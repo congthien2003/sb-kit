@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Visualizer"
+  short_description: "Turn specs and flows into one HTML view"
+  default_prompt: "Use $sk-visualizer to create a single readable HTML visualization from this prompt or conversation."
