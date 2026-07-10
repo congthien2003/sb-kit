@@ -1,12 +1,15 @@
 {
   "name": "sb-kit",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "CLI to pull .agents skills into any project — npx sb-kit install",
+  "bin": {
+    "sb-kit": "./cli.js"
   },
-  "keywords": [],
+  "files": [
+    "cli.js",
+    ".agents"
+  ],
+  "keywords": ["agents", "skills", "cli", "installer"],
   "author": "",
-  "license": "ISC",
-  "description": ""
+  "license": "ISC"
 }
