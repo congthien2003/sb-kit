@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "CLI to pull .agents skills into any project — npx sb-kit install",
   "bin": {
-    "sb-kit": "./cli.js"
+    "sb-kit": "cli.js"
   },
   "files": [
     "cli.js",
     ".agents"
   ],
-  "keywords": ["agents", "skills", "cli", "installer"],
+  "keywords": [
+    "agents",
+    "skills",
+    "cli",
+    "installer"
+  ],
   "author": "",
   "license": "ISC"
 }
