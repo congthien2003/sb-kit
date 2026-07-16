@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI để cài các skill trong thư mục `.agents` vào bất kỳ project nào.
+CLI để cài các skill vào cả `.agents/skills` và `.claude/skills` của project.
 
 ## Cài đặt
 
@@ -10,7 +10,13 @@ Chạy trong project cần sử dụng skill:
 npx sb-kit install
 ```
 
-Nếu project đã có `.agents`, lệnh sẽ merge các skill còn thiếu và giữ nguyên skill đã tồn tại.
+Sau đó chọn một nhóm:
+
+1. **All** — toàn bộ skill trong package.
+2. **sb-kit only** — `sk-excute` và `sk-visualizer`.
+3. **Other skills only** — các skill còn lại ngoài sb-kit.
+
+Skill đã tồn tại ở một trong hai thư mục sẽ được giữ nguyên và báo là `Skipped`.
 
 ## Sử dụng
 
@@ -18,7 +24,7 @@ Nếu project đã có `.agents`, lệnh sẽ merge các skill còn thiếu và 
 npx sb-kit --help
 ```
 
-## Skills
+## sb-kit skills
 
 ### `sk-excute`
 

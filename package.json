@@ -7,7 +7,8 @@
   },
   "files": [
     "cli.js",
-    ".agents"
+    ".agents",
+    ".claude"
   ],
   "keywords": [
     "agents",
