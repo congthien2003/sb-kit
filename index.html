@@ -3,89 +3,430 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="sb-kit — bộ 6 agent skills cho workflow phát triển có kiểm soát." />
-    <title>sb-kit — Agent skills for focused workflows</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta
+      name="description"
+      content="sb-kit — CLI cài đặt agent skills cho Claude Code. sk-excute, sk-visualizer, sk-create-slide và hơn thế nữa." />
+    <title>sb-kit — Agent skills for Claude Code</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet" />
     <style>
-      body { font-family: "Manrope", sans-serif; }
-      code, button { font-family: "DM Mono", monospace; }
+      :root {
+        --bg: #f8fafc;
+        --text: #0f172a;
+        --muted: #475569;
+        --border: #e2e8f0;
+        --accent: #059669;
+        --accent-subtle: #ecfdf5;
+        --code-bg: #f1f5f9;
+        --card-bg: #fff;
+        --radius: 10px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Manrope", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      code,
+      pre,
+      .mono {
+        font-family: "DM Mono", monospace;
+        font-size: 0.875rem;
+      }
+
+      /* ── Layout ── */
+      .container {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 3rem 1.25rem 4rem;
+      }
+
+      /* ── Header ── */
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 2.5rem;
+      }
+      .logo {
+        font-family: "DM Mono", monospace;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: var(--accent);
+      }
+      .badge {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6875rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--muted);
+        border: 1px solid var(--border);
+        border-radius: 99px;
+        padding: 0.2rem 0.75rem;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        margin-bottom: 2.5rem;
+      }
+      .hero h1 {
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1.2;
+        margin-bottom: 0.6rem;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 1rem;
+        max-width: 560px;
+        line-height: 1.65;
+      }
+      .install-block {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 0.5rem 0.75rem 0.5rem 1rem;
+      }
+      .install-block code {
+        font-size: 0.9375rem;
+        white-space: nowrap;
+      }
+      .install-block button {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        background: var(--text);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        padding: 0.35rem 0.75rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .install-block button:hover {
+        background: var(--accent);
+      }
+
+      /* ── Sections ── */
+      section {
+        margin-bottom: 2.5rem;
+      }
+      section + section {
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+      }
+      .section-label {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6875rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1rem;
+      }
+
+      /* ── Skill cards ── */
+      .skill-list {
+        display: grid;
+        gap: 1rem;
+      }
+      .skill-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.5rem;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+      .skill-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
+      }
+      .skill-card-header {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.35rem;
+      }
+      .skill-card-header h3 {
+        font-family: "DM Mono", monospace;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--accent);
+      }
+      .skill-card-header .tag {
+        font-family: "DM Mono", monospace;
+        font-size: 0.625rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.12rem 0.45rem;
+        border-radius: 4px;
+        font-weight: 500;
+      }
+      .tag-core {
+        background: var(--accent-subtle);
+        color: var(--accent);
+      }
+      .tag-support {
+        background: #f8fafc;
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .skill-card > p {
+        color: var(--muted);
+        font-size: 0.875rem;
+        line-height: 1.55;
+      }
+
+      /* ── Install steps ── */
+      .steps {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 1rem;
+      }
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+      .step-num {
+        font-family: "DM Mono", monospace;
+        font-weight: 500;
+        font-size: 0.75rem;
+        color: var(--accent);
+        min-width: 1.25rem;
+      }
+      .step code {
+        font-size: 0.8125rem;
+        background: var(--code-bg);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+      }
+      .step strong {
+        color: var(--text);
+      }
+
+      /* ── Footer ── */
+      footer {
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        font-family: "DM Mono", monospace;
+        font-size: 0.6875rem;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      /* ── Toast ── */
+      #copy-status {
+        font-family: "DM Mono", monospace;
+        font-size: 0.6875rem;
+        color: var(--accent);
+        transition: opacity 0.3s;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 1.5rem 1rem 2.5rem;
+        }
+        .skill-card {
+          padding: 1rem 1.15rem;
+        }
+      }
     </style>
   </head>
-  <body class="bg-slate-50 text-slate-950 antialiased">
-    <main class="mx-auto flex min-h-screen max-w-6xl flex-col px-6 py-7 sm:px-10 lg:px-14">
-      <header class="flex items-center justify-between border-b border-slate-300 pb-5">
-        <span class="font-mono text-sm font-medium">sb-kit</span>
-        <span class="font-mono text-xs uppercase tracking-[0.14em] text-slate-500">6 agent skills</span>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <span class="logo">sb-kit</span>
+        <span class="badge">6 agent skills</span>
       </header>
 
-      <section class="grid gap-6 py-9 lg:grid-cols-[1fr_auto] lg:items-end" aria-labelledby="page-title">
-        <div>
-          <p class="font-mono text-xs uppercase tracking-[0.16em] text-emerald-700">Documentation overview</p>
-          <h1 id="page-title" class="mt-3 text-4xl font-extrabold tracking-[-0.05em] sm:text-5xl">Một bộ skill cho workflow rõ ràng.</h1>
-          <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">Cài vào <code class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-950">.agents</code> và <code class="rounded bg-emerald-100 px-1.5 py-0.5 text-xs text-emerald-950">.claude</code>; chọn workflow sb-kit hoặc các skill bổ trợ theo nhu cầu.</p>
+      <!-- Hero -->
+      <section class="hero">
+        <h1>CLI cài đặt agent skills cho Agents.</h1>
+        <p>
+          Một câu lệnh — cài toàn bộ skill vào <code>.agents/skills</code> và
+          <code>.claude/skills</code>. Skill đã tồn tại được giữ nguyên, không
+          ghi đè.
+        </p>
+        <div class="install-block">
+          <code>npx sb-kit install</code>
+          <button id="copy-command" type="button">COPY</button>
         </div>
-        <div class="flex items-center gap-3 border border-slate-300 bg-white p-2">
-          <code class="px-2 text-xs sm:text-sm">npx sb-kit install</code>
-          <button id="copy-command" class="bg-slate-950 px-3 py-2 font-mono text-xs text-white hover:bg-emerald-800" type="button">COPY</button>
+        <p id="copy-status" style="margin-top: 0.5rem"></p>
+      </section>
+
+      <!-- Install -->
+      <section>
+        <h2 class="section-label">Cài đặt</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span
+            ><span
+              >Chạy <code>npx sb-kit install</code> trong project cần
+              skill.</span
+            >
+          </div>
+          <div class="step">
+            <span class="step-num">2</span
+            ><span
+              >Chọn nhóm: <strong>All</strong> (toàn bộ),
+              <strong>sb-kit only</strong> (<code>sk-excute</code> +
+              <code>sk-visualizer</code> + <code>sk-create-slide</code>), hoặc
+              <strong>Other skills</strong> (còn lại).</span
+            >
+          </div>
+          <div class="step">
+            <span class="step-num">3</span
+            ><span
+              >Skill đã có → <strong>Skipped</strong>. Skill mới → cài vào cả
+              hai thư mục.</span
+            >
+          </div>
         </div>
       </section>
 
-      <div class="grid flex-1 gap-7 lg:grid-cols-[1.05fr_.95fr]" aria-label="Skill catalogue">
-        <section aria-labelledby="core-skills">
-          <div class="mb-3 flex items-center justify-between">
-            <h2 id="core-skills" class="font-mono text-xs uppercase tracking-[0.14em] text-slate-500">sb-kit core / 2 skills</h2>
-            <span class="text-xs text-emerald-700">recommended together</span>
-          </div>
-          <div class="grid gap-3 sm:grid-cols-2">
-            <article class="border border-slate-300 bg-white p-5">
-              <p class="font-mono text-sm font-medium text-emerald-700">sk-excute</p>
-              <h3 class="mt-3 font-bold tracking-tight">Đi từ yêu cầu đến code có kiểm soát.</h3>
-              <p class="mt-2 text-sm leading-6 text-slate-600">Tạo spec, implementation plan, chờ approval, rồi mới thực hiện thay đổi nhỏ nhất.</p>
-            </article>
-            <article class="border border-slate-300 bg-white p-5">
-              <p class="font-mono text-sm font-medium text-emerald-700">sk-visualizer</p>
-              <h3 class="mt-3 font-bold tracking-tight">Biến nội dung thành HTML dễ đọc.</h3>
-              <p class="mt-2 text-sm leading-6 text-slate-600">Chuyển prompt, spec, plan hoặc tài liệu thành một visual document rõ ràng.</p>
-            </article>
-          </div>
-          <p class="mt-3 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm leading-6 text-slate-700"><strong>Works together:</strong> dùng <code>sk-excute</code> để chốt hướng triển khai, sau đó dùng <code>sk-visualizer</code> khi cần trình bày spec hoặc plan trực quan.</p>
-        </section>
+      <!-- sb-kit Core -->
+      <section>
+        <h2 class="section-label">sb-kit core / 3 skills</h2>
+        <div class="skill-list">
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+              Quy trình triển khai task có kiểm soát. Từ yêu cầu người dùng →
+              tạo spec → lập implementation plan → chờ approval → thực hiện thay
+              đổi nhỏ nhất. Không tự ý sửa code khi chưa có plan được duyệt.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-visualizer</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+              Biến prompt, spec, plan, hoặc nội dung hội thoại thành một file
+              HTML visualization trực quan, dễ đọc. Hỗ trợ nhiều style preset,
+              tự động responsive, có timeline và diagram.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-create-slide</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+              Tạo HTML presentation animation-rich, zero-dependency từ ý tưởng
+              hoặc chuyển đổi PPT/PPTX. Luôn hỏi theme (light/dark), mức chi
+              tiết, và mật độ layout trước khi build. 14 style preset, keyboard
+              + touch navigation, viewport-safe.
+            </p>
+          </article>
+        </div>
+      </section>
 
-        <section aria-labelledby="supporting-skills">
-          <h2 id="supporting-skills" class="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-slate-500">Supporting / 4 skills</h2>
-          <div class="divide-y divide-slate-200 border-y border-slate-300 bg-white">
-            <article class="grid grid-cols-[11.5rem_1fr] gap-3 px-4 py-3"><h3 class="font-mono text-xs font-medium text-slate-800">frontend-design</h3><p class="text-xs leading-5 text-slate-600">Thiết kế và xây dựng UI web có chất lượng production.</p></article>
-            <article class="grid grid-cols-[11.5rem_1fr] gap-3 px-4 py-3"><h3 class="font-mono text-xs font-medium text-slate-800">frontend-slides</h3><p class="text-xs leading-5 text-slate-600">Tạo slide HTML hoặc chuyển đổi presentation web.</p></article>
-            <article class="grid grid-cols-[11.5rem_1fr] gap-3 px-4 py-3"><h3 class="font-mono text-xs font-medium text-slate-800">vercel-react-best-practices</h3><p class="text-xs leading-5 text-slate-600">Tối ưu performance cho React và Next.js.</p></article>
-            <article class="grid grid-cols-[11.5rem_1fr] gap-3 px-4 py-3"><h3 class="font-mono text-xs font-medium text-slate-800">vercel-react-native-skills</h3><p class="text-xs leading-5 text-slate-600">Best practices cho React Native và Expo.</p></article>
-          </div>
-        </section>
-      </div>
+      <!-- Supporting -->
+      <section>
+        <h2 class="section-label">Supporting / 3 skills</h2>
+        <div class="skill-list">
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>frontend-design</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
+              Thiết kế và xây dựng UI web chất lượng production. Tạo landing
+              page, dashboard, component, React component với aesthetic
+              distinctive — không generic AI look. Tránh Inter/Roboto/Arial,
+              dùng font pair cá tính, background có chiều sâu.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>vercel-react-best-practices</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
+              Hướng dẫn tối ưu performance cho React và Next.js từ Vercel.
+              Routing, data fetching, rendering strategies, bundling, image
+              optimization — best practices cập nhật theo từng phiên bản
+              Next.js.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>vercel-react-native-skills</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
+              Best practices cho React Native và Expo. Navigation, styling,
+              native modules, performance profiling, deployment — từ dev đến
+              production cho mobile apps.
+            </p>
+          </article>
+        </div>
+      </section>
 
-      <footer class="mt-7 flex flex-wrap items-center justify-between gap-2 border-t border-slate-300 pt-4 font-mono text-xs text-slate-500">
-        <span id="copy-status" aria-live="polite">Interactive install · Safe merge · ISC</span>
-        <span>All / sb-kit only / Other skills</span>
+      <!-- Footer -->
+      <footer>
+        <span id="copy-status-footer" aria-live="polite"
+          >ISC · Safe merge · Interactive install</span
+        >
+        <span>npx sb-kit --help</span>
       </footer>
-    </main>
+    </div>
 
     <script>
-      const button = document.getElementById("copy-command");
+      const btn = document.getElementById("copy-command");
       const status = document.getElementById("copy-status");
-      const command = "npx sb-kit install";
+      const cmd = "npx sb-kit install";
 
-      button.addEventListener("click", async () => {
+      btn.addEventListener("click", async () => {
         try {
-          await navigator.clipboard.writeText(command);
-          button.textContent = "COPIED";
+          await navigator.clipboard.writeText(cmd);
+          btn.textContent = "COPIED";
           status.textContent = "Đã sao chép lệnh cài đặt.";
         } catch {
-          button.textContent = "SELECT";
+          btn.textContent = "SELECT";
           status.textContent = "Sao chép thủ công: npx sb-kit install";
         }
-        setTimeout(() => { button.textContent = "COPY"; }, 1800);
+        setTimeout(() => {
+          btn.textContent = "COPY";
+          status.textContent = "";
+        }, 1800);
       });
     </script>
   </body>

@@ -34,6 +34,10 @@ Quy trình triển khai task có kiểm soát: tạo spec, lập implementation 
 
 Chuyển prompt, spec, plan hoặc nội dung hội thoại thành một file HTML visualization dễ đọc.
 
+### `sk-create-slide`
+
+Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. Luôn hỏi theme (light/dark), mức chi tiết, và mật độ layout trước khi build.
+
 ## License
 
 ISC
