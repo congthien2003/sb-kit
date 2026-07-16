@@ -45,9 +45,9 @@ html {
     --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
     --h3-size: clamp(1rem, 2.5vw, 1.75rem);
 
-    /* Body text */
-    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
-    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+    /* Body text — bumped up for readability */
+    --body-size: clamp(0.85rem, 1.6vw, 1.2rem);
+    --small-size: clamp(0.75rem, 1.1vw, 0.9rem);
 
     /* Spacing scales with viewport */
     --slide-padding: clamp(1rem, 4vw, 4rem);
@@ -106,7 +106,7 @@ img, .image-container {
         --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
         --content-gap: clamp(0.3rem, 1vw, 0.75rem);
         --title-size: clamp(1.1rem, 4vw, 2rem);
-        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        --body-size: clamp(0.75rem, 1.2vw, 0.95rem);
     }
 
     /* Hide non-essential elements */
@@ -121,7 +121,7 @@ img, .image-container {
         --slide-padding: clamp(0.4rem, 2vw, 1rem);
         --title-size: clamp(1rem, 3.5vw, 1.5rem);
         --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
-        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        --body-size: clamp(0.7rem, 1vw, 0.85rem);
     }
 }
 

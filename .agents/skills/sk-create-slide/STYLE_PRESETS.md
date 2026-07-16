@@ -1,6 +1,6 @@
 # Style Presets Reference
 
-Curated visual styles for `frontend-slides`.
+Curated visual styles for `sk-create-slide`.
 
 Use this file for:
 - the mandatory viewport-fitting CSS base
@@ -21,16 +21,17 @@ Too much content = split into more slides.
 Never scroll inside a slide.
 ```
 
-### Density Limits
+### Density Limits (Configurable)
 
-| Slide Type | Maximum Content |
-|------------|-----------------|
-| Title slide | 1 heading + 1 subtitle + optional tagline |
-| Content slide | 1 heading + 4-6 bullets or 2 paragraphs |
-| Feature grid | 6 cards maximum |
-| Code slide | 8-10 lines maximum |
-| Quote slide | 1 quote + attribution |
-| Image slide | 1 image, ideally under 60vh |
+Pick based on user preference. Default = Moderate if user doesn't specify.
+
+| Slide type | Spacious | Moderate | Dense |
+|------------|--------|-----------|-------|
+| Title slide | 1 heading + 1 subtitle | + optional tagline | + date/author line |
+| Content slide | 2-3 bullets | 4-5 bullets | 5-6 bullets |
+| Feature grid | 2-3 cards | 4 cards | 6 cards max |
+| Code slide | 5-7 lines | 8-10 lines | 10-12 lines |
+| Quote slide | 1 quote + attribution | + context line | 2 quotes |
 
 ## Mandatory Base CSS
 
@@ -76,8 +77,8 @@ html {
     --title-size: clamp(1.5rem, 5vw, 4rem);
     --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
     --h3-size: clamp(1rem, 2.5vw, 1.75rem);
-    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
-    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+    --body-size: clamp(0.85rem, 1.6vw, 1.2rem);
+    --small-size: clamp(0.75rem, 1.1vw, 0.9rem);
 
     --slide-padding: clamp(1rem, 4vw, 4rem);
     --content-gap: clamp(0.5rem, 2vw, 2rem);
@@ -124,7 +125,7 @@ img, .image-container {
         --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
         --content-gap: clamp(0.3rem, 1vw, 0.75rem);
         --title-size: clamp(1.1rem, 4vw, 2rem);
-        --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+        --body-size: clamp(0.75rem, 1.2vw, 0.95rem);
     }
 
     .nav-dots, .keyboard-hint, .decorative {
@@ -137,7 +138,7 @@ img, .image-container {
         --slide-padding: clamp(0.4rem, 2vw, 1rem);
         --title-size: clamp(1rem, 3.5vw, 1.5rem);
         --h2-size: clamp(0.9rem, 2.5vw, 1.25rem);
-        --body-size: clamp(0.65rem, 1vw, 0.85rem);
+        --body-size: clamp(0.7rem, 1vw, 0.85rem);
     }
 }
 
@@ -175,16 +176,18 @@ img, .image-container {
 
 ## Mood to Preset Mapping
 
-| Mood | Good Presets |
-|------|--------------|
-| Impressed / Confident | Bold Signal, Electric Studio, Dark Botanical |
-| Excited / Energized | Creative Voltage, Neon Cyber, Split Pastel |
-| Calm / Focused | Notebook Tabs, Paper & Ink, Swiss Modern |
-| Inspired / Moved | Dark Botanical, Vintage Editorial, Pastel Geometry |
+| Mood | Dark Presets | Light Presets |
+|------|-------------|---------------|
+| Impressed / Confident | Bold Signal, Dark Botanical | Electric Studio, Swiss Modern |
+| Excited / Energized | Creative Voltage, Neon Cyber | Split Pastel, Pastel Geometry |
+| Calm / Focused | Notebook Tabs, Terminal Green | Paper & Ink, Swiss Modern |
+| Inspired / Moved | Dark Botanical, Vintage Editorial | Pastel Geometry, Paper & Ink |
 
 ## Preset Catalog
 
-### 1. Bold Signal
+Each preset is tagged **[Dark]** or **[Light]** to match the user's chosen theme.
+
+### 1. Bold Signal **[Dark]**
 
 - Vibe: confident, high-impact, keynote-ready
 - Best for: pitch decks, launches, statements
@@ -192,15 +195,15 @@ img, .image-container {
 - Palette: charcoal base, hot orange focal card, crisp white text
 - Signature: oversized section numbers, high-contrast card on dark field
 
-### 2. Electric Studio
+### 2. Electric Studio **[Light]**
 
 - Vibe: clean, bold, agency-polished
 - Best for: client presentations, strategic reviews
 - Fonts: Manrope only
-- Palette: black, white, saturated cobalt accent
+- Palette: white base, black text, saturated cobalt accent
 - Signature: two-panel split and sharp editorial alignment
 
-### 3. Creative Voltage
+### 3. Creative Voltage **[Dark]**
 
 - Vibe: energetic, retro-modern, playful confidence
 - Best for: creative studios, brand work, product storytelling
@@ -208,7 +211,7 @@ img, .image-container {
 - Palette: electric blue, neon yellow, deep navy
 - Signature: halftone textures, badges, punchy contrast
 
-### 4. Dark Botanical
+### 4. Dark Botanical **[Dark]**
 
 - Vibe: elegant, premium, atmospheric
 - Best for: luxury brands, thoughtful narratives, premium product decks
@@ -216,7 +219,7 @@ img, .image-container {
 - Palette: near-black, warm ivory, blush, gold, terracotta
 - Signature: blurred abstract circles, fine rules, restrained motion
 
-### 5. Notebook Tabs
+### 5. Notebook Tabs **[Dark]**
 
 - Vibe: editorial, organized, tactile
 - Best for: reports, reviews, structured storytelling
@@ -224,7 +227,7 @@ img, .image-container {
 - Palette: cream paper on charcoal with pastel tabs
 - Signature: paper sheet, colored side tabs, binder details
 
-### 6. Pastel Geometry
+### 6. Pastel Geometry **[Light]**
 
 - Vibe: approachable, modern, friendly
 - Best for: product overviews, onboarding, lighter brand decks
@@ -232,7 +235,7 @@ img, .image-container {
 - Palette: pale blue field, cream card, soft pink/mint/lavender accents
 - Signature: vertical pills, rounded cards, soft shadows
 
-### 7. Split Pastel
+### 7. Split Pastel **[Light]**
 
 - Vibe: playful, modern, creative
 - Best for: agency intros, workshops, portfolios
@@ -240,7 +243,7 @@ img, .image-container {
 - Palette: peach + lavender split with mint badges
 - Signature: split backdrop, rounded tags, light grid overlays
 
-### 8. Vintage Editorial
+### 8. Vintage Editorial **[Dark]**
 
 - Vibe: witty, personality-driven, magazine-inspired
 - Best for: personal brands, opinionated talks, storytelling
@@ -248,7 +251,7 @@ img, .image-container {
 - Palette: cream, charcoal, dusty warm accents
 - Signature: geometric accents, bordered callouts, punchy serif headlines
 
-### 9. Neon Cyber
+### 9. Neon Cyber **[Dark]**
 
 - Vibe: futuristic, techy, kinetic
 - Best for: AI, infra, dev tools, future-of-X talks
@@ -256,7 +259,7 @@ img, .image-container {
 - Palette: midnight navy, cyan, magenta
 - Signature: glow, particles, grids, data-radar energy
 
-### 10. Terminal Green
+### 10. Terminal Green **[Dark]**
 
 - Vibe: developer-focused, hacker-clean
 - Best for: APIs, CLI tools, engineering demos
@@ -264,7 +267,7 @@ img, .image-container {
 - Palette: GitHub dark + terminal green
 - Signature: scan lines, command-line framing, precise monospace rhythm
 
-### 11. Swiss Modern
+### 11. Swiss Modern **[Light]**
 
 - Vibe: minimal, precise, data-forward
 - Best for: corporate, product strategy, analytics
@@ -272,13 +275,35 @@ img, .image-container {
 - Palette: white, black, signal red
 - Signature: visible grids, asymmetry, geometric discipline
 
-### 12. Paper & Ink
+### 12. Paper & Ink **[Light]**
 
 - Vibe: literary, thoughtful, story-driven
 - Best for: essays, keynote narratives, manifesto decks
 - Fonts: Cormorant Garamond + Source Serif 4
 - Palette: warm cream, charcoal, crimson accent
 - Signature: pull quotes, drop caps, elegant rules
+
+### 13. Midnight teal **[Dark]**
+
+- Vibe: calm, modern, tech-professional
+- Best for: technical reports, architecture overviews, engineering talks
+- Fonts: DM Sans + DM Mono
+- Palette: deep teal-black, soft teal accent, warm gray text
+- Signature: subtle wave gradients, clean card hierarchy, rounded corners
+
+### 14. Warm Studio **[Light]**
+
+- Vibe: warm, professional, approachable
+- Best for: training slides, internal reports, team presentations
+- Fonts: Lexend only
+- Palette: warm white, dark brown text, amber accent
+- Signature: soft shadows, rounded everything, welcoming feel
+
+## Body Size Minimum
+
+**All presets must use `--body-size` minimum: `clamp(0.85rem, 1.6vw, 1.2rem)`**
+
+No preset may use body text smaller than this. Card descriptions, bullet text, paragraphs — all must use `--body-size`.
 
 ## Direct Selection Prompts
 
