@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Preparation"
+  short_description: "Draft release notes and SemVer bump plans"
+  default_prompt: "Use $sk-release to prepare the next release from the latest tag."

@@ -1,14 +1,19 @@
 {
   "name": "sb-kit",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "CLI to pull .agents skills into any project — npx sb-kit install",
   "bin": {
     "sb-kit": "cli.js"
   },
+  "dependencies": {
+    "@clack/prompts": "^1.7.0"
+  },
+  "engines": {
+    "node": ">=20.12.0"
+  },
   "files": [
     "cli.js",
-    ".agents",
-    ".claude"
+    ".agents"
   ],
   "keywords": [
     "agents",

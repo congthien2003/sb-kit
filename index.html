@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="sb-kit — CLI cài đặt agent skills cho Claude Code. sk-excute, sk-visualizer, sk-create-slide và hơn thế nữa." />
-    <title>sb-kit — Agent skills for Claude Code</title>
+      content="sb-kit — CLI cài đặt agent skills cho .agents và Claude Code." />
+    <title>sb-kit — Agent skills for .agents & Claude Code</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -269,16 +269,16 @@
       <!-- Header -->
       <header>
         <span class="logo">sb-kit</span>
-        <span class="badge">6 agent skills</span>
+        <span class="badge">8 agent skills</span>
       </header>
 
       <!-- Hero -->
       <section class="hero">
-        <h1>CLI cài đặt agent skills cho Agents.</h1>
+        <h1>CLI cài agent skills cho .agents, tùy chọn Claude Code.</h1>
         <p>
-          Một câu lệnh — cài toàn bộ skill vào <code>.agents/skills</code> và
-          <code>.claude/skills</code>. Skill đã tồn tại được giữ nguyên, không
-          ghi đè.
+          Một câu lệnh — luôn cài vào <code>.agents/skills</code>, rồi bạn chọn
+          có cài thêm cho <code>.claude/skills</code> hay không. Skill đã tồn tại
+          được giữ nguyên, không ghi đè.
         </p>
         <div class="install-block">
           <code>npx sb-kit install</code>
@@ -301,17 +301,17 @@
           <div class="step">
             <span class="step-num">2</span
             ><span
-              >Chọn nhóm: <strong>All</strong> (toàn bộ),
+              >Dùng radio chọn nhóm: <strong>All</strong> (toàn bộ),
               <strong>sb-kit only</strong> (<code>sk-excute</code> +
-              <code>sk-visualizer</code> + <code>sk-create-slide</code>), hoặc
+              <code>sk-visualizer</code>), hoặc
               <strong>Other skills</strong> (còn lại).</span
             >
           </div>
           <div class="step">
             <span class="step-num">3</span
             ><span
-              >Skill đã có → <strong>Skipped</strong>. Skill mới → cài vào cả
-              hai thư mục.</span
+              >Dùng radio chọn cài thêm cho Claude Code. <strong>No</strong> là
+              mặc định; chọn <strong>Yes</strong> để tạo <code>.claude/skills</code>.</span
             >
           </div>
         </div>
@@ -319,7 +319,7 @@
 
       <!-- sb-kit Core -->
       <section>
-        <h2 class="section-label">sb-kit core / 3 skills</h2>
+        <h2 class="section-label">SaboKit core / 5 skills</h2>
         <div class="skill-list">
           <article class="skill-card">
             <div class="skill-card-header">
@@ -349,10 +349,27 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-              Tạo HTML presentation animation-rich, zero-dependency từ ý tưởng
-              hoặc chuyển đổi PPT/PPTX. Luôn hỏi theme (light/dark), mức chi
-              tiết, và mật độ layout trước khi build. 14 style preset, keyboard
-              + touch navigation, viewport-safe.
+              Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-release</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+              Chuẩn bị release với draft changelog, đề xuất SemVer, summary và
+              checklist; không tự commit, push hoặc tag.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-doc</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+              Sinh README, API docs, changelog hoặc usage guide từ codebase
+              thành một file Markdown.
             </p>
           </article>
         </div>

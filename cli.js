@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 const fs = require("fs");
 const path = require("path");
-const readline = require("readline");
 
-const SB_KIT_SKILLS = ["sk-excute", "sk-visualizer"];
-const SKILL_ROOTS = [".agents", ".claude"];
+const SB_KIT_SKILLS = ["sk-excute", "sk-visualizer", "sk-create-slide", "sk-release", "sk-doc"];
 const USAGE = `sb-kit — install agent skills into the current project
 
   npx sb-kit install    Choose which packaged skills to install
@@ -38,68 +36,70 @@ function selectedSkills(choice, allSkills) {
   }
 }
 
-function chooseSkills(allSkills) {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-
-  return new Promise((resolve) => {
-    const ask = () => {
-      console.log("\nChoose skills to install:");
-      console.log("  1. All (sb-kit + other skills)");
-      console.log("  2. sb-kit only (sk-excute, sk-visualizer)");
-      console.log("  3. Other skills only");
-      rl.question("\nSelect 1-3: ", (answer) => {
-        const skills = selectedSkills(answer.trim(), allSkills);
-        if (!skills) {
-          console.log("Please select 1, 2, or 3.");
-          ask();
-          return;
-        }
-        rl.close();
-        resolve(skills);
-      });
-    };
-
-    ask();
+async function chooseSkills(allSkills, prompts) {
+  const choice = await prompts.select({
+    message: "Choose skills to install:",
+    options: [
+      { value: "1", label: "All", hint: "sb-kit + other skills" },
+      { value: "2", label: "sb-kit only", hint: "sk-excute, sk-visualizer, sk-create-slide, sk-release, sk-doc" },
+      { value: "3", label: "Other skills only" },
+    ],
   });
+
+  if (prompts.isCancel(choice)) {
+    prompts.cancel("Installation cancelled.");
+    return null;
+  }
+
+  return selectedSkills(choice, allSkills);
 }
 
-function install(skillNames) {
-  const sources = SKILL_ROOTS.map((root) => ({
-    root,
-    srcSkillsDir: path.resolve(__dirname, root, "skills"),
-    destSkillsDir: path.resolve(process.cwd(), root, "skills"),
-  }));
+function install(skillNames, root) {
+  const srcSkillsDir = path.resolve(__dirname, ".agents", "skills");
+  const destSkillsDir = path.resolve(process.cwd(), root, "skills");
 
-  for (const { root, srcSkillsDir } of sources) {
-    for (const name of skillNames) {
-      if (!fs.existsSync(path.join(srcSkillsDir, name))) {
-        console.error(`Error: ${root}/skills/${name} is missing from the package.`);
-        return false;
-      }
+  for (const name of skillNames) {
+    if (!fs.existsSync(path.join(srcSkillsDir, name))) {
+      console.error(`Error: .agents/skills/${name} is missing from the package.`);
+      return false;
     }
   }
 
-  for (const { root, srcSkillsDir, destSkillsDir } of sources) {
-    fs.mkdirSync(destSkillsDir, { recursive: true });
-    const added = [];
-    const skipped = [];
+  fs.mkdirSync(destSkillsDir, { recursive: true });
+  const added = [];
+  const skipped = [];
 
-    for (const name of skillNames) {
-      const destSkill = path.join(destSkillsDir, name);
-      if (fs.existsSync(destSkill)) {
-        skipped.push(name);
-        continue;
-      }
-      cpRecursive(path.join(srcSkillsDir, name), destSkill);
-      added.push(name);
+  for (const name of skillNames) {
+    const destSkill = path.join(destSkillsDir, name);
+    if (fs.existsSync(destSkill)) {
+      skipped.push(name);
+      continue;
     }
-
-    console.log(`\n✓ ${root}/skills processed`);
-    if (added.length) console.log(`  Added:   ${added.join(", ")}`);
-    if (skipped.length) console.log(`  Skipped: ${skipped.join(", ")} (already present)`);
+    cpRecursive(path.join(srcSkillsDir, name), destSkill);
+    added.push(name);
   }
 
+  console.log(`\n✓ ${root}/skills processed`);
+  if (added.length) console.log(`  Added:   ${added.join(", ")}`);
+  if (skipped.length) console.log(`  Skipped: ${skipped.join(", ")} (already present)`);
   return true;
+}
+
+async function chooseClaudeInstall(prompts) {
+  const choice = await prompts.select({
+    message: "Install for Claude Code too?",
+    options: [
+      { value: false, label: "No" },
+      { value: true, label: "Yes" },
+    ],
+  });
+
+  if (prompts.isCancel(choice)) {
+    prompts.cancel("Claude Code installation skipped.");
+    return false;
+  }
+
+  return choice;
 }
 
 async function main() {
@@ -107,6 +107,7 @@ async function main() {
 
   switch (cmd) {
     case "install": {
+      const prompts = await import("@clack/prompts");
       const srcSkillsDir = path.resolve(__dirname, ".agents", "skills");
       const allSkills = listSkills(srcSkillsDir);
       if (!allSkills.length) {
@@ -114,7 +115,13 @@ async function main() {
         process.exitCode = 1;
         return;
       }
-      if (!install(await chooseSkills(allSkills))) process.exitCode = 1;
+      const skillNames = await chooseSkills(allSkills, prompts);
+      if (!skillNames) return;
+      if (!install(skillNames, ".agents")) {
+        process.exitCode = 1;
+        return;
+      }
+      if (await chooseClaudeInstall(prompts) && !install(skillNames, ".claude")) process.exitCode = 1;
       break;
     }
     case "--help":
