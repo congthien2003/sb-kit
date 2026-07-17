@@ -1,6 +1,6 @@
 {
   "name": "sb-kit",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "CLI to pull .agents skills into any project — npx sb-kit install",
   "bin": {
     "sb-kit": "cli.js"
