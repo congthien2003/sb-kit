@@ -5,14 +5,21 @@
   "bin": {
     "sb-kit": "cli.js"
   },
+  "scripts": {
+    "test": "node --test test-cli.js test-tracker-core.js test-tracker-cli.js test-tracker-mcp.js test-tracker-server.js"
+  },
   "dependencies": {
-    "@clack/prompts": "^1.7.0"
+    "@clack/prompts": "^1.7.0",
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "better-sqlite3": "^13.0.0",
+    "zod": "^4.0.0"
   },
   "engines": {
-    "node": ">=20.12.0"
+    "node": ">=22.13.0"
   },
   "files": [
     "cli.js",
+    "tracker",
     ".agents"
   ],
   "keywords": [
