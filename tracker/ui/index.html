@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Agent Session Tracker</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Agent Sessions home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Agent Sessions</span>
+      </a>
+      <button class="button-primary" id="new-session">New session</button>
+    </header>
+    <main class="workspace">
+      <aside class="session-sidebar" id="session-sidebar">
+        <nav class="date-nav" aria-label="Board date">
+          <div class="date-controls">
+            <button
+              class="icon-button"
+              id="previous-date"
+              aria-label="Previous day">
+              ←
+            </button>
+            <button id="today">Today</button>
+            <button class="icon-button" id="next-date" aria-label="Next day">
+              →
+            </button>
+          </div>
+          <strong id="board-date"></strong>
+          <span id="board-counts"></span>
+        </nav>
+        <div id="session-list" aria-live="polite">Loading sessions…</div>
+      </aside>
+      <section class="session-detail" id="session-detail" aria-live="polite">
+        Loading session…
+      </section>
+      <aside class="artifact-panel" id="artifact-panel">
+        Loading artifacts…
+      </aside>
+    </main>
+
+    <dialog id="session-dialog">
+      <form id="session-form">
+        <h2>Session</h2>
+        <input name="id" type="hidden" /><label
+          >Title<input name="title" required /></label
+        ><label>Summary<textarea name="summary"></textarea></label>
+        <footer>
+          <button type="button" data-close>Cancel</button
+          ><button class="button-primary">Save</button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog id="task-dialog">
+      <form id="task-form">
+        <h2>Task</h2>
+        <input name="id" type="hidden" /><input
+          name="sessionId"
+          type="hidden" /><label>Title<input name="title" required /></label
+        ><label>Description<textarea name="description"></textarea></label
+        ><label
+          >Acceptance criteria<textarea name="acceptanceCriteria"></textarea>
+        </label>
+        <footer>
+          <button type="button" data-close>Cancel</button
+          ><button class="button-primary">Save</button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog id="artifact-dialog">
+      <form id="artifact-form">
+        <h2>Artifact</h2>
+        <input name="sessionId" type="hidden" /><label
+          >Type<select name="type">
+            <option value="spec">Spec</option>
+            <option value="implementation_plan">Implementation plan</option>
+            <option value="doc">Doc</option>
+          </select></label
+        ><label>Key<input name="key" required /></label
+        ><label>Title<input name="title" required /></label
+        ><label>Repository-relative path<input name="path" required /></label>
+        <footer>
+          <button type="button" data-close>Cancel</button
+          ><button class="button-primary">Add version</button>
+        </footer>
+      </form>
+    </dialog>
+    <dialog id="blocked-dialog">
+      <form id="blocked-form">
+        <h2>Block task</h2>
+        <input name="taskId" type="hidden" />
+        <label
+          >Reason<textarea name="blockedReason" required></textarea>
+        </label>
+        <footer>
+          <button type="button" data-close>Cancel</button
+          ><button class="button-primary">Mark blocked</button>
+        </footer>
+      </form>
+    </dialog>
+    <div id="status" role="status" aria-live="polite"></div>
+  </body>
+</html>

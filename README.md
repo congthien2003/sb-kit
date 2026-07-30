@@ -4,7 +4,7 @@ CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện
 
 ## Prerequisites
 
-- Node.js 20.12.0 trở lên với npm/npx.
+- Node.js 22.13.0 trở lên với npm/npx.
 - Một project đích có quyền tạo thư mục `.agents` (và `.claude` nếu chọn cài cho Claude Code).
 
 ## Installation
@@ -52,25 +52,63 @@ your-project/
 
 Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã chọn.
 
+## Local session tracker
+
+Tracker là tính năng tùy chọn để quản lý các agent chat session, task và tài liệu liên quan ngay trong repository:
+
+```bash
+npx sb-kit track init
+npx sb-kit track serve
+```
+
+`track init` tạo `.sb-kit/tracker.sqlite` và thêm `.sb-kit/` vào `.gitignore`. CLI và MCP ghi SQLite trực tiếp nên không cần chạy web server:
+
+```bash
+npx sb-kit track session create --title "Payment retry" --summary "Make retries safe"
+npx sb-kit track task create --session 1 --title "Implement retry"
+npx sb-kit track task update 1 --status in_progress --actor codex
+npx sb-kit track artifact add --session 1 --type spec --key payment-retry --path docs/specs/payment-retry.md
+npx sb-kit track handoff 1
+npx sb-kit track summary --date today
+```
+
+Task dùng bốn status cố định: `todo`, `in_progress`, `blocked`, `done`. Artifact là đường dẫn tương đối trong repository; nội dung file không được sao chép vào database.
+
+Chạy MCP local bằng stdio:
+
+```json
+{
+  "mcpServers": {
+    "sb-kit-tracker": {
+      "command": "npx",
+      "args": ["sb-kit", "track", "mcp"],
+      "cwd": "PATH_TO_REPOSITORY"
+    }
+  }
+}
+```
+
+Web UI chỉ bind `127.0.0.1`; dữ liệu không được đồng bộ cloud.
+
 ## Skill catalog
 
 ### SaboKit core
 
-| Skill | Mục đích |
-| --- | --- |
-| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code. |
-| `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
-| `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
-| `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
-| `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
+| Skill             | Mục đích                                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------------------------- |
+| `sk-excute`       | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code.                             |
+| `sk-visualizer`   | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc.                                     |
+| `sk-release`      | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
+| `sk-doc`          | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide.                  |
+| `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX.                                                 |
 
 ### Supporting skills
 
-| Skill | Mục đích |
-| --- | --- |
-| `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
-| `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
-| `vercel-react-native-skills` | Best practices cho React Native và Expo. |
+| Skill                         | Mục đích                                                     |
+| ----------------------------- | ------------------------------------------------------------ |
+| `frontend-design`             | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
+| `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js.                |
+| `vercel-react-native-skills`  | Best practices cho React Native và Expo.                     |
 
 ## CLI reference
 

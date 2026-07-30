@@ -4,16 +4,16 @@
 
 `cli.js` is the CommonJS entry point published as the `sb-kit` executable. It discovers packaged skills under `.agents/skills/` and installs them into a target project. Each skill keeps its instructions in `SKILL.md`; supporting rules, scripts, or agent metadata stay inside that skill directory.
 
-`test-cli.js` contains the CLI integration checks. `index.html` is the project landing page, while `docs/superpowers/` stores implementation plans and design notes. Package metadata lives in `package.json`, `package-lock.json`, and `skills-lock.json`.
+`test-cli.js` and `test-tracker-*.js` contain integration checks. `tracker/` owns the optional SQLite core, CLI/MCP/HTTP adapters, and static UI. `index.html` is the project landing page, while `docs/superpowers/` stores implementation plans and design notes.
 
 ## Build, Test, and Development Commands
 
 - `npm ci` installs the locked dependency set. Use `npm install` only when intentionally updating dependencies.
 - `node cli.js --help` verifies the command entry point and usage text.
 - `node cli.js install` runs the interactive installer against the current directory; use a disposable directory during manual testing.
-- `node test-cli.js` runs the complete automated CLI check. There is no separate build step or npm test script.
+- `npm test` runs installer, tracker core, CLI, MCP, HTTP, and UI smoke checks.
 
-Node.js 20.12.0 or newer is required.
+Node.js 22.13.0 or newer is required. There is no separate build step.
 
 ## Coding Style & Naming Conventions
 
@@ -23,7 +23,7 @@ Keep changes minimal and preserve the installer’s non-overwriting behavior. Up
 
 ## Testing Guidelines
 
-Tests use Node’s built-in `assert` module and `spawnSync`; no test framework is configured. Add focused integration assertions to `test-cli.js` for new CLI behavior. Tests must clean up temporary directories in `finally` blocks. Run `node test-cli.js` before opening a pull request.
+Tests use `node:test`, Node’s built-in `assert` module, and real temporary repositories. Add focused checks to the matching `test-tracker-*.js` adapter file. Tests must close databases and clean up temporary directories in `finally` blocks. Run `npm test` before opening a pull request.
 
 ## Commit & Pull Request Guidelines
 

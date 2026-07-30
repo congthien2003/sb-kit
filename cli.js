@@ -5,8 +5,10 @@ const path = require("path");
 const SB_KIT_SKILLS = ["sk-excute", "sk-visualizer", "sk-create-slide", "sk-release", "sk-doc"];
 const USAGE = `sb-kit — install agent skills into the current project
 
-  npx sb-kit install    Choose which packaged skills to install
-  npx sb-kit --help     Show this help`;
+  npx sb-kit install       Choose which packaged skills to install
+  npx sb-kit track init    Initialize local session tracking
+  npx sb-kit track serve   Open the local tracker UI
+  npx sb-kit --help        Show this help`;
 
 function usage() {
   console.log(USAGE);
@@ -106,6 +108,11 @@ async function main() {
   const cmd = process.argv[2];
 
   switch (cmd) {
+    case "track": {
+      const { run } = require("./tracker/cli");
+      await run(process.argv.slice(3));
+      break;
+    }
     case "install": {
       const prompts = await import("@clack/prompts");
       const srcSkillsDir = path.resolve(__dirname, ".agents", "skills");
