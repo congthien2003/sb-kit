@@ -58,7 +58,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code. |
+| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code; có thể tra cứu tài liệu bằng web search khi tool khả dụng. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
