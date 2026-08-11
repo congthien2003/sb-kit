@@ -1,7 +1,7 @@
 {
   "name": "sb-kit",
-  "version": "2.0.0",
-  "description": "CLI to pull .agents skills into any project — npx sb-kit install",
+  "version": "2.2.0",
+  "description": "CLI to install agent skills and bootstrap a Next.js and Hono pnpm workspace",
   "bin": {
     "sb-kit": "cli.js"
   },
@@ -19,7 +19,10 @@
     "agents",
     "skills",
     "cli",
-    "installer"
+    "installer",
+    "scaffold",
+    "nextjs",
+    "hono"
   ],
   "author": "",
   "license": "ISC"

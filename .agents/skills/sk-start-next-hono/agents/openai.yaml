@@ -1,0 +1,4 @@
+interface:
+  display_name: "Start Next + Hono"
+  short_description: "Finish a bootstrapped Next.js and Hono workspace"
+  default_prompt: "Use $sk-start-next-hono to finish setting up this existing pnpm workspace. Inspect the generated source, present a file-scoped plan, and wait for approval before modifying files."
