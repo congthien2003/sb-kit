@@ -25,6 +25,44 @@ Tiếp theo dùng phím mũi tên và Enter để chọn có cài thêm cho Clau
 
 Nếu một skill đã có ở thư mục đích, CLI giữ nguyên skill đó và báo `Skipped` thay vì ghi đè.
 
+## Create Next + Hono workspace
+
+Khởi tạo một pnpm workspace mới gồm Next.js App Router client, Node.js Hono server, root scripts, Prettier và bộ sb-kit core skills:
+
+```bash
+npx sb-kit create next-hono my-app
+```
+
+Thêm `--claude` để mirror cùng bộ core skills vào `.claude/skills`:
+
+```bash
+npx sb-kit create next-hono my-app --claude
+```
+
+CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan.
+
+Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
+
+```text
+Use $sk-start-next-hono to finish setting up this existing pnpm workspace.
+
+Inspect the generated Next.js client, Hono server, root workspace files,
+AGENTS.md, and Git state first. Preserve the generated applications and
+existing files.
+
+Configure the project following the skill conventions:
+- PostgreSQL with Drizzle migrations on the server;
+- authentication with admin/user boundaries by default;
+- same-origin /api/backend/* proxy for protected client requests;
+- shared environment, API error, response, logging, and database utilities;
+- client and server module boundaries documented by the skill;
+- Cloudflare R2 only if I explicitly request it.
+
+Before modifying files, present a concise file-scoped plan and wait for my
+approval. Follow the repository AGENTS.md. Do not commit code. Do not run
+build, test, lint, or verification commands unless I explicitly allow them.
+```
+
 ## Usage
 
 Hiển thị hướng dẫn:
@@ -58,11 +96,12 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code. |
+| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code; có thể tra cứu tài liệu bằng web search khi tool khả dụng. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
+| `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 
 ### Supporting skills
 
@@ -87,9 +126,18 @@ Mở lựa chọn nhóm skills và cài các skill được chọn vào project 
 
 In hướng dẫn sử dụng ngắn gọn. `-h` là alias của lệnh này.
 
+### `sb-kit create next-hono <project-name> [--claude]`
+
+Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn hóa root tooling, cài sb-kit core skills vào `.agents/skills`, chạy format và in prompt bàn giao cho `$sk-start-next-hono`.
+
+- Mặc định chỉ cài `.agents/skills`.
+- `--claude` mirror core skills vào `.claude/skills`.
+- Target phải mới hoặc rỗng; CLI không ghi đè project đã có source.
+- Generator lỗi ở stage nào thì CLI dừng ở đó và giữ partial state để kiểm tra.
+
 ## Configuration
 
-Không cần file cấu hình hoặc environment variable. CLI sử dụng project hiện tại làm thư mục đích.
+Không cần file cấu hình hoặc environment variable. `install` sử dụng project hiện tại làm thư mục đích; `create next-hono` nhận target từ `<project-name>`.
 
 ## Examples
 
@@ -104,6 +152,14 @@ Khi prompt hiển thị, giữ **All** và nhấn Enter để chọn toàn bộ 
 Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills`.
 
 Để chỉ cài bộ core, dùng phím mũi tên xuống một lần để chọn **sb-kit only**, rồi nhấn Enter.
+
+Khởi tạo base Next.js + Hono project:
+
+```bash
+npx sb-kit create next-hono my-app
+```
+
+Sau đó mở `my-app` bằng coding agent và gửi prompt mà CLI in ra để gọi `$sk-start-next-hono`.
 
 ## License
 

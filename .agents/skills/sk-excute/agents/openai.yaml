@@ -1,4 +1,4 @@
 interface:
   display_name: "SK Excute"
-  short_description: "Approved spec-plan-code task workflow"
-  default_prompt: "Use $sk-excute to turn this task into an approved spec, approved implementation plan, then implement it."
+  short_description: "Approved delivery workflow with verification"
+  default_prompt: "Use $sk-excute to investigate this task, obtain approval for the spec and implementation plan, implement the smallest change, and report verification evidence."
