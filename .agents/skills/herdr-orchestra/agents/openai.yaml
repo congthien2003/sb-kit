@@ -1,0 +1,4 @@
+interface:
+  display_name: "herdr Orchestra"
+  short_description: "Orchestrate multiple CLI agents with herdr"
+  default_prompt: "Use $herdr-orchestra to coordinate multiple agents for this task."

@@ -110,6 +110,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
+| `herdr-orchestra` | Điều phối nhiều CLI agent qua herdr để cùng phân tích, tranh luận và phân chia công việc. |
 
 ## CLI reference
 
