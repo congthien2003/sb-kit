@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "deep-research": {
+      "source": "affaan-m/ECC",
+      "sourceType": "github",
+      "skillPath": "skills/deep-research/SKILL.md",
+      "computedHash": "a077ae15135e506490458ac6dacaf17be9dfa61600f1712c6b7dc79a7cef249e"
+    },
     "frontend-slides": {
       "source": "affaan-m/ECC",
       "sourceType": "github",

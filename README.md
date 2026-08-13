@@ -111,6 +111,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
 | `herdr-orchestra` | Điều phối nhiều CLI agent qua herdr để cùng phân tích, tranh luận và phân chia công việc. |
+| `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
 
 ## CLI reference
 
