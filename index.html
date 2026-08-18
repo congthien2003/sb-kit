@@ -277,7 +277,7 @@
             <!-- Header -->
             <header>
                 <span class="logo">sb-kit</span>
-                <span class="badge">11 agent skills</span>
+                <span class="badge">15 agent skills</span>
             </header>
 
             <!-- Hero -->
@@ -286,7 +286,8 @@
                 <p>
                     Một câu lệnh — luôn cài vào <code>.agents/skills</code>, rồi
                     bạn chọn có cài thêm cho <code>.claude/skills</code> hay
-                    không. Skill đã tồn tại được giữ nguyên, không ghi đè.
+                    không. Bạn chọn giữ skill đã tồn tại hoặc replace đúng
+                    những skill đã tick.
                 </p>
                 <div class="install-block">
                     <code>npx sb-kit install</code>
@@ -330,18 +331,26 @@
                     <div class="step">
                         <span class="step-num">2</span
                         ><span
-                            >Dùng radio chọn nhóm: <strong>All</strong> (toàn
-                            bộ), <strong>sb-kit only</strong> (10 core skills),
-                            hoặc <strong>Other skills</strong> (còn lại).</span
+                            >Dùng checkbox chọn từng skill theo category:
+                            <strong>sk-work</strong>, <strong>assets</strong>,
+                            hoặc <strong>report</strong>.</span
                         >
                     </div>
                     <div class="step">
                         <span class="step-num">3</span
                         ><span
+                            >Chọn <strong>Install missing only</strong> để giữ
+                            skill có sẵn, hoặc <strong>Replace selected</strong>
+                            để chỉ thay các skill đã tick.</span
+                        >
+                    </div>
+                    <div class="step">
+                        <span class="step-num">4</span
+                        ><span
                             >Dùng radio chọn cài thêm cho Claude Code.
                             <strong>No</strong> là mặc định; chọn
-                            <strong>Yes</strong> để tạo
-                            <code>.claude/skills</code>.</span
+                            <strong>Yes</strong> để mirror cùng selection và mode
+                            vào <code>.claude/skills</code>.</span
                         >
                     </div>
                 </div>

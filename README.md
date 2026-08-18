@@ -15,15 +15,18 @@ Chạy lệnh trong thư mục project cần sử dụng skills:
 npx sb-kit install
 ```
 
-Sau đó dùng phím mũi tên và Enter để chọn một nhóm:
+Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-1. **All** — cài toàn bộ skills có trong package.
-2. **sb-kit only** — cài các skill core của sb-kit.
-3. **Other skills only** — cài các skill còn lại.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-release`, và `sk-start-next-hono`.
+- **assets** — `frontend-design`, `herdr-orchestra`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
+- **report** — `sk-create-slide`, `sk-visualizer`, và `sk-doc`.
 
-Tiếp theo dùng phím mũi tên và Enter để chọn có cài thêm cho Claude Code không. **No** là lựa chọn mặc định.
+CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử lý skill đã tồn tại:
 
-Nếu một skill đã có ở thư mục đích, CLI giữ nguyên skill đó và báo `Skipped` thay vì ghi đè.
+1. **Install missing only** — mặc định; giữ folder skill hiện có và báo `Skipped`.
+2. **Replace selected** — chỉ thay đúng các skill đã checkbox, báo `Replaced`; skill không chọn không bị ảnh hưởng.
+
+Cancel ở picker hoặc conflict mode sẽ dừng trước khi tạo/copy skill folder. Cuối cùng dùng phím mũi tên và Enter để chọn có mirror cùng selection và conflict mode sang Claude Code không. **No** là lựa chọn mặc định.
 
 ## Create Next + Hono workspace
 
@@ -74,9 +77,9 @@ npx sb-kit --help
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
-2. Bạn dùng radio prompt để chọn nhóm skill trên terminal.
-3. CLI sao chép những skill chưa có vào `.agents/skills` của project; skill có sẵn được bỏ qua.
-4. Bạn chọn **No** hoặc **Yes** ở radio prompt Claude Code. Khi chọn **Yes**, CLI sao chép cùng skills từ source `.agents/skills` sang `.claude/skills`.
+2. Bạn dùng checkbox để chọn từng skill dưới các group `sk-work`, `assets`, và `report`.
+3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
+4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
 `$sk-excute` chỉ dùng native sub-agent dispatch khi host hỗ trợ. Không có runtime-specific orchestrator, CLI, hay dependency nào được bundled. Explorer/reviewer có thể được thực hiện inline và workflow sẽ công khai fallback; researcher chỉ được dispatch khi bạn yêu cầu external research rõ ràng. Nếu đã chọn mode triển khai Sub-agent nhưng host không dispatch được, agent phải hỏi bạn đổi sang Inline hoặc dừng, không được fallback âm thầm.
 
@@ -125,11 +128,12 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ### `sb-kit install`
 
-Mở lựa chọn nhóm skills và cài các skill được chọn vào project hiện tại.
+Mở checkbox picker theo category và cài các skill được chọn vào project hiện tại.
 
-- Input: radio chọn nhóm skill, rồi radio chọn cài cho Claude Code hay không.
-- Output: danh sách skills `Added` và `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
-- Error: lệnh dừng nếu một skill đã chọn không tồn tại trong `.agents/skills` của package.
+- Input: checkbox từng skill trong `sk-work`, `assets`, `report`; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
+- Output: danh sách skills `Added`, `Replaced`, hoặc `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
+- Conflict mode mặc định **Install missing only** không ghi đè folder skill có sẵn. **Replace selected** chỉ thay folder của skill đã checkbox.
+- Error: lệnh dừng nếu không chọn skill, cancel prompt, hoặc một skill đã chọn không tồn tại trong `.agents/skills` của package.
 
 ### `sb-kit --help`
 
@@ -156,11 +160,9 @@ Cài toàn bộ skills vào project hiện tại:
 npx sb-kit install
 ```
 
-Khi prompt hiển thị, giữ **All** và nhấn Enter để chọn toàn bộ skills.
+Khi checkbox picker hiển thị, dùng phím mũi tên và Space để tick từng skill trong category phù hợp, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
 
-Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills`.
-
-Để chỉ cài bộ core, dùng phím mũi tên xuống một lần để chọn **sb-kit only**, rồi nhấn Enter.
+Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills` với cùng selection/mode.
 
 Khởi tạo base Next.js + Hono project:
 

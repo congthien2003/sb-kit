@@ -15,9 +15,16 @@ const SB_KIT_SKILLS = [
   "sk-doc",
   "sk-start-next-hono",
 ];
+const ASSET_SKILLS = [
+  "frontend-design",
+  "herdr-orchestra",
+  "vercel-react-best-practices",
+  "vercel-react-native-skills",
+];
+const REPORT_SKILLS = ["sk-create-slide", "sk-visualizer", "sk-doc"];
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
-  npx sb-kit install                                      Choose skills to install
+  npx sb-kit install                                      Choose skills by category
   npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace
   npx sb-kit --help                                       Show this help`;
 
@@ -31,35 +38,73 @@ function cpRecursive(src, dest) {
 
 function listSkills(dir) {
   if (!fs.existsSync(dir)) return [];
-  return fs.readdirSync(dir).filter((name) => {
-    return fs.statSync(path.join(dir, name)).isDirectory();
-  });
+  return fs.readdirSync(dir)
+    .filter((name) => fs.statSync(path.join(dir, name)).isDirectory())
+    .sort();
 }
 
-function selectedSkills(choice, allSkills) {
-  switch (choice) {
-    case "1":
-      return allSkills;
-    case "2":
-      return allSkills.filter((name) => SB_KIT_SKILLS.includes(name));
-    case "3":
-      return allSkills.filter((name) => !SB_KIT_SKILLS.includes(name));
-    default:
-      return null;
+function categorizedSkills(allSkills) {
+  const assets = new Set(ASSET_SKILLS);
+  const report = new Set(REPORT_SKILLS);
+  const categories = {
+    "sk-work": [],
+    assets: [],
+    report: [],
+  };
+
+  for (const skill of [...allSkills].sort()) {
+    if (assets.has(skill)) {
+      categories.assets.push(skill);
+    } else if (report.has(skill)) {
+      categories.report.push(skill);
+    } else {
+      categories["sk-work"].push(skill);
+    }
   }
+
+  return categories;
+}
+
+function categoryOptions(allSkills) {
+  return Object.fromEntries(
+    Object.entries(categorizedSkills(allSkills)).map(([category, skills]) => {
+      return [
+        category,
+        skills.map((skill) => ({ value: skill, label: skill })),
+      ];
+    }),
+  );
 }
 
 async function chooseSkills(allSkills, prompts) {
-  const choice = await prompts.select({
+  const choice = await prompts.groupMultiselect({
     message: "Choose skills to install:",
+    options: categoryOptions(allSkills),
+    required: true,
+  });
+
+  if (prompts.isCancel(choice) || !Array.isArray(choice) || !choice.length) {
+    prompts.cancel("Installation cancelled.");
+    return null;
+  }
+
+  return choice;
+}
+
+async function chooseConflictMode(prompts) {
+  const choice = await prompts.select({
+    message: "When selected skills already exist:",
     options: [
-      { value: "1", label: "All", hint: "sb-kit + other skills" },
       {
-        value: "2",
-        label: "sb-kit only",
-        hint: "sk-excute workflow roles, sk-visualizer, sk-create-slide, sk-release, sk-doc, sk-start-next-hono",
+        value: "install",
+        label: "Install missing only",
+        hint: "Keep existing selected skills",
       },
-      { value: "3", label: "Other skills only" },
+      {
+        value: "replace",
+        label: "Replace selected",
+        hint: "Replace only selected existing skills",
+      },
     ],
   });
 
@@ -68,10 +113,15 @@ async function chooseSkills(allSkills, prompts) {
     return null;
   }
 
-  return selectedSkills(choice, allSkills);
+  return choice;
 }
 
-function install(skillNames, root, targetDir = process.cwd()) {
+function install(
+  skillNames,
+  root,
+  targetDir = process.cwd(),
+  { replace = false } = {},
+) {
   const srcSkillsDir = path.resolve(__dirname, ".agents", "skills");
   const destSkillsDir = path.resolve(targetDir, root, "skills");
 
@@ -86,22 +136,59 @@ function install(skillNames, root, targetDir = process.cwd()) {
 
   fs.mkdirSync(destSkillsDir, { recursive: true });
   const added = [];
+  const replaced = [];
   const skipped = [];
 
   for (const name of skillNames) {
+    const srcSkill = path.join(srcSkillsDir, name);
     const destSkill = path.join(destSkillsDir, name);
-    if (fs.existsSync(destSkill)) {
+    if (!fs.existsSync(destSkill)) {
+      cpRecursive(srcSkill, destSkill);
+      added.push(name);
+      continue;
+    }
+    if (!replace) {
       skipped.push(name);
       continue;
     }
-    cpRecursive(path.join(srcSkillsDir, name), destSkill);
-    added.push(name);
+
+    const stageDir = fs.mkdtempSync(path.join(destSkillsDir, `.${name}-`));
+    const stagedSkill = path.join(stageDir, name);
+    const backupSkill = path.join(stageDir, "existing-skill");
+    let originalMoved = false;
+    let replacementInstalled = false;
+    try {
+      cpRecursive(srcSkill, stagedSkill);
+      fs.renameSync(destSkill, backupSkill);
+      originalMoved = true;
+      fs.renameSync(stagedSkill, destSkill);
+      replacementInstalled = true;
+      replaced.push(name);
+    } catch (error) {
+      if (originalMoved && !fs.existsSync(destSkill)) {
+        try {
+          fs.renameSync(backupSkill, destSkill);
+        } catch (rollbackError) {
+          error.message += `\nRollback failed: ${rollbackError.message}`;
+        }
+      }
+      throw error;
+    } finally {
+      if (
+        replacementInstalled ||
+        !originalMoved ||
+        fs.existsSync(destSkill)
+      ) {
+        fs.rmSync(stageDir, { recursive: true, force: true });
+      }
+    }
   }
 
   console.log(`\n✓ ${root}/skills processed`);
-  if (added.length) console.log(`  Added:   ${added.join(", ")}`);
+  if (added.length) console.log(`  Added:    ${added.join(", ")}`);
+  if (replaced.length) console.log(`  Replaced: ${replaced.join(", ")}`);
   if (skipped.length)
-    console.log(`  Skipped: ${skipped.join(", ")} (already present)`);
+    console.log(`  Skipped:  ${skipped.join(", ")} (already present)`);
   return true;
 }
 
@@ -416,10 +503,14 @@ async function main() {
 
       const skillNames = await chooseSkills(allSkills, prompts);
       if (!skillNames) return;
-      if (!install(skillNames, ".agents"))
+      const conflictMode = await chooseConflictMode(prompts);
+      if (!conflictMode) return;
+      const installOptions = { replace: conflictMode === "replace" };
+
+      if (!install(skillNames, ".agents", process.cwd(), installOptions))
         throw new Error("Skill installation failed.");
       if (await chooseClaudeInstall(prompts)) {
-        if (!install(skillNames, ".claude"))
+        if (!install(skillNames, ".claude", process.cwd(), installOptions))
           throw new Error("Claude Code installation failed.");
       }
       break;
@@ -454,7 +545,13 @@ if (require.main === module) {
 }
 
 module.exports = {
+  ASSET_SKILLS,
+  REPORT_SKILLS,
   SB_KIT_SKILLS,
+  categorizedSkills,
+  categoryOptions,
+  chooseConflictMode,
+  chooseSkills,
   install,
   parseCreateArgs,
   createNextHonoProject,
