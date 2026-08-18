@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm workflow `$sk-excute` và các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát.
 
 ## Prerequisites
 
@@ -15,15 +15,18 @@ Chạy lệnh trong thư mục project cần sử dụng skills:
 npx sb-kit install
 ```
 
-Sau đó dùng phím mũi tên và Enter để chọn một nhóm:
+Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-1. **All** — cài toàn bộ skills có trong package.
-2. **sb-kit only** — cài các skill core của sb-kit.
-3. **Other skills only** — cài các skill còn lại.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-release`, và `sk-start-next-hono`.
+- **assets** — `frontend-design`, `herdr-orchestra`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
+- **report** — `sk-create-slide`, `sk-visualizer`, và `sk-doc`.
 
-Tiếp theo dùng phím mũi tên và Enter để chọn có cài thêm cho Claude Code không. **No** là lựa chọn mặc định.
+CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử lý skill đã tồn tại:
 
-Nếu một skill đã có ở thư mục đích, CLI giữ nguyên skill đó và báo `Skipped` thay vì ghi đè.
+1. **Install missing only** — mặc định; giữ folder skill hiện có và báo `Skipped`.
+2. **Replace selected** — chỉ thay đúng các skill đã checkbox, báo `Replaced`; skill không chọn không bị ảnh hưởng.
+
+Cancel ở picker hoặc conflict mode sẽ dừng trước khi tạo/copy skill folder. Cuối cùng dùng phím mũi tên và Enter để chọn có mirror cùng selection và conflict mode sang Claude Code không. **No** là lựa chọn mặc định.
 
 ## Create Next + Hono workspace
 
@@ -39,7 +42,7 @@ Thêm `--claude` để mirror cùng bộ core skills vào `.claude/skills`:
 npx sb-kit create next-hono my-app --claude
 ```
 
-CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan.
+CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. Bootstrap cũng cài trọn bộ role của `$sk-excute` để workflow multi-agent portable sẵn sàng dùng.
 
 Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
 
@@ -74,9 +77,11 @@ npx sb-kit --help
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
-2. Bạn dùng radio prompt để chọn nhóm skill trên terminal.
-3. CLI sao chép những skill chưa có vào `.agents/skills` của project; skill có sẵn được bỏ qua.
-4. Bạn chọn **No** hoặc **Yes** ở radio prompt Claude Code. Khi chọn **Yes**, CLI sao chép cùng skills từ source `.agents/skills` sang `.claude/skills`.
+2. Bạn dùng checkbox để chọn từng skill dưới các group `sk-work`, `assets`, và `report`.
+3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
+4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
+
+`$sk-excute` chỉ dùng native sub-agent dispatch khi host hỗ trợ. Không có runtime-specific orchestrator, CLI, hay dependency nào được bundled. Explorer/reviewer có thể được thực hiện inline và workflow sẽ công khai fallback; researcher chỉ được dispatch khi bạn yêu cầu external research rõ ràng. Nếu đã chọn mode triển khai Sub-agent nhưng host không dispatch được, agent phải hỏi bạn đổi sang Inline hoặc dừng, không được fallback âm thầm.
 
 Ví dụ cấu trúc sau khi dùng lựa chọn mặc định **No**:
 
@@ -96,12 +101,18 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code; có thể tra cứu tài liệu bằng web search khi tool khả dụng. |
+| `sk-excute` | Workflow evidence-based: explorer ở spec/plan, reviewer độc lập chặn blocker, approval gates, rồi chọn triển khai Inline hoặc Sub-agent; không tự commit. |
+| `sk-excute-explorer` | Điều tra codebase read-only: instructions, contracts, callers/consumers, tests, working tree và risks; trả evidence packet. |
+| `sk-excute-researcher` | Nghiên cứu external có trích dẫn, chỉ khi người dùng yêu cầu rõ; ưu tiên primary source/version phù hợp. |
+| `sk-excute-reviewer` | Review độc lập draft spec/plan và trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
+| `sk-excute-implementer` | Triển khai plan đã duyệt trong delegated context, không commit/mở rộng scope và trả diff/verification evidence. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
+
+`$sk-excute` luôn thu thập evidence explorer trước khi lên spec và rà lại mapping trước plan. Sau self-review, reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Sau plan approval, chọn **Inline** để session hiện tại sửa code hoặc **Sub-agent** để implementer nhận toàn bộ plan; ở mode Sub-agent, session điều phối chỉ review và gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần người dùng quyết định.
 
 ### Supporting skills
 
@@ -117,11 +128,12 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ### `sb-kit install`
 
-Mở lựa chọn nhóm skills và cài các skill được chọn vào project hiện tại.
+Mở checkbox picker theo category và cài các skill được chọn vào project hiện tại.
 
-- Input: radio chọn nhóm skill, rồi radio chọn cài cho Claude Code hay không.
-- Output: danh sách skills `Added` và `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
-- Error: lệnh dừng nếu một skill đã chọn không tồn tại trong `.agents/skills` của package.
+- Input: checkbox từng skill trong `sk-work`, `assets`, `report`; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
+- Output: danh sách skills `Added`, `Replaced`, hoặc `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
+- Conflict mode mặc định **Install missing only** không ghi đè folder skill có sẵn. **Replace selected** chỉ thay folder của skill đã checkbox.
+- Error: lệnh dừng nếu không chọn skill, cancel prompt, hoặc một skill đã chọn không tồn tại trong `.agents/skills` của package.
 
 ### `sb-kit --help`
 
@@ -129,7 +141,7 @@ In hướng dẫn sử dụng ngắn gọn. `-h` là alias của lệnh này.
 
 ### `sb-kit create next-hono <project-name> [--claude]`
 
-Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn hóa root tooling, cài sb-kit core skills vào `.agents/skills`, chạy format và in prompt bàn giao cho `$sk-start-next-hono`.
+Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn hóa root tooling, cài toàn bộ sb-kit core skills (bao gồm các role `$sk-excute-*`) vào `.agents/skills`, chạy format và in prompt bàn giao cho `$sk-start-next-hono`.
 
 - Mặc định chỉ cài `.agents/skills`.
 - `--claude` mirror core skills vào `.claude/skills`.
@@ -148,11 +160,9 @@ Cài toàn bộ skills vào project hiện tại:
 npx sb-kit install
 ```
 
-Khi prompt hiển thị, giữ **All** và nhấn Enter để chọn toàn bộ skills.
+Khi checkbox picker hiển thị, dùng phím mũi tên và Space để tick từng skill trong category phù hợp, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
 
-Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills`.
-
-Để chỉ cài bộ core, dùng phím mũi tên xuống một lần để chọn **sb-kit only**, rồi nhấn Enter.
+Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills` với cùng selection/mode.
 
 Khởi tạo base Next.js + Hono project:
 

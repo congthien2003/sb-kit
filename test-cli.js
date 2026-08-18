@@ -3,7 +3,13 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const {
+  ASSET_SKILLS,
+  REPORT_SKILLS,
   SB_KIT_SKILLS,
+  categorizedSkills,
+  categoryOptions,
+  chooseConflictMode,
+  chooseSkills,
   createNextHonoProject,
   install,
   parseCreateArgs,
@@ -18,15 +24,66 @@ function runInstall({ claude = false } = {}) {
   return { target };
 }
 
+const CORE_ROLE_SKILLS = [
+  "sk-excute-explorer",
+  "sk-excute-researcher",
+  "sk-excute-reviewer",
+  "sk-excute-implementer",
+];
+const PACKAGED_SKILLS = fs
+  .readdirSync(path.join(__dirname, ".agents", "skills"))
+  .filter((name) => fs.statSync(path.join(__dirname, ".agents", "skills", name)).isDirectory())
+  .sort();
+
+function captureLogs(callback) {
+  const originalLog = console.log;
+  const logs = [];
+  console.log = (message) => logs.push(message);
+  try {
+    callback();
+  } finally {
+    console.log = originalLog;
+  }
+  return logs;
+}
+
 function assertSbKitSkills(target, root) {
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-excute")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-visualizer")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-create-slide")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-release")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-doc")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-start-next-hono")));
+  const expectedSkills = [
+    "sk-excute",
+    ...CORE_ROLE_SKILLS,
+    "sk-visualizer",
+    "sk-create-slide",
+    "sk-release",
+    "sk-doc",
+    "sk-start-next-hono",
+  ];
+
+  assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
+  for (const skill of expectedSkills) {
+    assert.ok(fs.existsSync(path.join(target, root, "skills", skill)), skill);
+  }
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
 }
+
+const categorized = categorizedSkills(PACKAGED_SKILLS);
+const pickerOptions = categoryOptions(PACKAGED_SKILLS);
+assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "assets", "report"]);
+assert.deepStrictEqual(categorized.assets, [...ASSET_SKILLS].sort());
+assert.deepStrictEqual(categorized.report, [...REPORT_SKILLS].sort());
+assert.deepStrictEqual(
+  Object.values(categorized).flat().sort(),
+  PACKAGED_SKILLS,
+);
+assert.deepStrictEqual(
+  Object.values(pickerOptions)
+    .flat()
+    .map(({ value }) => value)
+    .sort(),
+  PACKAGED_SKILLS,
+);
+assert.ok(categorized["sk-work"].includes("deep-research"));
+assert.ok(categorized["sk-work"].includes("sk-excute"));
+assert.ok(categorizedSkills(["future-skill"])["sk-work"].includes("future-skill"));
 
 function createFakeRunner(calls, { failHono = false } = {}) {
   return (command, args, options) => {
@@ -161,12 +218,15 @@ try {
     defaultCreate.target,
     ".agents",
     "skills",
-    "sk-start-next-hono",
+    "sk-excute-implementer",
     "SKILL.md",
   );
-  fs.writeFileSync(installedSkill, "user-owned skill");
+  fs.writeFileSync(installedSkill, "user-owned role skill");
   assert.strictEqual(install(SB_KIT_SKILLS, ".agents", defaultCreate.target), true);
-  assert.strictEqual(fs.readFileSync(installedSkill, "utf8"), "user-owned skill");
+  assert.strictEqual(
+    fs.readFileSync(installedSkill, "utf8"),
+    "user-owned role skill",
+  );
 
   assert.deepStrictEqual(
     defaultCreate.calls.map(({ args }) => args),
@@ -241,4 +301,128 @@ try {
   fs.rmSync(failedCreate.parent, { recursive: true, force: true });
 }
 
-console.log("sb-kit bootstrap passed");
+const replaceTarget = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-replace-"));
+try {
+  assert.strictEqual(
+    install(["sk-doc", "sk-visualizer"], ".agents", replaceTarget),
+    true,
+  );
+  const docSkill = path.join(replaceTarget, ".agents", "skills", "sk-doc");
+  const visualizerSkill = path.join(
+    replaceTarget,
+    ".agents",
+    "skills",
+    "sk-visualizer",
+  );
+  const docSkillFile = path.join(docSkill, "SKILL.md");
+  const visualizerSkillFile = path.join(visualizerSkill, "SKILL.md");
+  fs.writeFileSync(docSkillFile, "old selected skill");
+  fs.writeFileSync(path.join(docSkill, "stale.txt"), "remove me");
+  fs.writeFileSync(visualizerSkillFile, "unselected skill");
+
+  const replaceLogs = captureLogs(() => {
+    assert.strictEqual(
+      install(["sk-doc"], ".agents", replaceTarget, { replace: true }),
+      true,
+    );
+  });
+  assert.match(replaceLogs.join("\n"), /Replaced: sk-doc/);
+  assert.strictEqual(
+    fs.readFileSync(docSkillFile, "utf8"),
+    fs.readFileSync(
+      path.join(__dirname, ".agents", "skills", "sk-doc", "SKILL.md"),
+      "utf8",
+    ),
+  );
+  assert.ok(!fs.existsSync(path.join(docSkill, "stale.txt")));
+  assert.strictEqual(fs.readFileSync(visualizerSkillFile, "utf8"), "unselected skill");
+
+  assert.strictEqual(install(["sk-doc"], ".claude", replaceTarget), true);
+  const claudeDocFile = path.join(
+    replaceTarget,
+    ".claude",
+    "skills",
+    "sk-doc",
+    "SKILL.md",
+  );
+  fs.writeFileSync(claudeDocFile, "old Claude skill");
+  assert.strictEqual(
+    install(["sk-doc"], ".claude", replaceTarget, { replace: true }),
+    true,
+  );
+  assert.strictEqual(
+    fs.readFileSync(claudeDocFile, "utf8"),
+    fs.readFileSync(
+      path.join(__dirname, ".agents", "skills", "sk-doc", "SKILL.md"),
+      "utf8",
+    ),
+  );
+  assert.ok(
+    !fs.existsSync(path.join(replaceTarget, ".claude", "skills", "sk-visualizer")),
+  );
+} finally {
+  fs.rmSync(replaceTarget, { recursive: true, force: true });
+}
+
+async function testInstallPrompts() {
+  const cancellations = [];
+  let groupConfig;
+  const selected = await chooseSkills(PACKAGED_SKILLS, {
+    groupMultiselect: async (config) => {
+      groupConfig = config;
+      return ["sk-doc", "sk-excute"];
+    },
+    isCancel: () => false,
+    cancel: (message) => cancellations.push(message),
+  });
+  assert.deepStrictEqual(selected, ["sk-doc", "sk-excute"]);
+  assert.strictEqual(groupConfig.required, true);
+  assert.deepStrictEqual(groupConfig.options, pickerOptions);
+
+  const cancelledSelection = await chooseSkills(PACKAGED_SKILLS, {
+    groupMultiselect: async () => Symbol.for("cancel"),
+    isCancel: (value) => value === Symbol.for("cancel"),
+    cancel: (message) => cancellations.push(message),
+  });
+  assert.strictEqual(cancelledSelection, null);
+
+  const emptySelection = await chooseSkills(PACKAGED_SKILLS, {
+    groupMultiselect: async () => [],
+    isCancel: () => false,
+    cancel: (message) => cancellations.push(message),
+  });
+  assert.strictEqual(emptySelection, null);
+  assert.deepStrictEqual(cancellations, [
+    "Installation cancelled.",
+    "Installation cancelled.",
+  ]);
+
+  let conflictConfig;
+  const installMode = await chooseConflictMode({
+    select: async (config) => {
+      conflictConfig = config;
+      return "install";
+    },
+    isCancel: () => false,
+    cancel: () => assert.fail("install mode must not cancel"),
+  });
+  assert.strictEqual(installMode, "install");
+  assert.strictEqual(conflictConfig.options[0].value, "install");
+  assert.strictEqual(conflictConfig.options[1].value, "replace");
+
+  const cancelledModeMessages = [];
+  const cancelledMode = await chooseConflictMode({
+    select: async () => Symbol.for("cancel"),
+    isCancel: (value) => value === Symbol.for("cancel"),
+    cancel: (message) => cancelledModeMessages.push(message),
+  });
+  assert.strictEqual(cancelledMode, null);
+  assert.deepStrictEqual(cancelledModeMessages, ["Installation cancelled."]);
+}
+
+testInstallPrompts()
+  .then(() => console.log("sb-kit bootstrap and install picker passed"))
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

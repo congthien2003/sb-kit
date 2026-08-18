@@ -1,497 +1,680 @@
 <!doctype html>
 <html lang="vi">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="sb-kit — CLI cài agent skills và khởi tạo pnpm workspace Next.js + Hono."
-        />
-        <title>sb-kit — Sabo Kit CLI</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
-        <style>
-            :root {
-                --bg: #f8fafc;
-                --text: #0f172a;
-                --muted: #475569;
-                --border: #e2e8f0;
-                --accent: #059669;
-                --accent-subtle: #ecfdf5;
-                --code-bg: #f1f5f9;
-                --card-bg: #fff;
-                --radius: 10px;
-            }
-            *,
-            *::before,
-            *::after {
-                box-sizing: border-box;
-                margin: 0;
-                padding: 0;
-            }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="sb-kit — CLI cài agent skills và khởi tạo pnpm workspace Next.js + Hono."
+    />
+    <title>sb-kit — Sabo Kit CLI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --canvas: #fffdf8;
+        --surface: #ffffff;
+        --hairline: #dfe7e1;
+        --ink: #10221d;
+        --slate: #5a6b64;
+        --mint: #16866b;
+        --mint-wash: #e7f6ef;
+        --code-surface: #f3f6f3;
+        --radius: 12px;
+      }
 
-            body {
-                font-family: "Manrope", sans-serif;
-                background: var(--bg);
-                color: var(--text);
-                line-height: 1.6;
-                -webkit-font-smoothing: antialiased;
-            }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-            code,
-            pre,
-            .mono {
-                font-family: "DM Mono", monospace;
-                font-size: 0.875rem;
-            }
+      html {
+        background: var(--canvas);
+      }
 
-            /* ── Layout ── */
-            .container {
-                max-width: 780px;
-                margin: 0 auto;
-                padding: 3rem 1.25rem 4rem;
-            }
+      body {
+        min-width: 0;
+        overflow-x: hidden;
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
 
-            /* ── Header ── */
-            header {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 0.75rem;
-                padding-bottom: 1.5rem;
-                border-bottom: 1px solid var(--border);
-                margin-bottom: 2.5rem;
-            }
-            .logo {
-                font-family: "DM Mono", monospace;
-                font-size: 1.125rem;
-                font-weight: 500;
-                color: var(--accent);
-            }
-            .badge {
-                font-family: "DM Mono", monospace;
-                font-size: 0.6875rem;
-                letter-spacing: 0.16em;
-                text-transform: uppercase;
-                color: var(--muted);
-                border: 1px solid var(--border);
-                border-radius: 99px;
-                padding: 0.2rem 0.75rem;
-            }
+      code,
+      pre,
+      .mono,
+      .logo,
+      .badge,
+      .section-label,
+      .skill-card-header h3,
+      .tag,
+      .step-num,
+      footer,
+      #copy-status,
+      #copy-create-status,
+      .install-block button {
+        font-family: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
 
-            /* ── Hero ── */
-            .hero {
-                margin-bottom: 2.5rem;
-            }
-            .hero h1 {
-                font-size: clamp(1.75rem, 5vw, 2.5rem);
-                font-weight: 800;
-                letter-spacing: -0.04em;
-                line-height: 1.2;
-                margin-bottom: 0.6rem;
-            }
-            .hero p {
-                color: var(--muted);
-                font-size: 1rem;
-                max-width: 560px;
-                line-height: 1.65;
-            }
-            .install-block {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                margin-top: 1.25rem;
-                background: var(--code-bg);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                padding: 0.5rem 0.75rem 0.5rem 1rem;
-            }
-            .install-block code {
-                font-size: 0.9375rem;
-                white-space: nowrap;
-            }
-            .install-block button {
-                font-family: "DM Mono", monospace;
-                font-size: 0.6875rem;
-                font-weight: 500;
-                letter-spacing: 0.06em;
-                background: var(--text);
-                color: #fff;
-                border: none;
-                border-radius: 6px;
-                padding: 0.35rem 0.75rem;
-                cursor: pointer;
-                transition: background 0.2s;
-            }
-            .install-block button:hover {
-                background: var(--accent);
-            }
+      ::selection {
+        background: #b9ead8;
+        color: var(--ink);
+      }
 
-            /* ── Sections ── */
-            section {
-                margin-bottom: 2.5rem;
-            }
-            section + section {
-                padding-top: 2rem;
-                border-top: 1px solid var(--border);
-            }
-            .section-label {
-                font-family: "DM Mono", monospace;
-                font-size: 0.6875rem;
-                letter-spacing: 0.14em;
-                text-transform: uppercase;
-                color: var(--muted);
-                margin-bottom: 1rem;
-            }
-            .section-copy {
-                color: var(--muted);
-                font-size: 0.875rem;
-                line-height: 1.6;
-                max-width: 620px;
-            }
+      :focus-visible {
+        outline: 3px solid var(--mint);
+        outline-offset: 3px;
+      }
 
-            /* ── Skill cards ── */
-            .skill-list {
-                display: grid;
-                gap: 1rem;
-            }
-            .skill-card {
-                background: var(--card-bg);
-                border: 1px solid var(--border);
-                border-radius: var(--radius);
-                padding: 1.25rem 1.5rem;
-                transition:
-                    border-color 0.2s,
-                    box-shadow 0.2s;
-            }
-            .skill-card:hover {
-                border-color: var(--accent);
-                box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
-            }
-            .skill-card-header {
-                display: flex;
-                align-items: baseline;
-                gap: 0.5rem;
-                flex-wrap: wrap;
-                margin-bottom: 0.35rem;
-            }
-            .skill-card-header h3 {
-                font-family: "DM Mono", monospace;
-                font-size: 0.9375rem;
-                font-weight: 500;
-                color: var(--accent);
-            }
-            .skill-card-header .tag {
-                font-family: "DM Mono", monospace;
-                font-size: 0.625rem;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                padding: 0.12rem 0.45rem;
-                border-radius: 4px;
-                font-weight: 500;
-            }
-            .tag-core {
-                background: var(--accent-subtle);
-                color: var(--accent);
-            }
-            .tag-support {
-                background: #f8fafc;
-                color: var(--muted);
-                border: 1px solid var(--border);
-            }
-            .skill-card > p {
-                color: var(--muted);
-                font-size: 0.875rem;
-                line-height: 1.55;
-            }
+      .container {
+        width: min(100%, 1180px);
+        margin: 0 auto;
+        padding: 28px 24px 56px;
+      }
 
-            /* ── Install steps ── */
-            .steps {
-                display: grid;
-                gap: 0.75rem;
-                margin-top: 1rem;
-            }
-            .step {
-                display: flex;
-                align-items: flex-start;
-                gap: 0.75rem;
-                font-size: 0.875rem;
-                color: var(--muted);
-            }
-            .step-num {
-                font-family: "DM Mono", monospace;
-                font-weight: 500;
-                font-size: 0.75rem;
-                color: var(--accent);
-                min-width: 1.25rem;
-            }
-            .step code {
-                font-size: 0.8125rem;
-                background: var(--code-bg);
-                border-radius: 4px;
-                padding: 0.1rem 0.4rem;
-            }
-            .step strong {
-                color: var(--text);
-            }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 2px 20px;
+        border-bottom: 1px solid var(--hairline);
+      }
 
-            /* ── Footer ── */
-            footer {
-                padding-top: 1.5rem;
-                border-top: 1px solid var(--border);
-                font-family: "DM Mono", monospace;
-                font-size: 0.6875rem;
-                color: var(--muted);
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-            }
+      .logo {
+        color: var(--ink);
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: -0.04em;
+      }
 
-            /* ── Toast ── */
-            #copy-status,
-            #copy-create-status {
-                font-family: "DM Mono", monospace;
-                font-size: 0.6875rem;
-                color: var(--accent);
-                transition: opacity 0.3s;
-            }
+      .badge {
+        border: 1px solid var(--hairline);
+        border-radius: 999px;
+        color: var(--slate);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        padding: 5px 10px;
+        text-transform: uppercase;
+      }
 
-            @media (max-width: 480px) {
-                .container {
-                    padding: 1.5rem 1rem 2.5rem;
-                }
-                .skill-card {
-                    padding: 1rem 1.15rem;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <!-- Header -->
-            <header>
-                <span class="logo">sb-kit</span>
-                <span class="badge">11 agent skills</span>
-            </header>
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
+        align-items: center;
+        gap: clamp(32px, 6vw, 80px);
+        margin: 28px 0 44px;
+        overflow: hidden;
+        padding: clamp(32px, 6vw, 72px);
+        border: 1px solid #dce9e1;
+        border-radius: 20px;
+        background:
+          radial-gradient(circle at 82% 15%, rgba(180, 234, 214, 0.72), transparent 34%),
+          linear-gradient(135deg, #edf9f5 0%, #f5fbf7 47%, #fff7e7 100%);
+      }
 
-            <!-- Hero -->
-            <section class="hero">
-                <h1>CLI cài agent skills và khởi tạo Next.js + Hono.</h1>
-                <p>
+      .hero-copy {
+        min-width: 0;
+      }
+
+      .hero h1 {
+        max-width: 640px;
+        margin-bottom: 16px;
+        font-size: clamp(34px, 4.4vw, 58px);
+        font-weight: 700;
+        letter-spacing: -0.058em;
+        line-height: 1.08;
+      }
+
+      .hero-copy > p:not(#copy-status) {
+        max-width: 610px;
+        color: var(--slate);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      code {
+        border-radius: 4px;
+        background: var(--code-surface);
+        color: var(--ink);
+        font-size: 0.875em;
+        padding: 0.1em 0.32em;
+      }
+
+      .install-block {
+        display: inline-flex;
+        max-width: 100%;
+        min-width: 0;
+        align-items: center;
+        gap: 10px;
+        margin-top: 24px;
+        padding: 6px 6px 6px 14px;
+        border: 1px solid var(--hairline);
+        border-radius: 999px;
+        background: var(--surface);
+        box-shadow: 0 1px 2px rgba(16, 34, 29, 0.04);
+      }
+
+      .install-block code {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        background: transparent;
+        font-size: 14px;
+        padding: 0;
+      }
+
+      .install-block button {
+        min-height: 36px;
+        flex: 0 0 auto;
+        border: 0;
+        border-radius: 999px;
+        background: var(--ink);
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.07em;
+        padding: 0 14px;
+      }
+
+      .hero-product {
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid rgba(16, 34, 29, 0.14);
+        border-radius: var(--radius);
+        background: var(--ink);
+        box-shadow: 0 18px 40px rgba(16, 34, 29, 0.12);
+      }
+
+      .hero-product img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      section {
+        margin-bottom: 44px;
+      }
+
+      section + section {
+        padding-top: 36px;
+        border-top: 1px solid var(--hairline);
+      }
+
+      .section-label {
+        margin-bottom: 14px;
+        color: var(--slate);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .section-copy {
+        max-width: 700px;
+        color: var(--slate);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .skill-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .skill-card {
+        min-width: 0;
+        padding: 20px;
+        border: 1px solid var(--hairline);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 1px 2px rgba(16, 34, 29, 0.025);
+      }
+
+      .skill-card-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .skill-card-header h3 {
+        min-width: 0;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        overflow-wrap: anywhere;
+      }
+
+      .skill-card-header .tag {
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.07em;
+        padding: 2px 7px;
+        text-transform: uppercase;
+      }
+
+      .tag-core {
+        background: var(--mint-wash);
+        color: var(--mint);
+      }
+
+      .tag-support {
+        border: 1px solid var(--hairline);
+        color: var(--slate);
+      }
+
+      .skill-card > p {
+        color: var(--slate);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .steps {
+        display: grid;
+        gap: 14px;
+        margin-top: 16px;
+      }
+
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: var(--slate);
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      .step-num {
+        flex: 0 0 22px;
+        color: var(--mint);
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.9;
+      }
+
+      .step strong {
+        color: var(--ink);
+      }
+
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 22px 2px 0;
+        border-top: 1px solid var(--hairline);
+        color: var(--slate);
+        font-size: 11px;
+      }
+
+      #copy-status,
+      #copy-create-status {
+        min-height: 17px;
+        color: var(--mint);
+        font-size: 11px;
+      }
+
+      @media (max-width: 760px) {
+        .container {
+          padding: 20px 16px 40px;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 32px;
+          margin: 20px 0 36px;
+          padding: 28px 20px;
+          border-radius: 16px;
+        }
+
+        .hero-product {
+          width: 100%;
+        }
+
+        .skill-list {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        section {
+          margin-bottom: 36px;
+        }
+
+        section + section {
+          padding-top: 30px;
+        }
+
+        .install-block button {
+          min-height: 44px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding-bottom: 16px;
+        }
+
+        .hero h1 {
+          font-size: clamp(31px, 10vw, 42px);
+        }
+
+        .install-block {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .install-block button {
+          padding: 0 16px;
+        }
+
+        .skill-card {
+          padding: 18px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header>
+        <span class="logo">sb-kit</span>
+        <span class="badge">15 agent skills</span>
+      </header>
+
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>CLI cài agent skills</h1>
+          <p>
                     Một câu lệnh — luôn cài vào <code>.agents/skills</code>, rồi
                     bạn chọn có cài thêm cho <code>.claude/skills</code> hay
-                    không. Skill đã tồn tại được giữ nguyên, không ghi đè.
-                </p>
-                <div class="install-block">
-                    <code>npx sb-kit install</code>
-                    <button id="copy-command" type="button">COPY</button>
-                </div>
-                <p id="copy-status" style="margin-top: 0.5rem"></p>
-            </section>
+                    không. Bạn chọn giữ skill đã tồn tại hoặc replace đúng
+                    những skill đã tick.
+          </p>
+          <div class="install-block">
+            <code>npx sb-kit install</code>
+            <button id="copy-command" type="button">COPY</button>
+          </div>
+          <p id="copy-status" style="margin-top: 0.5rem" aria-live="polite"></p>
+        </div>
+        <figure class="hero-product">
+          <img src="assets/choose-skills.png" width="531" height="486" alt="Màn hình CLI chọn skills khi cài sb-kit." />
+        </figure>
+      </section>
 
-            <!-- Bootstrap -->
-            <section>
-                <h2 class="section-label">Khởi tạo Next.js + Hono</h2>
-                <p class="section-copy">
+      <!-- Bootstrap -->
+      <section>
+        <h2 class="section-label">Khởi tạo Next.js + Hono</h2>
+        <p class="section-copy">
                     Tạo base pnpm workspace, cài bộ core skills và format
                     project. Sau đó mở project bằng coding agent và gọi
                     <code>$sk-start-next-hono</code>
                     để cấu hình Drizzle, auth, proxy và convention sau khi duyệt
                     plan.
-                </p>
-                <div class="install-block">
-                    <code>npx sb-kit create next-hono my-app</code>
-                    <button id="copy-create-command" type="button">COPY</button>
-                </div>
-                <p
+        </p>
+        <div class="install-block">
+          <code>npx sb-kit create next-hono my-app</code>
+          <button id="copy-create-command" type="button">COPY</button>
+        </div>
+        <p
                     id="copy-create-status"
                     style="margin-top: 0.5rem"
                     aria-live="polite"
                 ></p>
-            </section>
+      </section>
 
-            <!-- Install -->
-            <section>
-                <h2 class="section-label">Cài đặt</h2>
-                <div class="steps">
-                    <div class="step">
-                        <span class="step-num">1</span
+      <!-- Install -->
+      <section>
+        <h2 class="section-label">Cài đặt</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-num">1</span
                         ><span
                             >Chạy <code>npx sb-kit install</code> trong project
                             cần skill.</span
                         >
-                    </div>
-                    <div class="step">
-                        <span class="step-num">2</span
+          </div>
+          <div class="step">
+            <span class="step-num">2</span
                         ><span
-                            >Dùng radio chọn nhóm: <strong>All</strong> (toàn
-                            bộ), <strong>sb-kit only</strong> (6 core skills),
-                            hoặc <strong>Other skills</strong> (còn lại).</span
+                            >Dùng checkbox chọn từng skill theo category:
+                            <strong>sk-work</strong>, <strong>assets</strong>,
+                            hoặc <strong>report</strong>.</span
                         >
-                    </div>
-                    <div class="step">
-                        <span class="step-num">3</span
+          </div>
+          <div class="step">
+            <span class="step-num">3</span
+                        ><span
+                            >Chọn <strong>Install missing only</strong> để giữ
+                            skill có sẵn, hoặc <strong>Replace selected</strong>
+                            để chỉ thay các skill đã tick.</span
+                        >
+          </div>
+          <div class="step">
+            <span class="step-num">4</span
                         ><span
                             >Dùng radio chọn cài thêm cho Claude Code.
                             <strong>No</strong> là mặc định; chọn
-                            <strong>Yes</strong> để tạo
-                            <code>.claude/skills</code>.</span
+                            <strong>Yes</strong> để mirror cùng selection và mode
+                            vào <code>.claude/skills</code>.</span
                         >
-                    </div>
-                </div>
-            </section>
+          </div>
+        </div>
+      </section>
 
-            <!-- sb-kit Core -->
-            <section>
-                <h2 class="section-label">SaboKit core / 6 skills</h2>
-                <div class="skill-list">
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-excute</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+      <!-- sb-kit Core -->
+      <section>
+        <h2 class="section-label">SaboKit core / 10 skills</h2>
+        <div class="skill-list">
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Quy trình triển khai task có kiểm soát. Từ yêu cầu
                             người dùng → tạo spec → lập implementation plan →
                             chờ approval → thực hiện thay đổi nhỏ nhất. Không tự
                             ý sửa code khi chưa có plan được duyệt.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-visualizer</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute-explorer</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+                            Điều tra codebase read-only, trả evidence về contracts,
+                            callers, consumers, tests, risks và unknowns trước spec
+                            hoặc plan.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute-researcher</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+                            Nghiên cứu external có trích dẫn khi người dùng yêu cầu
+                            rõ, ưu tiên primary source và thông tin đúng version.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute-reviewer</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+                            Review độc lập spec và plan; chỉ blocker hoặc high-risk
+                            finding mới chặn approval gate.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-excute-implementer</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
+                            Triển khai delegated plan đã duyệt trong scope, không
+                            commit hoặc mở rộng scope, rồi trả diff và evidence.
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-visualizer</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Biến prompt, spec, plan, hoặc nội dung hội thoại
                             thành một file HTML visualization trực quan, dễ đọc.
                             Hỗ trợ nhiều style preset, tự động responsive, có
                             timeline và diagram.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-create-slide</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-create-slide</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Tạo HTML presentation từ ý tưởng hoặc chuyển đổi
                             PPT/PPTX.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-release</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-release</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Chuẩn bị release với draft changelog, đề xuất
                             SemVer, summary và checklist; không tự commit, push
                             hoặc tag.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-doc</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-doc</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Sinh README, API docs, changelog hoặc usage guide từ
                             codebase thành một file Markdown.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>sk-start-next-hono</h3>
-                            <span class="tag tag-core">core</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-start-next-hono</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>
                             Hoàn thiện workspace Next.js + Hono đã bootstrap với
                             Drizzle, auth, proxy và convention modular monolith.
-                        </p>
-                    </article>
-                </div>
-            </section>
+            </p>
+          </article>
+        </div>
+      </section>
 
-            <!-- Supporting -->
-            <section>
-                <h2 class="section-label">Supporting / 5 skills</h2>
-                <div class="skill-list">
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>frontend-design</h3>
-                            <span class="tag tag-support">support</span>
-                        </div>
-                        <p>
+      <!-- Supporting -->
+      <section>
+        <h2 class="section-label">Supporting / 5 skills</h2>
+        <div class="skill-list">
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>frontend-design</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
                             Thiết kế và xây dựng UI web chất lượng production.
                             Tạo landing page, dashboard, component, React
                             component với aesthetic distinctive — không generic
                             AI look. Tránh Inter/Roboto/Arial, dùng font pair cá
                             tính, background có chiều sâu.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>vercel-react-best-practices</h3>
-                            <span class="tag tag-support">support</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>vercel-react-best-practices</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
                             Hướng dẫn tối ưu performance cho React và Next.js từ
                             Vercel. Routing, data fetching, rendering
                             strategies, bundling, image optimization — best
                             practices cập nhật theo từng phiên bản Next.js.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>vercel-react-native-skills</h3>
-                            <span class="tag tag-support">support</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>vercel-react-native-skills</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
                             Best practices cho React Native và Expo. Navigation,
                             styling, native modules, performance profiling,
                             deployment — từ dev đến production cho mobile apps.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>herdr-orchestra</h3>
-                            <span class="tag tag-support">support</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>herdr-orchestra</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
                             Điều phối nhiều CLI agent qua herdr để cùng phân tích,
                             tranh luận và phân chia công việc giữa các pane.
-                        </p>
-                    </article>
-                    <article class="skill-card">
-                        <div class="skill-card-header">
-                            <h3>deep-research</h3>
-                            <span class="tag tag-support">support</span>
-                        </div>
-                        <p>
+            </p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>deep-research</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>
                             Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện
                             và viết báo cáo có trích dẫn cùng source attribution.
-                        </p>
-                    </article>
-                </div>
-            </section>
+            </p>
+          </article>
+        </div>
+      </section>
 
-            <!-- Footer -->
-            <footer>
-                <span id="copy-status-footer" aria-live="polite"
+      <!-- Footer -->
+      <footer>
+        <span id="copy-status-footer" aria-live="polite"
                     >ISC · Safe merge · Interactive install</span
                 >
-                <span>npx sb-kit --help</span>
-            </footer>
-        </div>
+        <span>npx sb-kit --help</span>
+      </footer>
+    </div>
 
-        <script>
+    <script>
             function setupCopyButton(
                 buttonId,
                 statusId,
@@ -530,5 +713,5 @@
                 "Đã sao chép lệnh khởi tạo.",
             );
         </script>
-    </body>
+  </body>
 </html>

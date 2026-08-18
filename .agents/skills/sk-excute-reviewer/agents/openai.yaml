@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Excute Reviewer"
+  short_description: "Independent spec and plan gate reviewer"
+  default_prompt: "Use $sk-excute-reviewer to review this draft and evidence packet, then return a concise gate verdict with actionable findings."
