@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm workflow `$sk-excute` và các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát.
 
 ## Prerequisites
 
@@ -39,7 +39,7 @@ Thêm `--claude` để mirror cùng bộ core skills vào `.claude/skills`:
 npx sb-kit create next-hono my-app --claude
 ```
 
-CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan.
+CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. Bootstrap cũng cài trọn bộ role của `$sk-excute` để workflow multi-agent portable sẵn sàng dùng.
 
 Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
 
@@ -78,6 +78,8 @@ Luồng cài đặt:
 3. CLI sao chép những skill chưa có vào `.agents/skills` của project; skill có sẵn được bỏ qua.
 4. Bạn chọn **No** hoặc **Yes** ở radio prompt Claude Code. Khi chọn **Yes**, CLI sao chép cùng skills từ source `.agents/skills` sang `.claude/skills`.
 
+`$sk-excute` chỉ dùng native sub-agent dispatch khi host hỗ trợ. Không có runtime-specific orchestrator, CLI, hay dependency nào được bundled. Explorer/reviewer có thể được thực hiện inline và workflow sẽ công khai fallback; researcher chỉ được dispatch khi bạn yêu cầu external research rõ ràng. Nếu đã chọn mode triển khai Sub-agent nhưng host không dispatch được, agent phải hỏi bạn đổi sang Inline hoặc dừng, không được fallback âm thầm.
+
 Ví dụ cấu trúc sau khi dùng lựa chọn mặc định **No**:
 
 ```text
@@ -96,12 +98,18 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Chuyển yêu cầu triển khai thành spec và plan, chờ approval trước khi sửa code; có thể tra cứu tài liệu bằng web search khi tool khả dụng. |
+| `sk-excute` | Workflow evidence-based: explorer ở spec/plan, reviewer độc lập chặn blocker, approval gates, rồi chọn triển khai Inline hoặc Sub-agent; không tự commit. |
+| `sk-excute-explorer` | Điều tra codebase read-only: instructions, contracts, callers/consumers, tests, working tree và risks; trả evidence packet. |
+| `sk-excute-researcher` | Nghiên cứu external có trích dẫn, chỉ khi người dùng yêu cầu rõ; ưu tiên primary source/version phù hợp. |
+| `sk-excute-reviewer` | Review độc lập draft spec/plan và trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
+| `sk-excute-implementer` | Triển khai plan đã duyệt trong delegated context, không commit/mở rộng scope và trả diff/verification evidence. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
+
+`$sk-excute` luôn thu thập evidence explorer trước khi lên spec và rà lại mapping trước plan. Sau self-review, reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Sau plan approval, chọn **Inline** để session hiện tại sửa code hoặc **Sub-agent** để implementer nhận toàn bộ plan; ở mode Sub-agent, session điều phối chỉ review và gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần người dùng quyết định.
 
 ### Supporting skills
 
@@ -129,7 +137,7 @@ In hướng dẫn sử dụng ngắn gọn. `-h` là alias của lệnh này.
 
 ### `sb-kit create next-hono <project-name> [--claude]`
 
-Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn hóa root tooling, cài sb-kit core skills vào `.agents/skills`, chạy format và in prompt bàn giao cho `$sk-start-next-hono`.
+Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn hóa root tooling, cài toàn bộ sb-kit core skills (bao gồm các role `$sk-excute-*`) vào `.agents/skills`, chạy format và in prompt bàn giao cho `$sk-start-next-hono`.
 
 - Mặc định chỉ cài `.agents/skills`.
 - `--claude` mirror core skills vào `.claude/skills`.

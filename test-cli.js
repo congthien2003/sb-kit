@@ -18,13 +18,28 @@ function runInstall({ claude = false } = {}) {
   return { target };
 }
 
+const CORE_ROLE_SKILLS = [
+  "sk-excute-explorer",
+  "sk-excute-researcher",
+  "sk-excute-reviewer",
+  "sk-excute-implementer",
+];
+
 function assertSbKitSkills(target, root) {
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-excute")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-visualizer")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-create-slide")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-release")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-doc")));
-  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-start-next-hono")));
+  const expectedSkills = [
+    "sk-excute",
+    ...CORE_ROLE_SKILLS,
+    "sk-visualizer",
+    "sk-create-slide",
+    "sk-release",
+    "sk-doc",
+    "sk-start-next-hono",
+  ];
+
+  assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
+  for (const skill of expectedSkills) {
+    assert.ok(fs.existsSync(path.join(target, root, "skills", skill)), skill);
+  }
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
 }
 
@@ -161,12 +176,15 @@ try {
     defaultCreate.target,
     ".agents",
     "skills",
-    "sk-start-next-hono",
+    "sk-excute-implementer",
     "SKILL.md",
   );
-  fs.writeFileSync(installedSkill, "user-owned skill");
+  fs.writeFileSync(installedSkill, "user-owned role skill");
   assert.strictEqual(install(SB_KIT_SKILLS, ".agents", defaultCreate.target), true);
-  assert.strictEqual(fs.readFileSync(installedSkill, "utf8"), "user-owned skill");
+  assert.strictEqual(
+    fs.readFileSync(installedSkill, "utf8"),
+    "user-owned role skill",
+  );
 
   assert.deepStrictEqual(
     defaultCreate.calls.map(({ args }) => args),

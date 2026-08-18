@@ -1,4 +1,4 @@
 interface:
   display_name: "SK Excute"
-  short_description: "Approved delivery workflow with verification"
-  default_prompt: "Use $sk-excute to investigate this task, obtain approval for the spec and implementation plan, implement the smallest change, and report verification evidence."
+  short_description: "Reviewed portable multi-agent delivery workflow"
+  default_prompt: "Use $sk-excute to investigate this task, obtain reviewed approval for the spec and implementation plan, choose Inline or Sub-agent implementation, and report verification evidence."

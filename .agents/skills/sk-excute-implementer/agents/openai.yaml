@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Excute Implementer"
+  short_description: "Implement an approved bounded plan"
+  default_prompt: "Use $sk-excute-implementer to implement this approved scoped plan, run only allowed verification, and report diff evidence without committing."

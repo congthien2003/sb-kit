@@ -5,9 +5,13 @@ const { spawnSync } = require("child_process");
 
 const SB_KIT_SKILLS = [
   "sk-excute",
+  "sk-excute-explorer",
+  "sk-excute-researcher",
+  "sk-excute-reviewer",
+  "sk-excute-implementer",
   "sk-visualizer",
   "sk-create-slide",
-  // "sk-release",
+  "sk-release",
   "sk-doc",
   "sk-start-next-hono",
 ];
@@ -53,7 +57,7 @@ async function chooseSkills(allSkills, prompts) {
       {
         value: "2",
         label: "sb-kit only",
-        hint: "sk-excute, sk-visualizer, sk-create-slide, sk-release, sk-doc, sk-start-next-hono",
+        hint: "sk-excute workflow roles, sk-visualizer, sk-create-slide, sk-release, sk-doc, sk-start-next-hono",
       },
       { value: "3", label: "Other skills only" },
     ],
@@ -307,7 +311,11 @@ Configure the project following the skill conventions:
 
 Before modifying files, present a concise file-scoped plan and wait for my
 approval. Follow the repository AGENTS.md. Do not commit code. Do not run
-build, test, lint, or verification commands unless I explicitly allow them.`;
+build, test, lint, or verification commands unless I explicitly allow them.
+
+The installed sk-excute workflow includes portable explorer, researcher,
+reviewer, and implementer roles. Use native sub-agent dispatch only when the
+host supports it; otherwise disclose the inline fallback.`;
 }
 
 function createNextHonoProject(

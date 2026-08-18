@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Excute Explorer"
+  short_description: "Read-only codebase evidence investigator"
+  default_prompt: "Use $sk-excute-explorer to inspect this repository read-only and return an evidence packet for a spec or implementation plan."
