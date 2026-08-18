@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.4.0] - 2026-08-18
+
+### Added
+
+- Add portable `sk-excute` workflow roles: explorer, researcher, reviewer, and implementer.
+- Add categorized multi-select skill picker for `sb-kit install`.
+- Add `Replace selected` conflict mode for selected existing skills.
+- Add landing-page screenshot demonstrating skill selection.
+
+### Changed
+
+- Expand the `sk-excute` workflow with evidence gathering, review gates, and explicit inline/sub-agent behavior.
+- Update `create next-hono` to install the complete `sk-excute` role set.
+- Refresh README and landing-page documentation for the new installation flow.
+
 ## [2.2.1] - 2026-08-11
 
 ### Added
