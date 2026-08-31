@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.4.1] - 2026-08-31
+
+### Changed
+
+- Refine `sk-visualizer` design guidance for coherent typography, spacing, responsive overflow, subtle corner radii, restrained motion, and accessibility checks.
+
 ## [2.4.0] - 2026-08-18
 
 ### Added

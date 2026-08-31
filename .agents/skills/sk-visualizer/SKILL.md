@@ -49,6 +49,14 @@ If the content does not fit these blocks, answer in chat instead of forcing HTML
 
 - Hierarchy: one element must visually dominate, and it must be the right takeaway.
 - Color: use slate for structure, emerald for good, amber for warning, rose for risk, and sky for info.
+- Visual direction: choose one restrained, content-appropriate visual direction and carry it consistently across type, spacing, surfaces, and emphasis. Do not force every visualization into one preset.
+- Typography: use a clear type scale with comfortable line-height and keep normal reading measure around 60-75 characters when practical.
+- Layout rhythm: use a small, consistent spacing scale, align repeated content to shared edges, and bound the main content width so wide screens do not dilute the hierarchy.
+- Responsive behavior: collapse multi-column layouts on narrow screens. Put wide tables, code, and Mermaid diagrams inside `max-w-full overflow-x-auto` containers rather than clipping or shrinking them past readability.
+- Surfaces: create depth with whitespace, subtle borders, tonal surfaces, and dividers. Vary containment by meaning instead of turning every section into the same card.
+- Radius: keep corners subtle and consistent, normally `rounded-md` through `rounded-lg` for bounded surfaces and controls. Reserve `rounded-full` for genuine badges, pills, and status indicators; avoid oversized or arbitrarily mixed radii.
+- Motion: use brief CSS-only transitions only for genuine state changes. Prefer opacity and transform, avoid perpetual decorative motion, and reduce or remove non-essential motion under `prefers-reduced-motion`.
+- Accessibility: use semantic HTML, WCAG AA contrast, and visible focus states for every real interactive element. Do not add interaction only to justify hover, focus, or motion effects.
 - Hard bans: no gradients, decorative box shadows, emoji bullets/icons, rainbow palettes, or background-clip text.
 - Do not wrap every block in identical cards.
 - Keep normal prose compact. No `<p>` should run longer than about 3 lines outside a `<details>` block.
@@ -68,6 +76,11 @@ Before writing the file, verify:
 
 - Could any block be deleted without losing meaning? Delete it.
 - Does the page pass the squint test: the main takeaway is visible even blurred?
+- Are typography, reading measure, spacing rhythm, and shared alignments consistent?
+- At narrow widths, do grids collapse and do tables, code, and diagrams remain usable without clipping?
+- Are radii subtle, consistent, and semantic without turning every section into a card?
+- Is motion limited to genuine state changes, and is non-essential motion removed under `prefers-reduced-motion`?
+- Are semantic structure, readable contrast, and visible focus states present wherever interaction exists?
 - Does every CDN match an actual block on the page?
 - Are all colors semantic?
 - Are all long details moved into `<details>`?
