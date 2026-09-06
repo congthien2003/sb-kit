@@ -1,11 +1,11 @@
 ---
 name: sk-excute-reviewer
-description: Independently review a draft implementation spec or file-specific plan against evidence and return a gate verdict. Use as an isolated sub-agent before spec and plan approval gates.
+description: Independently review a spec, file-specific plan, or combined light draft against evidence and return a gate verdict. Use as an isolated sub-agent before the corresponding user approval.
 ---
 
 # sk-excute-reviewer
 
-Independently review a draft spec or implementation plan. This role is intended for host-native sub-agent dispatch; it does not assume a particular runtime or command.
+Independently review a draft spec, implementation plan, or combined spec and plan. This role is intended for host-native sub-agent dispatch; it does not assume a particular runtime or command.
 
 ## Constraints
 
@@ -17,11 +17,16 @@ Independently review a draft spec or implementation plan. This role is intended 
 
 ## Input packet
 
-The dispatcher provides the draft type (`spec` or `plan`), draft content, investigation/research evidence, applicable instructions, and task constraints.
+The dispatcher provides the draft type (`spec`, `plan`, or `combined`), workflow level (`light` or `full`), draft content, investigation/research evidence and freshness basis, applicable instructions, and task constraints. For `plan` or `combined`, include the proposed or previously selected execution mode (`Inline` or `Sub-agent`) and any unresolved user decision.
 
 ## Review checklist
 
-Check scope and non-goals, acceptance criteria, repository evidence, contracts and data flow, risks and edge cases, task ordering and dependencies for plans, verification relevance, no-commit constraints, and scope creep. For plans, ensure every acceptance criterion maps to at least one concrete task with files and verification.
+Check scope and non-goals, acceptance criteria, repository evidence, contracts and data flow, risks and edge cases, task ordering and dependencies for plans, verification relevance, no-commit constraints, and scope creep. For `plan` and `combined`, ensure every acceptance criterion maps to at least one concrete task with files and verification.
+
+- For `combined`, check both spec completeness and file-specific plan correctness in one review. Do not require a separate spec approval for light unless applicable instructions require it. Full retains separate spec and plan gates.
+- Check that the workflow level fits the stated scope, risk, and instructions. Light may contain one clear recommended approach; do not demand artificial alternatives or extra phases.
+- Check that plan approval explicitly covers the execution mode or identifies the missing decision. Respect an existing choice for the task or an explicit session-wide preference; do not demand a second selection after approval. A draft is being reviewed before approval, so pending user approval is not itself a finding.
+- Check evidence coverage and freshness: content comparison, relevant dirty/untracked files, instructions and dependency changes, and stated limits. Stale or unverified evidence supporting a critical plan decision needs targeted refresh, not an automatic whole-repository reinvestigation. Do not treat unchanged source as fresh runtime evidence.
 
 ## Output packet
 

@@ -101,10 +101,10 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Workflow evidence-based: explorer ở spec/plan, reviewer độc lập chặn blocker, approval gates, rồi chọn triển khai Inline hoặc Sub-agent; không tự commit. |
-| `sk-excute-explorer` | Điều tra codebase read-only: instructions, contracts, callers/consumers, tests, working tree và risks; trả evidence packet. |
+| `sk-excute` | Workflow evidence-based mức light/full: review và duyệt spec/plan, thống nhất triển khai Inline hoặc Sub-agent cùng lúc duyệt plan; không tự commit. |
+| `sk-excute-explorer` | Điều tra codebase read-only hoặc cập nhật phần evidence thay đổi; trả packet kèm baseline nội dung và giới hạn xác minh. |
 | `sk-excute-researcher` | Nghiên cứu external có trích dẫn, chỉ khi người dùng yêu cầu rõ; ưu tiên primary source/version phù hợp. |
-| `sk-excute-reviewer` | Review độc lập draft spec/plan và trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
+| `sk-excute-reviewer` | Review độc lập spec, plan hoặc bản gộp light; trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
 | `sk-excute-implementer` | Triển khai plan đã duyệt trong delegated context, không commit/mở rộng scope và trả diff/verification evidence. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
@@ -112,7 +112,30 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 
-`$sk-excute` luôn thu thập evidence explorer trước khi lên spec và rà lại mapping trước plan. Sau self-review, reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Sau plan approval, chọn **Inline** để session hiện tại sửa code hoặc **Sub-agent** để implementer nhận toàn bộ plan; ở mode Sub-agent, session điều phối chỉ review và gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần người dùng quyết định.
+`$sk-excute` chọn **mức workflow** theo phạm vi và rủi ro, thông báo lý do và tôn trọng lựa chọn của bạn cùng instructions của repository:
+
+- **light:** thay đổi nhỏ, ít rủi ro, đường đi đã rõ; gộp spec và plan theo file thành một bản, review rồi xin duyệt một lần.
+- **full:** thay đổi contract, auth/security, migration, nhiều boundary hoặc còn quyết định quan trọng chưa rõ; review và duyệt spec trước, sau đó review và duyệt plan riêng. Nếu repository yêu cầu hai lần duyệt riêng thì vẫn phải tuân thủ.
+
+Cả hai mức đều thu thập evidence trước khi đề xuất và self-review trước reviewer. Reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Khi phát hiện rủi ro làm đánh giá light không còn phù hợp, agent giải thích việc chuyển sang full.
+
+**Cách triển khai** là lựa chọn riêng với mức workflow: **Inline** để session hiện tại sửa file, hoặc **Sub-agent** để implementer nhận toàn bộ plan và session điều phối chỉ review, gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần bạn quyết định. Agent dùng lại lựa chọn đã rõ cho task; chỉ dùng xuyên task khi bạn nêu preference cho cả session. Nếu chưa chọn, agent đề xuất cách triển khai ngay trong lần xin duyệt plan. Duyệt toàn bộ đề xuất bao gồm cách triển khai đã nêu rõ, không có lượt hỏi lại bắt buộc sau đó. Nếu bạn chỉ duyệt một phần hoặc lựa chọn còn mơ hồ, agent hỏi đúng quyết định còn thiếu.
+
+Evidence được dùng lại trong session sau khi đối chiếu nội dung file, instructions và dependencies liên quan trước plan và trước triển khai. File chưa commit, file untracked và file thêm/xóa cũng được xét; chỉ kiểm tra Git `HEAD` là chưa đủ. Agent chỉ điều tra lại phần thay đổi hoặc thiếu căn cứ, báo rõ phần dùng lại và phần cập nhật. Nếu evidence mới làm plan đã duyệt không còn đúng, phần bị ảnh hưởng phải được review và duyệt lại. Source không đổi không có nghĩa là kết quả runtime cũ đã được xác minh lại.
+
+Ví dụ yêu cầu mức workflow và cách triển khai:
+
+```text
+$sk-excute Dùng mức light để sửa nội dung thông báo này, triển khai Inline sau khi tôi duyệt plan.
+$sk-excute Dùng mức full để lên phương án thay đổi contract API này.
+```
+
+Ví dụ lúc duyệt bản gộp đã được review:
+
+```text
+Agent: Bạn duyệt spec + plan này với cách triển khai Inline chứ?
+Bạn: Duyệt, triển khai Inline.
+```
 
 ### Supporting skills
 

@@ -1,6 +1,6 @@
 ---
 name: sk-excute
-description: Run a portable, evidence-based multi-agent workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use when Codex must investigate the dependency path, obtain approval for a reviewed spec and file-specific plan, choose inline or delegated implementation, and report verification without overstating runtime evidence; do not commit unless explicitly requested.
+description: Run a portable, evidence-based workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use light or full review and approval according to scope and risk, with Inline or Sub-agent execution agreed alongside the plan; do not commit unless explicitly requested.
 ---
 
 # sk-excute
@@ -11,7 +11,7 @@ Use this self-contained workflow for implementation tasks that require an approv
 
 - Read the repository `AGENTS.md` if it exists and follow it.
 - Inspect the working tree before planning edits. Preserve unrelated and user-owned changes; never revert or overwrite them.
-- Do not write code, scaffold, or modify implementation files before both approval gates pass.
+- Do not write code, scaffold, or modify implementation files before the approvals required by the selected workflow level and applicable instructions pass.
 - Do not commit code, specs, or plans unless the user explicitly requests it.
 - Do not run build, test, lint, or verification commands when repository or user instructions forbid them. List the commands for the user instead.
 - Trace existing contracts and the caller-to-consumer path before changing APIs, data models, state, or UI. Preserve an existing contract when it already carries the required data.
@@ -24,16 +24,28 @@ Use this self-contained workflow for implementation tasks that require an approv
 
 When native dispatch is available, use the packaged roles below. Give each only the context it needs and retain the returned packet in the main session.
 
-- `$sk-excute-explorer`: read-only repository evidence for the spec or plan. It never edits or runs verification.
+- `$sk-excute-explorer`: read-only repository evidence for a spec, plan, or combined draft, including targeted refresh of an earlier packet. It never edits or runs verification.
 - `$sk-excute-researcher`: cited external evidence; only after explicit user request.
-- `$sk-excute-reviewer`: independent spec/plan gate review. Its verdict is `Pass`, `Pass with non-blocking findings`, or `Blocked`.
+- `$sk-excute-reviewer`: independent review of a spec, plan, or combined draft. Its verdict is `Pass`, `Pass with non-blocking findings`, or `Blocked`.
 - `$sk-excute-implementer`: bounded implementation of an approved plan; only after the user selects Sub-agent mode.
 
-An evidence packet must preserve paths, symbols or regions, observed behavior, source URLs when applicable, hypotheses, unknowns, and relevant instructions. A delegation packet must include the full approved plan, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, and allowed verification.
+An evidence packet must preserve paths, symbols or regions, observed behavior, source URLs when applicable, hypotheses, unknowns, relevant instructions, and a content baseline for the investigated scope. A delegation packet must include the full approved plan, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, and allowed verification.
+
+## Evidence freshness and reuse
+
+Keep packets in the current session; do not create a persistent cache. Before preparing a plan and again before implementation, check that the evidence still covers the task and current repository state:
+
+- Compare the scope, applicable instructions (including nested `AGENTS.md`), mapped files, contracts, dependencies, and known configuration/environment assumptions with the packet. Check relevant added, deleted, or renamed files and dependencies as well as previously read paths.
+- Check actual content against the recorded baseline, including tracked edits and relevant untracked files. Use content digests or direct comparison with retained content; `HEAD`, Git status, or timestamps alone do not establish freshness.
+- Reuse unchanged, still-relevant evidence. If content changed, coverage is incomplete, or the baseline cannot be verified, dispatch the explorer only for the affected or missing dependency path, with the prior packet and concrete delta questions. Use the disclosed inline fallback when native dispatch is unavailable. Unrelated edits do not invalidate the whole packet.
+- Record what was reused, what was refreshed, the comparison basis, and unresolved limits. Refresh the baseline for any newly inspected evidence.
+- If new evidence changes the scope, acceptance criteria, contract, or correctness of an approved plan, revise and re-review the affected draft and obtain the necessary user approval before implementation. Do not restart unaffected approvals merely because a file changed.
+
+Source freshness does not refresh earlier test or runtime results. Report those results with their original context; never treat unchanged source as proof of current runtime behavior.
 
 ## Workflow
 
-### 1. Classify and explore for the spec
+### 1. Explore and select the workflow level
 
 Classify the request as a feature, bug fix, refactor, or implementation-heavy tooling/documentation change. Dispatch `$sk-excute-explorer` in isolated context when available; otherwise perform its read-only evidence contract inline and disclose the fallback. Inspect relevant files, repository instructions, existing patterns, contracts, callers, consumers, tests, working-tree changes, and recent changes when useful. If the user explicitly requested external research, dispatch `$sk-excute-researcher` too.
 
@@ -41,7 +53,12 @@ Synthesize and verify the returned packets against the repository. Discover answ
 
 When current, external, or version-specific information would materially improve the approaches or spec but the user did not request research, identify it as an optional unknown rather than dispatching the researcher. Do not offer or use a visual companion.
 
-Propose two or three viable approaches with trade-offs. Lead with the recommended approach.
+Select a **workflow level** and state a short reason, respecting the user's choice and applicable instructions:
+
+- **light:** a bounded, low-risk change with a known dependency path and no material unresolved decisions. Combine the spec and file-specific plan in one reviewed draft and one user approval. One recommended approach with its rationale is enough when the solution is clear.
+- **full:** contract changes, authentication/security, data migrations, changes across application boundaries, or material unknowns. Review and approve the spec first, then review and approve the plan. Present meaningful alternatives with trade-offs when they exist; do not manufacture alternatives.
+
+Choose by risk and uncertainty, not file count alone. If the user explicitly chooses a level, honor it within applicable instructions; explain any risk that warrants a different level. If discoveries invalidate the light assessment, explain the upgrade before continuing. Instructions requiring separate spec and plan approvals still apply. Distinguish workflow level (`light/full`) from execution mode (`Inline/Sub-agent`).
 
 ### 2. Reproduce and diagnose bugs
 
@@ -55,7 +72,7 @@ For a bug fix, establish the failure before proposing the spec:
 
 For non-bug tasks, skip this step.
 
-### 3. Draft, review, and gate the spec
+### 3. Draft the spec; gate it separately for full
 
 Draft a concise spec from verified evidence containing:
 
@@ -66,13 +83,15 @@ Draft a concise spec from verified evidence containing:
 - Investigation and explicitly requested research summary, including remaining unknowns
 - Explicit statement that commits are out of scope unless later requested
 
-Self-review the draft for missing acceptance criteria, inconsistent contracts, ambiguity, scope creep, placeholders, and unsupported claims. Then dispatch `$sk-excute-reviewer` with the draft and evidence when available; otherwise independently apply its review contract inline and disclose the fallback.
+For **light**, carry this spec into step 4 and review the combined draft there; do not request a separate spec approval.
+
+For **full**, self-review the spec for missing acceptance criteria, inconsistent contracts, ambiguity, scope creep, placeholders, and unsupported claims. Then dispatch `$sk-excute-reviewer` with draft type `spec`, the workflow level, draft, and evidence when available; otherwise apply its review contract inline and disclose that this is not an independent review.
 
 If the verdict is `Blocked`, make the smallest correction supported by evidence and re-review until no blocker remains. Record the disposition of every non-blocking finding; apply it when useful without delaying the gate. Only then present the spec, reviewer verdict/disposition, and approval question. Stop until the user approves.
 
-### 4. Draft, review, and gate the implementation plan
+### 4. Review and approve the plan with its execution mode
 
-After spec approval, dispatch `$sk-excute-explorer` again when available to confirm exact file/symbol mapping, contracts, callers/consumers, and dependency order for the plan. Otherwise perform this evidence check inline and disclose the fallback. Dispatch `$sk-excute-researcher` only when the user explicitly requests external research.
+Enter this step after drafting the light spec, or after the user approves the full spec. Apply the evidence freshness check above to confirm exact file/symbol mapping, contracts, callers/consumers, and dependency order. Do not dispatch the explorer again when the existing packet is sufficient and verified unchanged. Dispatch `$sk-excute-researcher` only when the user explicitly requests external research.
 
 Map the exact files to create or modify, the symbols or regions that change, and each file's responsibility. Write ordered tasks that can be reviewed independently. Keep dependencies explicit: a task may only depend on behavior or contracts established by earlier tasks.
 
@@ -91,7 +110,7 @@ Split tasks at meaningful review checkpoints: contract/schema first, shared beha
 
 Avoid placeholders such as `TBD`, vague instructions, undefined names, and generic test steps. Use the existing repository patterns; do not introduce abstractions or dependencies without a demonstrated need.
 
-Self-review the plan before presenting it:
+Keep light plans concise: combine adjacent edits into a task when appropriate, while retaining the relevant content above. Self-review the plan (and the spec too for light) before presenting it:
 
 - Map every acceptance criterion to at least one task.
 - Confirm task order satisfies dependencies and no task relies on an undefined contract.
@@ -99,16 +118,22 @@ Self-review the plan before presenting it:
 - Ensure each verification command targets the change and has a concrete expected result.
 - Remove scope creep, placeholders, and duplicated context. Fix issues inline.
 
-Then dispatch `$sk-excute-reviewer` with the plan and evidence when available; otherwise independently apply its review contract inline and disclose the fallback. If its verdict is `Blocked`, correct the plan and re-review until no blocker remains. Record the disposition of non-blocking findings.
+Include the intended execution mode in the draft:
 
-Present the ordered plan, investigation/research summary, reviewer verdict/disposition, and an approval question. Stop until the user approves.
+- Reuse a mode already chosen for this task. Reuse a choice across tasks only when the user explicitly made it a session-wide preference.
+- Otherwise propose **Inline** (the current session edits) or **Sub-agent** (the coordinator delegates and reviews), based on the task and available native dispatch. State the concrete proposal in the approval request; do not leave the selection for a mandatory later step.
+- Approval of the whole plan and its clearly stated execution mode accepts both. Record the choice and do not ask again. A partial approval, unresolved selection, or ambiguous reply requires clarification only of the missing decision; never infer approval from silence. If the user explicitly defers that decision, acknowledge it and wait rather than requesting approval again immediately.
 
-### 5. Choose execution mode
+Then dispatch `$sk-excute-reviewer` with draft type `combined` for light or `plan` for full, the workflow level, execution mode proposal/prior choice, draft, and evidence when available. Otherwise apply its review contract inline and disclose that this is not an independent review. If its verdict is `Blocked`, correct the draft and re-review until no blocker remains. Record the disposition of non-blocking findings.
 
-After the user approves the plan, ask them to choose one mode and wait for the answer:
+Present the combined spec and plan for light, or the ordered plan for full, with the investigation summary, reviewer verdict/disposition, execution mode, and one approval question covering the presented draft and execution mode. Stop until the user approves. For example: “Approve this combined spec and plan with Inline execution?”
+
+### 5. Start the approved execution mode
+
+After approval, apply the evidence freshness check again. Continue in the agreed execution mode without another selection question:
 
 - **Inline:** continue with step 6 in the current session.
-- **Sub-agent:** create a bounded delegation packet containing the complete approved plan, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, and allowed verification. Dispatch `$sk-excute-implementer` in an isolated native sub-agent context.
+- **Sub-agent:** create a bounded delegation packet containing the complete approved plan (including the spec section for light), the selected execution mode, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, allowed verification, and current evidence. Dispatch `$sk-excute-implementer` in an isolated native sub-agent context.
 
 If the user chooses Sub-agent but native dispatch is unavailable, state that no delegated implementation occurred and ask the user to select Inline or stop. Do not edit implementation files in the coordinating session while Sub-agent mode is active.
 
@@ -137,9 +162,9 @@ Review the final diff for scope, accidental generated files, debug code, secrets
 
 ## Output shape
 
-- **Investigation and research:** packet summaries, sources when used, evidence, unknowns, and portable fallback disclosures.
+- **Workflow level:** selected `light` or `full` and a short rationale.
+- **Investigation and research:** packet summaries, reused/refreshed evidence and freshness basis, sources when used, unknowns, and portable fallback disclosures.
 - **Diagnosis:** for bugs only, reproduction steps, evidence status, and root cause or hypothesis.
-- **Spec:** behavior, success criteria, scope, non-goals, verification strategy, reviewer verdict/finding disposition, and approval question.
-- **Plan:** ordered file-specific steps, reviewer verdict/finding disposition, and approval question.
+- **Spec and plan:** behavior, success criteria, scope, non-goals, and ordered file-specific steps with verification. For light, present one combined reviewed draft and approval; for full, present separately reviewed spec and plan approvals. Include the execution mode in the plan approval request.
 - **Execution mode:** selected `Inline` or `Sub-agent`; for delegated work, delegation and coordinator-review outcome.
 - **Completion:** changed files, completed behavior, evidence by level, unverified behavior, and user-run verification commands. State that no commit was created unless the user requested one.
