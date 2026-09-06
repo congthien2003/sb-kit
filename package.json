@@ -1,6 +1,6 @@
 {
   "name": "sb-kit",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "description": "CLI to install agent skills and bootstrap a Next.js and Hono pnpm workspace",
   "bin": {
     "sb-kit": "cli.js"
