@@ -21,13 +21,34 @@ Create one HTML file that makes a spec, plan, doc, mockup, flow, or diagram easi
 - Do not claim the file is self-contained when it depends on CDN assets.
 - Do not create a multi-file app, build step, README, or asset folder.
 
+## Language and Typography
+
+- If the user has not explicitly selected an output language, ask exactly: `Which language should the visualization use: English or Vietnamese?` This is the one required question and counts toward the prompt-start question limit.
+- Do not infer the output language from the source material. Do not ask again when the user has already selected English or Vietnamese.
+- Use the selected output language for generated headings, labels, summaries, and explanatory copy. Preserve source quotations, code, named entities, and evidence verbatim unless the user explicitly asks for translation.
+- English output: load `Poppins` from Google Fonts and apply it to the document and UI with system fallbacks.
+- Vietnamese output: load `Be Vietnam Pro` from Google Fonts and apply it to the document and UI with system fallbacks.
+- Load only the selected font family and mention its Google Fonts CDN dependency in the completion response.
+
+## Reference Routing
+
+Choose one primary visual archetype before composing the page. References are design recipes, not output templates; never merge them into a universal layout.
+
+- System change report: read [references/system-change-report.md](references/system-change-report.md) for severity-first triage.
+- Spec visualization: read [references/spec-visualization.md](references/spec-visualization.md) for a reading-first document.
+- Implementation plan: read [references/implementation-plan.md](references/implementation-plan.md) for a delivery-first plan.
+
+Use an explicitly requested archetype first. Otherwise, choose the archetype that best matches the dominant source intent and the single takeaway the page must make obvious. For mixed material, choose one primary route and include secondary context only when it supports that route. If no archetype fits, continue with the generic workflow below without a reference. If the material cannot be meaningfully visualized with the available blocks, answer in chat instead of forcing HTML.
+
 ## Workflow
 
-1. Identify the single takeaway the page must make obvious.
-2. Choose the fewest blocks that carry that takeaway.
-3. Convert long prose into structured blocks. Avoid recreating a markdown document.
-4. Write the HTML file with simple responsive layout, readable spacing, and semantic color only.
-5. Before delivery, run the self-check below by inspection.
+1. Resolve the output language and font family.
+2. Choose the primary archetype and read its reference when one applies.
+3. Identify the single takeaway the page must make obvious.
+4. Choose the fewest blocks that carry that takeaway.
+5. Convert long prose into structured blocks. Avoid recreating a markdown document.
+6. Write the HTML file with simple responsive layout, readable spacing, semantic color, and the selected font only.
+7. Before delivery, run the self-check below by inspection.
 
 ## Blocks
 
@@ -42,8 +63,6 @@ Use only the blocks the content needs:
 - Code: short snippets only when code is the point.
 - Compare: before/after, options, tradeoffs, or current/proposed behavior.
 - Checklist: review status, acceptance criteria, or launch readiness.
-
-If the content does not fit these blocks, answer in chat instead of forcing HTML.
 
 ## Design Policy
 
@@ -88,4 +107,4 @@ Before writing the file, verify:
 
 ## Completion Response
 
-Return the created HTML file path and mention any CDN dependencies used.
+Return the created HTML file path and mention Tailwind plus every actual CDN dependency used, including the selected Google Fonts family.
