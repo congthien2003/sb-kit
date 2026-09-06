@@ -17,7 +17,7 @@ npx sb-kit install
 
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-release`, và `sk-start-next-hono`.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, và `sk-start-next-hono`.
 - **assets** — `frontend-design`, `herdr-orchestra`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
 - **report** — `sk-create-slide`, `sk-visualizer`, và `sk-doc`.
 
@@ -118,11 +118,20 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 | Skill | Mục đích |
 | --- | --- |
+| `sk-landing-page` | Tạo landing page sản phẩm tại `landing/index.html` bằng Tailwind CSS CDN, chọn concept và font theo nội dung. |
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
 | `herdr-orchestra` | Điều phối nhiều CLI agent qua herdr để cùng phân tích, tranh luận và phân chia công việc. |
 | `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
+
+Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
+
+```text
+$sk-landing-page Tạo landing page cho sản phẩm trong repository này.
+```
+
+Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
 
 ## CLI reference
 
