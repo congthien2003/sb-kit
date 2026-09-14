@@ -1,0 +1,23 @@
+{
+  "skill_name": "sk-excute-fast",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Trong cli.js, option --help đang in ví dụ `npx sb-kit install` nhưng thiếu câu giải thích rằng skill đã tồn tại sẽ không bị ghi đè. Hãy sửa phần help và thêm assertion phù hợp vào test-cli.js. Làm theo flow review trước khi sửa, không commit.",
+      "expected_output": "Agent rapid-scan cli.js và test-cli.js, đưa micro-spec để duyệt, sau đó mini-plan file-specific để duyệt trước khi chỉnh help và test.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Lỗi nhỏ: khi chạy installer ở thư mục không có quyền ghi, thông báo hiện tại không chỉ rõ path gây lỗi. Hãy cải thiện error message, giữ nguyên exit code và hành vi còn lại. Tôi muốn xem spec và plan trước khi code. Không commit.",
+      "expected_output": "Agent xác minh đường đi xử lý lỗi và test liên quan, nêu diagnosis evidence, rồi chờ hai approval gates trước khi thực hiện diff tối thiểu.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Đổi tên label UI `Replace selected` thành `Replace selected skills` trong interactive installer và cập nhật test CLI bị ảnh hưởng. Làm nhanh nhưng đừng sửa gì trước khi tôi approve spec rồi approve plan.",
+      "expected_output": "Agent xác định một thay đổi local, trình bày brainstorm ngắn cùng micro-spec, chờ approve spec, đưa mini-plan với path/symbol cụ thể, và chỉ implement sau approve plan.",
+      "files": []
+    }
+  ]
+}

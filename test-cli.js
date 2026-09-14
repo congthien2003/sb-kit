@@ -50,18 +50,23 @@ function captureLogs(callback) {
 function assertSbKitSkills(target, root) {
   const expectedSkills = [
     "sk-excute",
+    "sk-excute-fast",
     ...CORE_ROLE_SKILLS,
     "sk-visualizer",
     "sk-create-slide",
     "sk-release",
     "sk-doc",
     "sk-start-next-hono",
+    "sk-explain",
   ];
 
   assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
   for (const skill of expectedSkills) {
     assert.ok(fs.existsSync(path.join(target, root, "skills", skill)), skill);
   }
+  const explainSkill = path.join(target, root, "skills", "sk-explain");
+  assert.ok(fs.existsSync(path.join(explainSkill, "SKILL.md")));
+  assert.ok(fs.existsSync(path.join(explainSkill, "agents", "openai.yaml")));
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
 }
 

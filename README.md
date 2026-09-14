@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm workflow `$sk-excute` và các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow evidence-based đầy đủ, `$sk-excute-fast` cho thay đổi nhỏ có approval gates nhanh, cùng các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Sau đó dùng checkbox để chọn từng skill, được chia thành ba categ
 
 - **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-release`, và `sk-start-next-hono`.
 - **assets** — `frontend-design`, `herdr-orchestra`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
-- **report** — `sk-create-slide`, `sk-visualizer`, và `sk-doc`.
+- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
 CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử lý skill đã tồn tại:
 
@@ -102,6 +102,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | Skill | Mục đích |
 | --- | --- |
 | `sk-excute` | Workflow evidence-based: explorer ở spec/plan, reviewer độc lập chặn blocker, approval gates, rồi chọn triển khai Inline hoặc Sub-agent; không tự commit. |
+| `sk-excute-fast` | Fast path cho task nhỏ: rapid brainstorm → micro-spec → approve → file-specific mini-plan → approve → triển khai inline và verify; tự escalate sang `sk-excute` khi scope/risk lớn. |
 | `sk-excute-explorer` | Điều tra codebase read-only: instructions, contracts, callers/consumers, tests, working tree và risks; trả evidence packet. |
 | `sk-excute-researcher` | Nghiên cứu external có trích dẫn, chỉ khi người dùng yêu cầu rõ; ưu tiên primary source/version phù hợp. |
 | `sk-excute-reviewer` | Review độc lập draft spec/plan và trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
@@ -109,10 +110,13 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
+| `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 
 `$sk-excute` luôn thu thập evidence explorer trước khi lên spec và rà lại mapping trước plan. Sau self-review, reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Sau plan approval, chọn **Inline** để session hiện tại sửa code hoặc **Sub-agent** để implementer nhận toàn bộ plan; ở mode Sub-agent, session điều phối chỉ review và gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần người dùng quyết định.
+
+Dùng `$sk-excute-fast` khi task chỉ có blast radius nhỏ (thường 1–3 files): workflow vẫn giữ hai approval gates nhưng thay explorer/reviewer độc lập bằng rapid scan, micro-spec và mini-plan 2–5 bước, rồi triển khai inline. Skill sẽ yêu cầu chuyển sang `$sk-excute` nếu phát hiện thay đổi cross-subsystem, public API/schema, security-sensitive, external research hoặc rủi ro contract đáng kể.
 
 ### Supporting skills
 
