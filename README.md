@@ -28,6 +28,16 @@ CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử
 
 Cancel ở picker hoặc conflict mode sẽ dừng trước khi tạo/copy skill folder. Cuối cùng dùng phím mũi tên và Enter để chọn có mirror cùng selection và conflict mode sang Claude Code không. **No** là lựa chọn mặc định.
 
+## Pi config profiles (optional)
+
+Repository này cũng có Pi package độc lập để lưu/export/import persisted Pi settings và inventory extensions an toàn:
+
+```bash
+pi install ./pi-config-profiles
+```
+
+Xem [pi-config-profiles/README.md](pi-config-profiles/README.md) để biết lệnh `/pi-profile`, merge/backup và phạm vi secret-safe. Package này không thay đổi luồng `sb-kit install`.
+
 ## Create Next + Hono workspace
 
 Khởi tạo một pnpm workspace mới gồm Next.js App Router client, Node.js Hono server, root scripts, Prettier và bộ sb-kit core skills:

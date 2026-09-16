@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0] - 2026-09-16
+
+### Added
+
+- Add `sk-excute-fast` for small, low-risk changes with fast approval gates.
+- Add `sk-explain` for evidence-backed explanations of source-code questions, flows, and state transitions.
+
+### Changed
+
+- Include both skills in the core bundle and expose them through the report catalog.
+- Update CLI integration coverage and the README skill catalog.
+
 ## [2.4.0] - 2026-08-18
 
 ### Added
