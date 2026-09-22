@@ -5,6 +5,7 @@ const { spawnSync } = require("child_process");
 
 const SB_KIT_SKILLS = [
   "sk-excute",
+  "sk-excute-fast",
   "sk-excute-explorer",
   "sk-excute-researcher",
   "sk-excute-reviewer",
@@ -14,6 +15,7 @@ const SB_KIT_SKILLS = [
   "sk-release",
   "sk-doc",
   "sk-start-next-hono",
+  "sk-explain",
 ];
 const ASSET_SKILLS = [
   "frontend-design",
@@ -21,7 +23,7 @@ const ASSET_SKILLS = [
   "vercel-react-best-practices",
   "vercel-react-native-skills",
 ];
-const REPORT_SKILLS = ["sk-create-slide", "sk-visualizer", "sk-doc"];
+const REPORT_SKILLS = ["sk-create-slide", "sk-visualizer", "sk-doc", "sk-explain"];
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
   npx sb-kit install                                      Choose skills by category

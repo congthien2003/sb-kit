@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Explain"
+  short_description: "Explain source code, flows, and state transitions"
+  default_prompt: "Use $sk-explain to explain this source-code question with evidence-backed file references."
