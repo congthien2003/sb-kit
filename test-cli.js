@@ -30,6 +30,11 @@ const CORE_ROLE_SKILLS = [
   "sk-excute-reviewer",
   "sk-excute-implementer",
 ];
+const VISUALIZER_REFERENCE_FILES = [
+  "system-change-report.md",
+  "spec-visualization.md",
+  "implementation-plan.md",
+];
 const PACKAGED_SKILLS = fs
   .readdirSync(path.join(__dirname, ".agents", "skills"))
   .filter((name) => fs.statSync(path.join(__dirname, ".agents", "skills", name)).isDirectory())
@@ -68,6 +73,34 @@ function assertSbKitSkills(target, root) {
   assert.ok(fs.existsSync(path.join(explainSkill, "SKILL.md")));
   assert.ok(fs.existsSync(path.join(explainSkill, "agents", "openai.yaml")));
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
+}
+
+function assertVisualizerReferences(target, root) {
+  const sourceReferencesDir = path.join(
+    __dirname,
+    ".agents",
+    "skills",
+    "sk-visualizer",
+    "references",
+  );
+  const installedReferencesDir = path.join(
+    target,
+    root,
+    "skills",
+    "sk-visualizer",
+    "references",
+  );
+
+  for (const fileName of VISUALIZER_REFERENCE_FILES) {
+    const sourceFile = path.join(sourceReferencesDir, fileName);
+    const installedFile = path.join(installedReferencesDir, fileName);
+    assert.ok(fs.existsSync(installedFile), fileName);
+    assert.strictEqual(
+      fs.readFileSync(installedFile, "utf8"),
+      fs.readFileSync(sourceFile, "utf8"),
+      fileName,
+    );
+  }
 }
 
 const categorized = categorizedSkills(PACKAGED_SKILLS);
@@ -150,6 +183,7 @@ function runFakeCreate({ claude = false, failHono = false } = {}) {
 const noClaude = runInstall();
 try {
   assertSbKitSkills(noClaude.target, ".agents");
+  assertVisualizerReferences(noClaude.target, ".agents");
   assert.ok(!fs.existsSync(path.join(noClaude.target, ".claude")));
 } finally {
   fs.rmSync(noClaude.target, { recursive: true, force: true });
@@ -158,7 +192,9 @@ try {
 const withClaude = runInstall({ claude: true });
 try {
   assertSbKitSkills(withClaude.target, ".agents");
+  assertVisualizerReferences(withClaude.target, ".agents");
   assertSbKitSkills(withClaude.target, ".claude");
+  assertVisualizerReferences(withClaude.target, ".claude");
   console.log("sb-kit installation passed");
 } finally {
   fs.rmSync(withClaude.target, { recursive: true, force: true });
@@ -215,6 +251,7 @@ try {
   assert.ok(!fs.existsSync(path.join(defaultCreate.target, "client", "pnpm-workspace.yaml")));
   assert.ok(!fs.existsSync(path.join(defaultCreate.target, "server", "bun.lock")));
   assertSbKitSkills(defaultCreate.target, ".agents");
+  assertVisualizerReferences(defaultCreate.target, ".agents");
   assert.ok(!fs.existsSync(path.join(defaultCreate.target, ".claude")));
   assert.ok(defaultCreate.handoff.includes("$sk-start-next-hono"));
   assert.ok(defaultCreate.logs.join("\n").includes("$sk-start-next-hono"));
@@ -263,7 +300,9 @@ try {
 const claudeCreate = runFakeCreate({ claude: true });
 try {
   assertSbKitSkills(claudeCreate.target, ".agents");
+  assertVisualizerReferences(claudeCreate.target, ".agents");
   assertSbKitSkills(claudeCreate.target, ".claude");
+  assertVisualizerReferences(claudeCreate.target, ".claude");
 } finally {
   fs.rmSync(claudeCreate.parent, { recursive: true, force: true });
 }

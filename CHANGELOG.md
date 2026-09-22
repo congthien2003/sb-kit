@@ -12,6 +12,26 @@
 - Include both skills in the core bundle and expose them through the report catalog.
 - Update CLI integration coverage and the README skill catalog.
 
+## [2.5.0] - 2026-09-06
+
+### Added
+
+- Add `sk-landing-page` for product landing pages at `landing/index.html`.
+- Add three `sk-visualizer` references for system change reports, specs, and implementation plans.
+- Add integration assertions for installing visualizer reference files.
+
+### Changed
+
+- Add explicit English/Vietnamese selection and matching fonts to `sk-visualizer`.
+- Replace the root landing page with a redesigned `landing/index.html`.
+- Document `sk-landing-page` installation and usage in README.
+
+## [2.4.1] - 2026-08-31
+
+### Changed
+
+- Refine `sk-visualizer` design guidance for coherent typography, spacing, responsive overflow, subtle corner radii, restrained motion, and accessibility checks.
+
 ## [2.4.0] - 2026-08-18
 
 ### Added
