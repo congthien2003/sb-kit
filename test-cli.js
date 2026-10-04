@@ -66,6 +66,7 @@ function assertSbKitSkills(target, root) {
   ];
 
   assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
+  assert.ok(!SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
   for (const skill of expectedSkills) {
     assert.ok(fs.existsSync(path.join(target, root, "skills", skill)), skill);
   }
@@ -73,6 +74,8 @@ function assertSbKitSkills(target, root) {
   assert.ok(fs.existsSync(path.join(explainSkill, "SKILL.md")));
   assert.ok(fs.existsSync(path.join(explainSkill, "agents", "openai.yaml")));
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
+  assert.ok(!fs.existsSync(path.join(target, root, "skills", "sk-verify-code-ui-only")));
+  assert.ok(!fs.existsSync(path.join(target, root, "skills", "sk-create-skill")));
 }
 
 function assertVisualizerReferences(target, root) {
@@ -107,7 +110,18 @@ const categorized = categorizedSkills(PACKAGED_SKILLS);
 const pickerOptions = categoryOptions(PACKAGED_SKILLS);
 assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "assets", "report"]);
 assert.deepStrictEqual(categorized.assets, [...ASSET_SKILLS].sort());
+assert.ok(!categorized.assets.includes("sk-create-skill"));
 assert.deepStrictEqual(categorized.report, [...REPORT_SKILLS].sort());
+assert.ok(categorized.report.includes("sk-verify-code-ui-only"));
+assert.ok(!categorized.report.includes("sk-verify-code"));
+assert.ok(
+  Object.values(pickerOptions)
+    .flat()
+    .some(({ value }) => value === "sk-verify-code-ui-only"),
+);
+assert.ok(!categorized["sk-work"].includes("sk-verify-code-ui-only"));
+assert.ok(!SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
+assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-verify-code")));
 assert.deepStrictEqual(
   Object.values(categorized).flat().sort(),
   PACKAGED_SKILLS,
@@ -121,7 +135,171 @@ assert.deepStrictEqual(
 );
 assert.ok(categorized["sk-work"].includes("deep-research"));
 assert.ok(categorized["sk-work"].includes("sk-excute"));
+assert.ok(categorized["sk-work"].includes("sk-create-skill"));
+assert.ok(!SB_KIT_SKILLS.includes("sk-create-skill"));
+assert.ok(!categorized.report.includes("sk-create-skill"));
+const landingSource = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
+const landingCards = [...landingSource.matchAll(/<article class="skill-card">([\s\S]*?)<\/article>/g)];
+const landingSkillNames = landingCards.map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
+assert.deepStrictEqual([...landingSkillNames].sort(), PACKAGED_SKILLS);
+const landingCoreNames = landingCards
+  .filter(([, article]) => /<span class="tag tag-core">core<\/span>/.test(article))
+  .map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
+assert.deepStrictEqual(landingCoreNames.sort(), [...SB_KIT_SKILLS].sort());
+const renamedSkillCards = landingCards
+  .filter(([, article]) => /<h3>sk-verify-code-ui-only<\/h3>/.test(article));
+assert.strictEqual(renamedSkillCards.length, 1);
+assert.match(renamedSkillCards[0][1], /<span class="tag tag-support">report<\/span>/);
+const createSkillCards = landingCards
+  .filter(([, article]) => /<h3>sk-create-skill<\/h3>/.test(article));
+assert.strictEqual(createSkillCards.length, 1);
+assert.match(createSkillCards[0][1], /<span class="tag tag-support">support<\/span>/);
+const supportingCount = PACKAGED_SKILLS.length - SB_KIT_SKILLS.length;
+assert.ok(landingSource.includes(`<h2 class="section-label">SaboKit core / ${SB_KIT_SKILLS.length} skills</h2>`));
+assert.ok(landingSource.includes(`<h2 class="section-label">Supporting / ${supportingCount} skills</h2>`));
+assert.ok(landingSource.includes(`<span class="badge">${PACKAGED_SKILLS.length} agent skills</span>`));
+assert.doesNotMatch(landingSource, /<h3>sk-verify-code<\/h3>/);
+const readmeSource = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
+const changelogSource = fs.readFileSync(path.join(__dirname, "CHANGELOG.md"), "utf8");
+const packageMetadata = JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf8"));
+const packageLock = JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8"));
+assert.strictEqual(packageLock.version, packageMetadata.version);
+assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
+assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
+assert.deepStrictEqual(
+  [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
+  PACKAGED_SKILLS,
+);
+assert.match(readmeSource, /`sk-create-skill`/);
+assert.match(readmeSource, /cài và tự chọn.*`skill-creator`/i);
+assert.match(readmeSource, /không tự cài các companion/i);
+assert.match(changelogSource, /Add `sk-create-skill`/);
 assert.ok(categorizedSkills(["future-skill"])["sk-work"].includes("future-skill"));
+
+const createSkillSourceDir = path.join(__dirname, ".agents", "skills", "sk-create-skill");
+const createSkillFiles = [
+  "SKILL.md",
+  path.join("agents", "openai.yaml"),
+  path.join("evals", "evals.json"),
+];
+const createSkillSourceBytes = new Map(
+  createSkillFiles.map((fileName) => [fileName, fs.readFileSync(path.join(createSkillSourceDir, fileName))]),
+);
+const createSkillSource = createSkillSourceBytes.get("SKILL.md").toString("utf8");
+const createSkillMetadata = createSkillSourceBytes.get(path.join("agents", "openai.yaml")).toString("utf8");
+const createSkillEvals = JSON.parse(createSkillSourceBytes.get(path.join("evals", "evals.json")));
+assert.match(createSkillSource, /^name: sk-create-skill$/m);
+assert.match(createSkillSource, /^description:.*English or Vietnamese.*tạo skill.*$/m);
+assert.match(createSkillSource, /\.\.\/sk-excute\/SKILL\.md/);
+assert.match(createSkillSource, /\.\.\/skill-creator\/SKILL\.md/);
+assert.ok(fs.existsSync(path.resolve(createSkillSourceDir, "..", "sk-excute", "SKILL.md")));
+assert.ok(fs.existsSync(path.resolve(createSkillSourceDir, "..", "skill-creator", "SKILL.md")));
+assert.match(createSkillMetadata, /display_name: "SK Create Skill"/);
+assert.ok(createSkillMetadata.includes('default_prompt: "Use $sk-create-skill'));
+assert.strictEqual(createSkillEvals.skill_name, "sk-create-skill");
+assert.strictEqual(createSkillEvals.evals.length, 3);
+assert.deepStrictEqual(createSkillEvals.evals.map(({ id }) => id), [1, 2, 3]);
+for (const evaluation of createSkillEvals.evals) {
+  assert.strictEqual(typeof evaluation.prompt, "string");
+  assert.strictEqual(typeof evaluation.expected_output, "string");
+  assert.ok(Array.isArray(evaluation.files));
+  assert.ok(Array.isArray(evaluation.expectations));
+}
+const evalPrompts = createSkillEvals.evals.map(({ prompt }) => prompt).join("\n");
+assert.match(evalPrompts, /have not approved/i);
+assert.match(evalPrompts, /approved this spec and file-scoped plan/i);
+assert.match(evalPrompts, /skill-creator companion is missing/i);
+assert.match(evalPrompts, /sk-ui-copy-review/);
+const approvedIntegrationPrompt = createSkillEvals.evals[1].prompt;
+for (const approvedPath of [
+  ".agents/skills/sk-ui-copy-review/SKILL.md",
+  ".agents/skills/sk-ui-copy-review/agents/openai.yaml",
+  ".agents/skills/sk-ui-copy-review/evals/evals.json",
+  "cli.js",
+  "README.md",
+  "CHANGELOG.md",
+  "index.html",
+  "test-cli.js",
+]) {
+  assert.ok(approvedIntegrationPrompt.includes(approvedPath), approvedPath);
+}
+assert.match(approvedIntegrationPrompt, /exactly these eight repository paths/);
+assert.match(approvedIntegrationPrompt, /`approved-packet\.json` is separate, read-only approval context/);
+assert.match(approvedIntegrationPrompt, /selected Inline/);
+assert.match(approvedIntegrationPrompt, /node test-cli\.js.*node cli\.js --help/);
+assert.match(approvedIntegrationPrompt, /Do not start a recursive evaluation/i);
+
+const createSkillSoloTarget = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-create-skill-solo-"));
+try {
+  assert.strictEqual(install(["sk-create-skill"], ".agents", createSkillSoloTarget), true);
+  assert.ok(!fs.existsSync(path.join(createSkillSoloTarget, ".claude")));
+  const installedSkill = path.join(createSkillSoloTarget, ".agents", "skills", "sk-create-skill");
+  for (const fileName of createSkillFiles) {
+    assert.deepStrictEqual(
+      fs.readFileSync(path.join(installedSkill, fileName)),
+      createSkillSourceBytes.get(fileName),
+    );
+  }
+  assert.ok(!fs.existsSync(path.join(createSkillSoloTarget, ".agents", "skills", "sk-excute")));
+  assert.ok(!fs.existsSync(path.join(createSkillSoloTarget, ".agents", "skills", "skill-creator")));
+
+  assert.strictEqual(install(["sk-create-skill"], ".claude", createSkillSoloTarget), true);
+  for (const fileName of createSkillFiles) {
+    assert.deepStrictEqual(
+      fs.readFileSync(path.join(createSkillSoloTarget, ".claude", "skills", "sk-create-skill", fileName)),
+      createSkillSourceBytes.get(fileName),
+    );
+  }
+  for (const root of [".agents", ".claude"]) {
+    assert.ok(!fs.existsSync(path.join(createSkillSoloTarget, root, "skills", "sk-excute")));
+    assert.ok(!fs.existsSync(path.join(createSkillSoloTarget, root, "skills", "skill-creator")));
+  }
+
+  const explicitSelection = ["sk-create-skill", "sk-excute", "skill-creator"];
+  for (const root of [".agents", ".claude"]) {
+    assert.strictEqual(install(explicitSelection, root, createSkillSoloTarget), true);
+    for (const fileName of createSkillFiles) {
+      assert.deepStrictEqual(
+        fs.readFileSync(path.join(createSkillSoloTarget, root, "skills", "sk-create-skill", fileName)),
+        createSkillSourceBytes.get(fileName),
+      );
+    }
+    for (const companion of ["sk-excute", "skill-creator"]) {
+      const sourceCompanion = path.join(__dirname, ".agents", "skills", companion, "SKILL.md");
+      const installedCompanion = path.join(createSkillSoloTarget, root, "skills", companion, "SKILL.md");
+      assert.deepStrictEqual(fs.readFileSync(installedCompanion), fs.readFileSync(sourceCompanion));
+    }
+  }
+
+  const sentinels = new Map();
+  for (const root of [".agents", ".claude"]) {
+    const skillDir = path.join(createSkillSoloTarget, root, "skills", "sk-create-skill");
+    const skillFile = path.join(skillDir, "SKILL.md");
+    const sentinel = `user-owned ${root} coordinator`;
+    fs.writeFileSync(skillFile, sentinel);
+    sentinels.set(skillFile, sentinel);
+  }
+  const skipLogs = captureLogs(() => {
+    for (const root of [".agents", ".claude"]) {
+      assert.strictEqual(install(["sk-create-skill"], root, createSkillSoloTarget), true);
+    }
+  });
+  assert.match(skipLogs.join("\n"), /Skipped:.*sk-create-skill/);
+  for (const [file, sentinel] of sentinels) {
+    assert.strictEqual(fs.readFileSync(file, "utf8"), sentinel);
+  }
+  for (const root of [".agents", ".claude"]) {
+    for (const fileName of createSkillFiles.slice(1)) {
+      assert.deepStrictEqual(
+        fs.readFileSync(path.join(createSkillSoloTarget, root, "skills", "sk-create-skill", fileName)),
+        createSkillSourceBytes.get(fileName),
+      );
+    }
+  }
+  console.log("sk-create-skill selected installation passed");
+} finally {
+  fs.rmSync(createSkillSoloTarget, { recursive: true, force: true });
+}
 
 function createFakeRunner(calls, { failHono = false } = {}) {
   return (command, args, options) => {
@@ -198,6 +376,76 @@ try {
   console.log("sb-kit installation passed");
 } finally {
   fs.rmSync(withClaude.target, { recursive: true, force: true });
+}
+
+const verifyCodeTarget = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-verify-code-ui-only-"));
+try {
+  const sourceSkill = path.join(__dirname, ".agents", "skills", "sk-verify-code-ui-only");
+  const sourceFiles = ["SKILL.md", path.join("agents", "openai.yaml")];
+  const skillSource = fs.readFileSync(path.join(sourceSkill, "SKILL.md"), "utf8");
+  const metadataSource = fs.readFileSync(path.join(sourceSkill, "agents", "openai.yaml"), "utf8");
+  assert.match(skillSource, /^name: sk-verify-code-ui-only$/m);
+  assert.match(metadataSource, /display_name: "SK Verify Code UI Only"/);
+  assert.match(metadataSource, /short_description: "Audit UI-only component, typography, and spacing consistency"/);
+  assert.match(metadataSource, /default_prompt: "Use \$sk-verify-code-ui-only to audit/);
+  assert.strictEqual(install(["sk-verify-code-ui-only"], ".agents", verifyCodeTarget), true);
+  assert.ok(!fs.existsSync(path.join(verifyCodeTarget, ".claude")));
+
+  for (const fileName of sourceFiles) {
+    assert.deepStrictEqual(
+      fs.readFileSync(
+        path.join(verifyCodeTarget, ".agents", "skills", "sk-verify-code-ui-only", fileName),
+      ),
+      fs.readFileSync(path.join(sourceSkill, fileName)),
+    );
+  }
+
+  assert.strictEqual(install(["sk-verify-code-ui-only"], ".claude", verifyCodeTarget), true);
+  for (const root of [".agents", ".claude"]) {
+    for (const fileName of sourceFiles) {
+      assert.deepStrictEqual(
+        fs.readFileSync(
+          path.join(verifyCodeTarget, root, "skills", "sk-verify-code-ui-only", fileName),
+        ),
+        fs.readFileSync(path.join(sourceSkill, fileName)),
+      );
+    }
+  }
+
+  const userSentinels = new Map();
+  for (const root of [".agents", ".claude"]) {
+    const installedSkill = path.join(verifyCodeTarget, root, "skills", "sk-verify-code-ui-only");
+    const skillFile = path.join(installedSkill, "SKILL.md");
+    const contents = `user-owned ${root} SKILL.md`;
+    fs.writeFileSync(skillFile, contents);
+    userSentinels.set(skillFile, contents);
+  }
+
+  const skippedLogs = captureLogs(() => {
+    assert.strictEqual(install(["sk-verify-code-ui-only"], ".agents", verifyCodeTarget), true);
+    assert.strictEqual(install(["sk-verify-code-ui-only"], ".claude", verifyCodeTarget), true);
+  });
+  assert.match(skippedLogs.join("\n"), /Skipped:.*sk-verify-code-ui-only/);
+  for (const [file, contents] of userSentinels) {
+    assert.strictEqual(fs.readFileSync(file, "utf8"), contents);
+  }
+  for (const root of [".agents", ".claude"]) {
+    const installedMetadata = path.join(
+      verifyCodeTarget,
+      root,
+      "skills",
+      "sk-verify-code-ui-only",
+      "agents",
+      "openai.yaml",
+    );
+    assert.deepStrictEqual(
+      fs.readFileSync(installedMetadata),
+      fs.readFileSync(path.join(sourceSkill, "agents", "openai.yaml")),
+    );
+  }
+  console.log("sk-verify-code-ui-only selected installation passed");
+} finally {
+  fs.rmSync(verifyCodeTarget, { recursive: true, force: true });
 }
 
 assert.deepStrictEqual(parseCreateArgs(["my-app"]), {

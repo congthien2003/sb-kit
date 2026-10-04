@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Create Skill"
+  short_description: "Coordinate approved SaboKit skill creation and improvement"
+  default_prompt: "Use $sk-create-skill to create or improve a SaboKit skill."

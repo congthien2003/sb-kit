@@ -19,11 +19,16 @@ const SB_KIT_SKILLS = [
 ];
 const ASSET_SKILLS = [
   "frontend-design",
-  "herdr-orchestra",
   "vercel-react-best-practices",
   "vercel-react-native-skills",
 ];
-const REPORT_SKILLS = ["sk-create-slide", "sk-visualizer", "sk-doc", "sk-explain"];
+const REPORT_SKILLS = [
+  "sk-create-slide",
+  "sk-visualizer",
+  "sk-doc",
+  "sk-explain",
+  "sk-verify-code-ui-only",
+];
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
   npx sb-kit install                                      Choose skills by category

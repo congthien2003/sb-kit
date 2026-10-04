@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.0.0] - 2026-10-04
+
+### Added
+
+- Add `sk-create-skill` as a supporting coordinator for approved SaboKit skill creation and improvement, with prerequisite, handoff, catalog, installer, documentation, and eval guidance.
+- Add `sk-verify-code-ui-only` for evidence-backed, read-only audits of UI component reuse, typography, and spacing.
+- Bundle `skill-creator` as an explicitly selectable companion for skill authorship and improvement.
+- Add coordinator metadata and three skill-coordination eval definitions.
+
+### Changed
+
+- Document skill selection, companion prerequisites, and usage in README and the existing root landing page.
+- Complete the catalog for all 20 packaged skills: 12 core and 8 supporting.
+- Extend CLI integration coverage for skill selection, installation, catalog consistency, and release metadata.
+
+### Breaking changes
+
+- Remove `herdr-orchestra` from the packaged skill catalog and installer picker. Existing installed copies are not deleted.
+
 ## [2.6.0] - 2026-09-16
 
 ### Added

@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow evidence-based đầy đủ, `$sk-excute-fast` cho thay đổi nhỏ có approval gates nhanh, cùng các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow evidence-based đầy đủ, `$sk-excute-fast` cho thay đổi nhỏ có approval gates nhanh, cùng các role explorer, researcher, reviewer, implementer để điều tra, review, và triển khai có kiểm soát. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
 
 ## Prerequisites
 
@@ -17,9 +17,9 @@ npx sb-kit install
 
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, và `sk-start-next-hono`.
-- **assets** — `frontend-design`, `herdr-orchestra`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
-- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-create-skill`, `skill-creator`, `sk-landing-page`, `sk-release`, và `sk-start-next-hono`.
+- **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
+- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, `sk-explain`, và `sk-verify-code-ui-only`.
 
 CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử lý skill đã tồn tại:
 
@@ -107,6 +107,10 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
+Package có **20 skills**, gồm **12 core** và **8 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+
+Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
+
 ### SaboKit core
 
 | Skill | Mục đích |
@@ -124,6 +128,8 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 
+Dùng `$sk-create-skill` khi muốn tạo hoặc cải thiện một SaboKit skill (ví dụ `$sk-create-skill Tạo skill kiểm tra migration scripts.`). Trước khi dùng, cài và tự chọn `$sk-excute` cùng các role skills phù hợp, và `skill-creator`; sb-kit không tự cài các companion này. Skill dừng nếu thiếu companion bắt buộc và không tự cài thay.
+
 `$sk-excute` luôn thu thập evidence explorer trước khi lên spec và rà lại mapping trước plan. Sau self-review, reviewer chỉ block lỗi nghiêm trọng/high risk; finding nhỏ được ghi nhận hoặc áp dụng khi phù hợp. Sau plan approval, chọn **Inline** để session hiện tại sửa code hoặc **Sub-agent** để implementer nhận toàn bộ plan; ở mode Sub-agent, session điều phối chỉ review và gửi findings trở lại implementer cho đến khi đạt plan hoặc gặp blocker cần người dùng quyết định.
 
 Dùng `$sk-excute-fast` khi task chỉ có blast radius nhỏ (thường 1–3 files): workflow vẫn giữ hai approval gates nhưng thay explorer/reviewer độc lập bằng rapid scan, micro-spec và mini-plan 2–5 bước, rồi triển khai inline. Skill sẽ yêu cầu chuyển sang `$sk-excute` nếu phát hiện thay đổi cross-subsystem, public API/schema, security-sensitive, external research hoặc rủi ro contract đáng kể.
@@ -136,8 +142,10 @@ Dùng `$sk-excute-fast` khi task chỉ có blast radius nhỏ (thường 1–3 f
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
-| `herdr-orchestra` | Điều phối nhiều CLI agent qua herdr để cùng phân tích, tranh luận và phân chia công việc. |
 | `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
+| `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
+| `sk-create-skill` | Điều phối tạo, cải thiện, đổi tên rõ ràng hoặc tích hợp SaboKit skill theo workflow được tham chiếu; không chép lại quy trình approval/implementation. |
+| `skill-creator` | Hướng dẫn tạo, cải thiện và đánh giá skill; companion được chọn riêng cho `sk-create-skill`. |
 
 Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
 
@@ -146,6 +154,17 @@ $sk-landing-page Tạo landing page cho sản phẩm trong repository này.
 ```
 
 Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
+
+`sk-verify-code-ui-only` nằm trong nhóm `report` của `sb-kit install`, không tự cài trong `create next-hono`. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
+
+Ví dụ:
+
+```text
+$sk-verify-code-ui-only Scan UI trong src/pages và src/components.
+Kiểm tra component reuse, typography và padding-x/y theo chuẩn repo.
+Tổng hợp file:line, bằng chứng và hướng thay thế; không sửa code.
+Có thể chia pages/sections cho native sub-agents nếu host hỗ trợ.
+```
 
 ## CLI reference
 

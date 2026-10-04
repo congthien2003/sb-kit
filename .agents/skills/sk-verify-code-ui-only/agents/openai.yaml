@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Verify Code UI Only"
+  short_description: "Audit UI-only component, typography, and spacing consistency"
+  default_prompt: "Use $sk-verify-code-ui-only to audit the selected UI source against repository standards without changing code."
