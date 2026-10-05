@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.1] - 2026-10-05
+
+### Fixed
+
+- Fix the core bundle classification so `sk-verify-code-ui-only` is installed by `create next-hono` and displayed in the SaboKit core catalog while retaining its report picker category.
+
+### Changed
+
+- Update installer integration coverage, README, and landing-page catalog counts for 13 core and 7 supporting skills.
+
 ## [3.0.0] - 2026-10-04
 
 ### Added

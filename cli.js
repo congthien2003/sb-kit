@@ -16,6 +16,7 @@ const SB_KIT_SKILLS = [
   "sk-doc",
   "sk-start-next-hono",
   "sk-explain",
+  "sk-verify-code-ui-only",
 ];
 const ASSET_SKILLS = [
   "frontend-design",
@@ -297,7 +298,12 @@ function writeJson(file, value) {
 
 function renameChildPackage(targetDir, child, name) {
   const manifestPath = path.join(targetDir, child, "package.json");
-  const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  let manifest;
+  try {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  } catch (error) {
+    throw new Error(`Invalid package manifest at ${manifestPath}: ${error.message}`);
+  }
   manifest.name = name;
   writeJson(manifestPath, manifest);
 }

@@ -107,7 +107,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Package có **20 skills**, gồm **12 core** và **8 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Package có **20 skills**, gồm **13 core** và **7 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -127,6 +127,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
+| `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
 
 Dùng `$sk-create-skill` khi muốn tạo hoặc cải thiện một SaboKit skill (ví dụ `$sk-create-skill Tạo skill kiểm tra migration scripts.`). Trước khi dùng, cài và tự chọn `$sk-excute` cùng các role skills phù hợp, và `skill-creator`; sb-kit không tự cài các companion này. Skill dừng nếu thiếu companion bắt buộc và không tự cài thay.
 
@@ -143,7 +144,6 @@ Dùng `$sk-excute-fast` khi task chỉ có blast radius nhỏ (thường 1–3 f
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
 | `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
-| `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
 | `sk-create-skill` | Điều phối tạo, cải thiện, đổi tên rõ ràng hoặc tích hợp SaboKit skill theo workflow được tham chiếu; không chép lại quy trình approval/implementation. |
 | `skill-creator` | Hướng dẫn tạo, cải thiện và đánh giá skill; companion được chọn riêng cho `sk-create-skill`. |
 
@@ -155,7 +155,7 @@ $sk-landing-page Tạo landing page cho sản phẩm trong repository này.
 
 Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
 
-`sk-verify-code-ui-only` nằm trong nhóm `report` của `sb-kit install`, không tự cài trong `create next-hono`. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
+`sk-verify-code-ui-only` nằm trong nhóm `report` của `sb-kit install` và được cài trong `create next-hono` như một core skill. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
 
 Ví dụ:
 

@@ -52,6 +52,14 @@ function captureLogs(callback) {
   return logs;
 }
 
+function parseJson(contents, sourceName) {
+  try {
+    return JSON.parse(contents);
+  } catch (error) {
+    throw new Error(`Invalid JSON in ${sourceName}: ${error.message}`);
+  }
+}
+
 function assertSbKitSkills(target, root) {
   const expectedSkills = [
     "sk-excute",
@@ -63,10 +71,11 @@ function assertSbKitSkills(target, root) {
     "sk-doc",
     "sk-start-next-hono",
     "sk-explain",
+    "sk-verify-code-ui-only",
   ];
 
   assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
-  assert.ok(!SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
+  assert.ok(SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
   for (const skill of expectedSkills) {
     assert.ok(fs.existsSync(path.join(target, root, "skills", skill)), skill);
   }
@@ -74,7 +83,7 @@ function assertSbKitSkills(target, root) {
   assert.ok(fs.existsSync(path.join(explainSkill, "SKILL.md")));
   assert.ok(fs.existsSync(path.join(explainSkill, "agents", "openai.yaml")));
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "frontend-design")));
-  assert.ok(!fs.existsSync(path.join(target, root, "skills", "sk-verify-code-ui-only")));
+  assert.ok(fs.existsSync(path.join(target, root, "skills", "sk-verify-code-ui-only")));
   assert.ok(!fs.existsSync(path.join(target, root, "skills", "sk-create-skill")));
 }
 
@@ -120,7 +129,7 @@ assert.ok(
     .some(({ value }) => value === "sk-verify-code-ui-only"),
 );
 assert.ok(!categorized["sk-work"].includes("sk-verify-code-ui-only"));
-assert.ok(!SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
+assert.ok(SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
 assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-verify-code")));
 assert.deepStrictEqual(
   Object.values(categorized).flat().sort(),
@@ -146,10 +155,10 @@ const landingCoreNames = landingCards
   .filter(([, article]) => /<span class="tag tag-core">core<\/span>/.test(article))
   .map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
 assert.deepStrictEqual(landingCoreNames.sort(), [...SB_KIT_SKILLS].sort());
-const renamedSkillCards = landingCards
+const coreVerifySkillCards = landingCards
   .filter(([, article]) => /<h3>sk-verify-code-ui-only<\/h3>/.test(article));
-assert.strictEqual(renamedSkillCards.length, 1);
-assert.match(renamedSkillCards[0][1], /<span class="tag tag-support">report<\/span>/);
+assert.strictEqual(coreVerifySkillCards.length, 1);
+assert.match(coreVerifySkillCards[0][1], /<span class="tag tag-core">core<\/span>/);
 const createSkillCards = landingCards
   .filter(([, article]) => /<h3>sk-create-skill<\/h3>/.test(article));
 assert.strictEqual(createSkillCards.length, 1);
@@ -161,8 +170,14 @@ assert.ok(landingSource.includes(`<span class="badge">${PACKAGED_SKILLS.length} 
 assert.doesNotMatch(landingSource, /<h3>sk-verify-code<\/h3>/);
 const readmeSource = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
 const changelogSource = fs.readFileSync(path.join(__dirname, "CHANGELOG.md"), "utf8");
-const packageMetadata = JSON.parse(fs.readFileSync(path.join(__dirname, "package.json"), "utf8"));
-const packageLock = JSON.parse(fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8"));
+const packageMetadata = parseJson(
+  fs.readFileSync(path.join(__dirname, "package.json"), "utf8"),
+  "package.json",
+);
+const packageLock = parseJson(
+  fs.readFileSync(path.join(__dirname, "package-lock.json"), "utf8"),
+  "package-lock.json",
+);
 assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
@@ -187,7 +202,10 @@ const createSkillSourceBytes = new Map(
 );
 const createSkillSource = createSkillSourceBytes.get("SKILL.md").toString("utf8");
 const createSkillMetadata = createSkillSourceBytes.get(path.join("agents", "openai.yaml")).toString("utf8");
-const createSkillEvals = JSON.parse(createSkillSourceBytes.get(path.join("evals", "evals.json")));
+const createSkillEvals = parseJson(
+  createSkillSourceBytes.get(path.join("evals", "evals.json")),
+  "sk-create-skill/evals/evals.json",
+);
 assert.match(createSkillSource, /^name: sk-create-skill$/m);
 assert.match(createSkillSource, /^description:.*English or Vietnamese.*tạo skill.*$/m);
 assert.match(createSkillSource, /\.\.\/sk-excute\/SKILL\.md/);
