@@ -413,9 +413,16 @@ Before modifying files, present a concise file-scoped plan and wait for my
 approval. Follow the repository AGENTS.md. Do not commit code. Do not run
 build, test, lint, or verification commands unless I explicitly allow them.
 
-The installed sk-excute workflow includes portable explorer, researcher,
-reviewer, and implementer roles. Use native sub-agent dispatch only when the
-host supports it; otherwise disclose the inline fallback.`;
+The installed sk-excute workflow is inline-first. The main agent owns the
+spec, detailed plan/todos, implementation, integration, and final review.
+Obtain approval for the reviewed spec, then the detailed plan, before edits.
+Only native scout, researcher, worker, and reviewer roles may be dispatched.
+Use scout/researcher only for concrete missing evidence within permissions;
+review the whole spec once, and add plan/change review only for material risk
+or user request. The worker is optional and receives authorized approved
+tasks with exclusive file ownership. Review its changed files after handback.
+If required independent review or an authorized worker is unavailable or
+fails, disclose status and ask before fallback or takeover.`;
 }
 
 function createNextHonoProject(

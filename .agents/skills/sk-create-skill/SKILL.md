@@ -12,11 +12,11 @@ Coordinate SaboKit skill authorship with the repository's approved implementatio
 Resolve the companion skills relative to this skill directory, not through machine-specific paths:
 
 - `../skill-creator/SKILL.md` owns intent capture, skill authorship, eval design, and feedback-driven improvements.
-- `../sk-excute/SKILL.md` owns investigation, spec and plan approvals, review, execution-mode choice, implementation prohibitions, and evidence reporting.
+- `../sk-excute/SKILL.md` owns investigation, spec and plan approvals, review, inline-first implementation and optional worker ownership, implementation prohibitions, and evidence reporting.
 
-Read both before proceeding. If either required companion is unavailable, stop and tell the user which skill must be installed; do not install it automatically or substitute a locally invented workflow. Keep these workflows separate: do not restart either recursively. Creator intent/design informs the spec and plan; excute governs approvals and implementation. Creator authorship, evals, and feedback loops may proceed only within approved scope and after required approvals. In Sub-agent mode, implementation and corrections remain implementer-owned, and the coordinating parent must not patch them; in Inline mode, defer implementation ownership to the workflow defined by sk-excute. The coordinating parent may coordinate authorized evaluations.
+Read both before proceeding. If either required companion is unavailable, stop and tell the user which skill must be installed; do not install it automatically or substitute a locally invented workflow. Keep these workflows separate: do not restart either recursively. Creator intent/design informs the spec and plan; excute governs approvals and implementation. Creator authorship, evals, and feedback loops may proceed only within approved scope and after required approvals. Defer implementation ownership to sk-excute: the main session implements inline by default; an optional authorized worker owns only its assigned files until explicit handback, after which the main session may integrate and correct within scope. The coordinating parent may coordinate authorized evaluations.
 
-Use the native capability and fallback behavior described by `sk-excute`; never emulate delegation with shell commands or silently change execution mode. Do not copy either companion's workflow or templates into this skill.
+Use the native capability and fallback behavior described by `sk-excute`; never emulate delegation with shell commands or silently take over unavailable or failed worker scope. Do not copy either companion's workflow or templates into this skill.
 
 ## SaboKit-specific checklist
 

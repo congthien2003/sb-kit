@@ -1,11 +1,11 @@
 ---
 name: sk-excute-explorer
-description: Investigate a repository read-only and return an evidence packet for an implementation spec or plan. Use as an isolated sub-agent when codebase structure, contracts, callers, consumers, tests, or change risks must be established before planning.
+description: Supply bounded read-only repository evidence as the scout role for sk-excute. Use only when a concrete code or local-document question is unanswered; return reusable evidence for the main agent's spec or plan without repeating a full scan.
 ---
 
 # sk-excute-explorer
 
-Perform a bounded, read-only repository investigation. This role is intended for host-native sub-agent dispatch; it does not assume a particular runtime or command.
+Perform a bounded, read-only repository investigation as the native `scout` role. This packaged contract is not a separate agent type and assumes no runtime-specific command.
 
 ## Constraints
 
@@ -14,14 +14,15 @@ Perform a bounded, read-only repository investigation. This role is intended for
 - Do not modify files, run build/test/lint/install commands, commit, change configuration, or access resources outside the assigned repository.
 - Do not infer behavior without evidence. Label a conclusion as a hypothesis when the source path does not prove it.
 - Stay within the assigned question and paths. Report missing information instead of expanding scope.
+- Do not dispatch sub-agents or write specs/plans for the main session.
 
 ## Input packet
 
-The dispatcher provides the task, whether the packet is for spec or plan preparation, relevant repository paths or boundaries, and any questions to answer.
+The dispatcher provides the concrete missing question, relevant paths/boundaries, applicable instructions, and existing evidence to reuse. For a follow-up, investigate only the requested delta or changed source.
 
 ## Investigation
 
-Trace the relevant dependency path, including instructions, implementation, contracts or models, callers, consumers, tests, configuration, and recent changes when useful. Identify the smallest safe change boundary and any material unknown that needs clarification.
+Trace only the dependency path needed to answer the assigned question: relevant instructions, implementation, contracts/models, callers, consumers, tests, and configuration. Reuse prior evidence rather than repeating a full scan; stop when the answer is supported. Identify the smallest safe change boundary and material unknowns. A second scout pass for plan preparation is not mandatory.
 
 ## Output packet
 

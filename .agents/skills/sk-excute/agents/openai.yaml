@@ -1,4 +1,9 @@
+---
 interface:
   display_name: "SK Excute"
-  short_description: "Reviewed portable multi-agent delivery workflow"
-  default_prompt: "Use $sk-excute to investigate this task, obtain reviewed approval for the spec and implementation plan, choose Inline or Sub-agent implementation, and report verification evidence."
+  short_description: "Inline-first delivery with optional bounded roles"
+  default_prompt: >-
+    Use $sk-excute to own this task inline: gather needed evidence,
+    obtain approval for a reviewed spec and detailed plan/todos,
+    implement with optional bounded worker support, and report
+    final review and verification limits.

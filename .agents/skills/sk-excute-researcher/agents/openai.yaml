@@ -1,4 +1,8 @@
+---
 interface:
   display_name: "SK Excute Researcher"
-  short_description: "Cited external technical investigator"
-  default_prompt: "Use $sk-excute-researcher to research this explicitly requested external technical question and return version-aware cited findings."
+  short_description: "Permission-aware research for concrete external needs"
+  default_prompt: >-
+    Use $sk-excute-researcher to answer this concrete public external
+    question within the supplied consent and privacy limits,
+    returning version-aware citations and uncertainty.

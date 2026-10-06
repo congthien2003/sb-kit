@@ -499,10 +499,10 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Quy trình triển khai task có kiểm soát. Từ yêu cầu
-                            người dùng → tạo spec → lập implementation plan →
-                            chờ approval → thực hiện thay đổi nhỏ nhất. Không tự
-                            ý sửa code khi chưa có plan được duyệt.
+                            Inline-first: agent chính viết spec → một reviewer
+                            kiểm tra → approve spec → plan/todo → approve plan →
+                            triển khai và final review. Scout/researcher theo nhu
+                            cầu; worker tùy chọn, không hỏi mode riêng.
             </p>
           </article>
           <article class="skill-card">
@@ -521,9 +521,9 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Điều tra codebase read-only, trả evidence về contracts,
-                            callers, consumers, tests, risks và unknowns trước spec
-                            hoặc plan.
+                            Contract cho scout read-only: tìm evidence về code và
+                            tài liệu local còn thiếu, trả paths, contracts và risks.
+                            Tái sử dụng kết quả, không bắt buộc scout lại cho plan.
             </p>
           </article>
           <article class="skill-card">
@@ -532,8 +532,9 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Nghiên cứu external có trích dẫn khi người dùng yêu cầu
-                            rõ, ưu tiên primary source và thông tin đúng version.
+                            Researcher trả citations cho câu hỏi public external
+                            cần thiết, tuân thủ consent/privacy và ưu tiên primary
+                            source đúng version.
             </p>
           </article>
           <article class="skill-card">
@@ -542,8 +543,9 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Review độc lập spec và plan; chỉ blocker hoặc high-risk
-                            finding mới chặn approval gate.
+                            Một reviewer kiểm tra toàn spec, trả findings theo block.
+                            Review plan/changes có mục tiêu khi có rủi ro mới hoặc
+                            user yêu cầu; không bắt buộc thêm lượt review.
             </p>
           </article>
           <article class="skill-card">
@@ -552,8 +554,9 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Triển khai delegated plan đã duyệt trong scope, không
-                            commit hoặc mở rộng scope, rồi trả diff và evidence.
+                            Contract cho worker tùy chọn: triển khai nhóm task đã
+                            duyệt với exclusive file ownership, rồi handback files
+                            và evidence để agent chính review, integrate và sửa.
             </p>
           </article>
           <article class="skill-card">
