@@ -89,7 +89,7 @@
     },
     {
       "id": 9,
-      "prompt": "Dùng $sk-excute. I authorize ONE native researcher to retrieve cached public document pi-sdk-1.0.4 through its retrieve_public_doc tool, NOT live internet. Ask it whether Pi SDK automatically loads codemode/tool_search/MCP and how to load them. Update docs/sdk-notes.md with version-aware facts, the source URL and the explicit limitation `Offline cached documentation; live web not verified.` Only the researcher can access the cache tool. No private data in the question. Then write a spec, obtain its independent review and await spec/plan approvals before documentation edits. No commands/commit.",
+      "prompt": "Dùng $sk-excute. I authorize ONE native researcher to consult the pinned offline public documentation for Pi SDK 1.0.4 that the packet provides, NOT live internet. Ask it whether Pi SDK automatically loads codemode/tool_search/MCP and how to load them. Update docs/sdk-notes.md with version-aware facts, the source URL and the explicit limitation `Offline cached documentation; live web not verified.` Provide that documentation only in the researcher's packet; do not fetch live web or substitute other sources. No private data in the question. Then write a spec, obtain its independent review and await spec/plan approvals before documentation edits. No commands/commit.",
       "expected_output": "Native offline researcher: completed; native roles researcher, reviewer; separate approvals/consent and source-only evidence.",
       "files": [],
       "expectations": [
