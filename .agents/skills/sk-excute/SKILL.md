@@ -1,11 +1,11 @@
 ---
 name: sk-excute
-description: Run an inline-first, evidence-based workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use when the main agent must own a reviewed spec, an approved file-specific plan and todo list, implementation, and final review, with bounded scout, researcher, reviewer, or optional worker support; do not commit unless explicitly requested.
+description: Run an inline-first, evidence-based workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use when the main agent must own a reviewed spec, an approved file-specific plan and todo list, implementation, and final review, with bounded scout, researcher, reviewer, or optional worker support. Prefer sk-excute-fast for a small change confined to one or two files; use this skill when the task needs investigation, external research, API/schema or security work, several subsystems, or delegated implementation. Trigger on English or Vietnamese requests to implement, fix, or refactor under a reviewed spec and approved plan, including "triển khai tính năng", "sửa lỗi", "làm task này"; do not trigger for a small local change that sk-excute-fast already covers. Do not commit unless explicitly requested.
 ---
 
 # sk-excute
 
-Keep one main agent responsible for delivery. Use this self-contained workflow; do not invoke separate brainstorming or writing-plans skills. Delegation should resolve a concrete evidence gap, provide independent review, or isolate a useful implementation slice—not repeat work already done.
+Keep one main agent responsible for delivery. Use this self-contained workflow; do not invoke separate brainstorming or writing-plans skills, and run research for the task through the `researcher` role rather than through a separate research skill. Delegation should resolve a concrete evidence gap, provide independent review, or isolate a useful implementation slice—not repeat work already done.
 
 ## Rules and ownership
 
@@ -31,6 +31,7 @@ Packaged skill names remain unchanged; they are instructions for the four native
 
 Give each child a compact, cold-start-complete packet: objective, relevant paths/evidence, applicable instructions, authority boundary, acceptance criteria, allowed verification, output, and stop conditions. Do not copy the entire conversation or approved plan when a slice and its dependencies suffice. Children must not dispatch agents.
 
+- If the packaged contract for a role cannot be resolved, treat that role as unavailable and tell the user which skill must be installed (`sk-excute-explorer`, `sk-excute-researcher`, `sk-excute-reviewer`, or `sk-excute-implementer`). Do not install it automatically or substitute a locally invented contract; apply the matching fallback below.
 - If optional scout/researcher dispatch is unavailable, gather permitted evidence inline or disclose the limitation. Do not guess a decision-critical fact or treat an essential unanswered question as non-blocking.
 - If independent reviewer dispatch is unavailable, disclose that self-review is not independent. Ask the user to explicitly accept a self-review fallback or stop; do not silently pass the review gate.
 - If an authorized worker is unavailable or fails, report status and any partial changes, preserve the ownership boundary, and ask the user before taking over its assigned scope. Do not silently switch execution ownership.
@@ -43,7 +44,7 @@ Classify the task as feature, bug fix, refactor, or implementation-heavy tooling
 
 Reuse existing evidence for the spec and plan. Scout again only for a new gap or changed source, and request the missing delta rather than another full scan. Verify decisive findings against source without duplicating the entire investigation.
 
-Use a researcher only for a concrete current, version-specific, or external question that can materially affect the task. Choosing this workflow authorizes necessary public research unless user/repository/host policy requires explicit consent, offline work, or other restrictions; honor those restrictions first. Prefer official, version-matched primary sources. Distinguish documented facts from inference and runtime evidence. If tools or sources are unavailable, disclose the uncertainty; stop for a decision when the missing fact is critical.
+Use a researcher only for a concrete current, version-specific, or external question that can materially affect the task. The main session owns the consent decision and records it in the packet: choosing this workflow authorizes necessary public research unless user, repository, or host policy requires explicit consent, offline work, or other restrictions, which override it. Prefer official, version-matched primary sources. Distinguish documented facts from inference and runtime evidence. If tools or sources are unavailable, disclose the uncertainty; stop for a decision when the missing fact is critical.
 
 Ask concise clarifying questions only when an answer changes behavior, scope, or risk. Compare alternatives when a real choice remains; do not invent alternatives or research for routine edits. Do not offer or use a visual companion.
 
