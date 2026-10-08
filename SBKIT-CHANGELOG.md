@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0] - 2026-10-06
+
+### Changed
+
+- Refine `$sk-excute` into an inline-first workflow with separate spec and plan approval gates, main-agent ownership, and optional bounded native roles.
+- Update role contracts, CLI handoff instructions, README, landing page, and workflow eval cases.
+
 ## [3.0.1] - 2026-10-05
 
 ### Fixed
