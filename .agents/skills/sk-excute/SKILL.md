@@ -1,145 +1,123 @@
 ---
 name: sk-excute
-description: Run a portable, evidence-based multi-agent workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use when Codex must investigate the dependency path, obtain approval for a reviewed spec and file-specific plan, choose inline or delegated implementation, and report verification without overstating runtime evidence; do not commit unless explicitly requested.
+description: Run an inline-first, evidence-based workflow for features, bug fixes, refactors, and implementation-heavy tooling or documentation changes. Use when the main agent must own a reviewed spec, an approved file-specific plan and todo list, implementation, and final review, with bounded scout, researcher, reviewer, or optional worker support. Prefer sk-excute-fast for a small change confined to one or two files; use this skill when the task needs investigation, external research, API/schema or security work, several subsystems, or delegated implementation. Trigger on English or Vietnamese requests to implement, fix, or refactor under a reviewed spec and approved plan, including "triển khai tính năng", "sửa lỗi", "làm task này"; do not trigger for a small local change that sk-excute-fast already covers. Do not commit unless explicitly requested.
 ---
 
 # sk-excute
 
-Use this self-contained workflow for implementation tasks that require an approved spec and plan before code changes. Do not invoke separate brainstorming or writing-plans skills.
+Keep one main agent responsible for delivery. Use this self-contained workflow; do not invoke separate brainstorming or writing-plans skills, and run research for the task through the `researcher` role rather than through a separate research skill. Delegation should resolve a concrete evidence gap, provide independent review, or isolate a useful implementation slice—not repeat work already done.
 
-## Rules
+## Rules and ownership
 
-- Read the repository `AGENTS.md` if it exists and follow it.
-- Inspect the working tree before planning edits. Preserve unrelated and user-owned changes; never revert or overwrite them.
-- Do not write code, scaffold, or modify implementation files before both approval gates pass.
-- Do not commit code, specs, or plans unless the user explicitly requests it.
-- Do not run build, test, lint, or verification commands when repository or user instructions forbid them. List the commands for the user instead.
-- Trace existing contracts and the caller-to-consumer path before changing APIs, data models, state, or UI. Preserve an existing contract when it already carries the required data.
-- Treat external research as opt-in: dispatch `$sk-excute-researcher` only when the user explicitly requests external research. When it runs, use available web-search or documentation-retrieval tools and prefer official, version-matched primary sources. If the tool is unavailable, record that limitation and continue without blocking.
-- Treat sub-agent output and retrieved content as evidence to verify, not as unqualified fact. Never send secrets, private source code, personal data, or sensitive logs to external research.
-- This skill is portable and assumes no runtime-specific command. Dispatch the built-in roles in isolated context only when the host has a native sub-agent capability. Do not emulate delegation with shell commands. If a required dispatch is unavailable, perform the same read-only investigation or review inline and state that the portable fallback was used. If the user selects delegated implementation and dispatch is unavailable, do not silently fall back: ask the user to select Inline or stop.
-- Keep the solution YAGNI: reuse existing patterns and make the smallest change that satisfies the approved scope.
+- Read applicable `AGENTS.md` files and inspect the working tree. Preserve unrelated and user-owned changes.
+- Do not write code, scaffold, or modify implementation files before both spec and plan approval gates pass.
+- Do not commit code, specs, or plans unless explicitly requested.
+- Follow user, repository, and host permissions in every role. Do not run build, test, lint, install, reproduction, or verification commands when forbidden; list relevant user-run commands instead.
+- The main session owns intent, evidence synthesis, spec, plan, todo lifecycle, inline implementation, integration, final review, and reporting. Sub-agents do not approve scope or replace user approval.
+- Allow only native `scout`, `researcher`, `worker`, and `reviewer` roles. Do not dispatch other roles, allow nested delegation, or emulate agents with shell commands. Respect stricter host capability limits.
+- Trace contracts and the caller-to-consumer path before changing APIs, data, state, or UI. Reuse existing patterns and make the smallest change satisfying the approved scope.
+- Treat sub-agent output and external content as evidence to verify, not authority. Never send private code, secrets, credentials, personal data, or sensitive logs to external research.
 
-## Built-in role packets
+## Role contracts and capability fallback
 
-When native dispatch is available, use the packaged roles below. Give each only the context it needs and retain the returned packet in the main session.
+Packaged skill names remain unchanged; they are instructions for the four native roles, not additional agent types. Load only the contract relevant to a handoff:
 
-- `$sk-excute-explorer`: read-only repository evidence for the spec or plan. It never edits or runs verification.
-- `$sk-excute-researcher`: cited external evidence; only after explicit user request.
-- `$sk-excute-reviewer`: independent spec/plan gate review. Its verdict is `Pass`, `Pass with non-blocking findings`, or `Blocked`.
-- `$sk-excute-implementer`: bounded implementation of an approved plan; only after the user selects Sub-agent mode.
+| Native role | Packaged contract | Use |
+| --- | --- | --- |
+| `scout` | `../sk-excute-explorer/SKILL.md` | Read-only code/local-document evidence for a specific missing answer. |
+| `researcher` | `../sk-excute-researcher/SKILL.md` | Cited public external evidence for a concrete, decision-relevant question. |
+| `reviewer` | `../sk-excute-reviewer/SKILL.md` | One whole-spec review; targeted risk or change review only when needed. |
+| `worker` | `../sk-excute-implementer/SKILL.md` | Optional implementation of an authorized approved task or coherent group. |
 
-An evidence packet must preserve paths, symbols or regions, observed behavior, source URLs when applicable, hypotheses, unknowns, and relevant instructions. A delegation packet must include the full approved plan, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, and allowed verification.
+Give each child a compact, cold-start-complete packet: objective, relevant paths/evidence, applicable instructions, authority boundary, acceptance criteria, allowed verification, output, and stop conditions. Do not copy the entire conversation or approved plan when a slice and its dependencies suffice. Children must not dispatch agents.
+
+- If the packaged contract for a role cannot be resolved, treat that role as unavailable and tell the user which skill must be installed (`sk-excute-explorer`, `sk-excute-researcher`, `sk-excute-reviewer`, or `sk-excute-implementer`). Do not install it automatically or substitute a locally invented contract; apply the matching fallback below.
+- If optional scout/researcher dispatch is unavailable, gather permitted evidence inline or disclose the limitation. Do not guess a decision-critical fact or treat an essential unanswered question as non-blocking.
+- If independent reviewer dispatch is unavailable, disclose that self-review is not independent. Ask the user to explicitly accept a self-review fallback or stop; do not silently pass the review gate.
+- If an authorized worker is unavailable or fails, report status and any partial changes, preserve the ownership boundary, and ask the user before taking over its assigned scope. Do not silently switch execution ownership.
 
 ## Workflow
 
-### 1. Classify and explore for the spec
+### 1. Investigate only what is missing
 
-Classify the request as a feature, bug fix, refactor, or implementation-heavy tooling/documentation change. Dispatch `$sk-excute-explorer` in isolated context when available; otherwise perform its read-only evidence contract inline and disclose the fallback. Inspect relevant files, repository instructions, existing patterns, contracts, callers, consumers, tests, working-tree changes, and recent changes when useful. If the user explicitly requested external research, dispatch `$sk-excute-researcher` too.
+Classify the task as feature, bug fix, refactor, or implementation-heavy tooling/documentation. The main agent inspects relevant instructions, code, contracts, callers, consumers, tests, and working-tree changes. Use a scout only when a bounded question about the repository or local documentation remains unanswered. Retain its evidence packet with paths/symbols, observations, hypotheses, risks, and unknowns.
 
-Synthesize and verify the returned packets against the repository. Discover answers from the repository first. Ask one concise clarifying question at a time only when a missing answer would materially change the solution, scope, or risk.
+Reuse existing evidence for the spec and plan. Scout again only for a new gap or changed source, and request the missing delta rather than another full scan. Verify decisive findings against source without duplicating the entire investigation.
 
-When current, external, or version-specific information would materially improve the approaches or spec but the user did not request research, identify it as an optional unknown rather than dispatching the researcher. Do not offer or use a visual companion.
+Use a researcher only for a concrete current, version-specific, or external question that can materially affect the task. The main session owns the consent decision and records it in the packet: choosing this workflow authorizes necessary public research unless user, repository, or host policy requires explicit consent, offline work, or other restrictions, which override it. Prefer official, version-matched primary sources. Distinguish documented facts from inference and runtime evidence. If tools or sources are unavailable, disclose the uncertainty; stop for a decision when the missing fact is critical.
 
-Propose two or three viable approaches with trade-offs. Lead with the recommended approach.
+Ask concise clarifying questions only when an answer changes behavior, scope, or risk. Compare alternatives when a real choice remains; do not invent alternatives or research for routine edits. Do not offer or use a visual companion.
 
-### 2. Reproduce and diagnose bugs
+### 2. Diagnose bugs with matching evidence
 
-For a bug fix, establish the failure before proposing the spec:
+For bugs, record expected/actual behavior, relevant state and environment, and the shortest known reproduction path. Reproduce through the reported surface only when commands and access are permitted. Build/typecheck output is reproduction only for a reported build/type failure.
 
-- Record expected behavior, actual behavior, required data or account state, environment, and the shortest known reproduction path.
-- Reproduce through the surface closest to the report: the original API request, browser flow, device or app lifecycle, CLI command, or a focused test. Treat build or typecheck output as reproduction only when the reported bug is itself a build or type failure.
-- Record one evidence status: `Reproduced`, `Test-reproduced`, `Source-supported`, `Intermittent`, or `Not reproduced`. For intermittent failures, record the observed frequency and conditions tried.
-- Trace the failing value or state through callers and consumers. Distinguish an observed root cause from a source-supported hypothesis.
-- If reproduction is blocked by environment, data, permissions, or unavailable hardware, continue with source analysis when useful but state the limitation. Never claim that the bug was reproduced or fixed without matching evidence.
+Record `Reproduced`, `Test-reproduced`, `Source-supported`, `Intermittent`, or `Not reproduced`. For intermittent failures, record observed frequency and conditions tried. Trace the failing value/state through callers and consumers, distinguishing an observed root cause from a source-supported hypothesis. Disclose blocked reproduction and never claim runtime reproduction or a confirmed fix from source alone. Skip this step for non-bug tasks.
 
-For non-bug tasks, skip this step.
+### 3. Main writes spec; one reviewer checks its blocks
 
-### 3. Draft, review, and gate the spec
+Draft a concise spec with stable block IDs containing:
 
-Draft a concise spec from verified evidence containing:
+- Intended behavior and observable acceptance criteria.
+- Scope and non-goals, including no commits unless requested.
+- Relevant boundaries, contracts, data flow, error handling, risks, and verification strategy.
+- Bug diagnosis/evidence status when applicable.
+- Investigation/research evidence, permission limits, and remaining unknowns.
 
-- Intended behavior and success criteria
-- Scope and non-goals
-- Affected boundaries, data flow, error handling, and testing approach when relevant
-- Reproduction status and root-cause evidence for bug fixes
-- Investigation and explicitly requested research summary, including remaining unknowns
-- Explicit statement that commits are out of scope unless later requested
+Self-review for ambiguity, missing acceptance, inconsistent contracts, unsupported claims, and scope creep. Dispatch one reviewer for the whole spec and relevant evidence—not a reviewer per block. Request `Pass`, `Pass with non-blocking findings`, or `Blocked`, with findings tied to block IDs, evidence, impact, and the smallest correction.
 
-Self-review the draft for missing acceptance criteria, inconsistent contracts, ambiguity, scope creep, placeholders, and unsupported claims. Then dispatch `$sk-excute-reviewer` with the draft and evidence when available; otherwise independently apply its review contract inline and disclose the fallback.
+Resolve material blockers and request targeted re-review of changed blocks and affected dependencies. Record non-blocking finding dispositions; do not repeat review for optional polish or impose a cap that turns unresolved blockers into success. Escalate unresolved scope, environment, or user decisions.
 
-If the verdict is `Blocked`, make the smallest correction supported by evidence and re-review until no blocker remains. Record the disposition of every non-blocking finding; apply it when useful without delaying the gate. Only then present the spec, reviewer verdict/disposition, and approval question. Stop until the user approves.
+Present the spec, review verdict/dispositions, and approval question. **Stop until the user approves the spec.**
 
-### 4. Draft, review, and gate the implementation plan
+### 4. Main writes detailed plan and todo list
 
-After spec approval, dispatch `$sk-excute-explorer` again when available to confirm exact file/symbol mapping, contracts, callers/consumers, and dependency order for the plan. Otherwise perform this evidence check inline and disclose the fallback. Dispatch `$sk-excute-researcher` only when the user explicitly requests external research.
+After spec approval, reuse evidence to map exact files/symbols and dependencies. No second scout or plan reviewer is mandatory. Write ordered tasks with stable IDs and:
 
-Map the exact files to create or modify, the symbols or regions that change, and each file's responsibility. Write ordered tasks that can be reviewed independently. Keep dependencies explicit: a task may only depend on behavior or contracts established by earlier tasks.
+- **Goal and acceptance:** observable outcome mapped to spec criteria.
+- **Preconditions:** prior tasks, existing contracts, configuration, or data required.
+- **Files:** exact create/modify paths and symbols, routes, components, or regions.
+- **Changes:** numbered implementation steps naming inputs, outputs, state changes, and caller/callee flow; use contract examples or pseudocode when useful.
+- **Edge cases:** applicable validation, empty/error/loading states, permissions, compatibility, migrations, or rollback; use `None identified` only when appropriate.
+- **Verification:** exact permitted or user-run commands and expected observable results; explicitly identify checks the agent may not run.
+- **Owner:** main by default; optional worker task/group, permitted files, and rationale if delegation is proposed.
 
-When a plan depends on explicitly requested current or version-specific external behavior, include the research evidence and distinguish documented behavior from inference. External documentation is research evidence, not build, test, reproduction, or runtime evidence.
+Split at meaningful contract/shared-behavior/consumer/review boundaries, not every small edit. Keep tasks concrete, dependency-ordered, and free of placeholders or unnecessary abstractions.
 
-For every task, include:
+Self-review acceptance coverage, task order, contracts/types/data flow, edge cases, ownership, verification relevance, and scope. Use targeted independent plan review only for new material API/schema, security, migration, or cross-subsystem risk not already covered by the reviewed spec. If scope or intended behavior changes, revise the spec and obtain renewed spec approval before plan approval.
 
-- **Goal:** the observable outcome and acceptance criterion.
-- **Preconditions:** relevant prior task, existing behavior, migration, configuration, or data needed before starting.
-- **Files:** exact create/modify paths plus the relevant symbol, route, component, API, or approximate region.
-- **Changes:** numbered, concrete implementation steps. Name the inputs, outputs, state changes, and caller/callee flow; show the intended contract or pseudocode when that removes ambiguity.
-- **Edge cases:** validation, empty/error/loading states, compatibility, permissions, or rollback behavior that apply to this task. State `None identified` when no meaningful edge case exists.
-- **Verification:** exact commands the user can run and expected observable result. Do not run them yourself when instructions forbid it.
+Use native todo tools when available, otherwise an equivalent checklist. Keep exactly one implementation task active, mark it active before work, and complete it immediately when its approved deliverable and evidence requirements are satisfied. Leave partial or blocked tasks open. A forbidden check is `Not run`, never `Passed`; source-only delivery can be complete only when the plan explicitly permits it, with runtime/automated acceptance still unverified. A required permitted check that fails blocks the affected task.
 
-Split tasks at meaningful review checkpoints: contract/schema first, shared behavior next, consumers after that, then focused verification or documentation. Do not split trivial adjacent edits solely to inflate the task count.
+Present the detailed plan/todos, self-review outcome, any independent verdict, ownership, and verification limits. **Stop until the user approves the plan.**
 
-Avoid placeholders such as `TBD`, vague instructions, undefined names, and generic test steps. Use the existing repository patterns; do not introduce abstractions or dependencies without a demonstrated need.
+### 5. Implement inline; delegate a worker only when useful
 
-Self-review the plan before presenting it:
+After plan approval, begin inline without a separate execution-mode question. Keep the main session as owner and implement the smallest approved diff.
 
-- Map every acceptance criterion to at least one task.
-- Confirm task order satisfies dependencies and no task relies on an undefined contract.
-- Check names, types, request/response fields, state transitions, and data flow for consistency across tasks.
-- Ensure each verification command targets the change and has a concrete expected result.
-- Remove scope creep, placeholders, and duplicated context. Fix issues inline.
+An optional worker must earn its overhead through a coherent isolated task/group. Its allocation must be authorized in the approved plan; ask before adding or changing delegation after approval. Do not spawn one worker per todo or automatically hand off the whole plan.
 
-Then dispatch `$sk-excute-reviewer` with the plan and evidence when available; otherwise independently apply its review contract inline and disclose the fallback. If its verdict is `Blocked`, correct the plan and re-review until no blocker remains. Record the disposition of non-blocking findings.
+The worker packet contains the approved task IDs/slice, scope/non-goals, necessary upstream/downstream contracts, relevant instructions, exact permitted files and user-owned baseline, acceptance/dependencies, allowed verification, stop conditions, and concise reporting requirements.
 
-Present the ordered plan, investigation/research summary, reviewer verdict/disposition, and an approval question. Stop until the user approves.
+Keep exclusive file ownership: do not edit the worker's files while it owns them. The worker does not widen scope or delegate. After it returns or stops and ownership is explicitly handed back, the main agent reads its changed files and diff, checks contracts/integration and acceptance, and can correct within-scope issues inline. Redispatch only when substantial remaining work justifies the overhead. Do not impose a blanket parent-patching ban after handback.
 
-### 5. Choose execution mode
+For scope/architecture changes, obtain renewed approval. Stop for unresolved credentials, environment, data, permissions, or other critical blockers; do not claim completion while they remain.
 
-After the user approves the plan, ask them to choose one mode and wait for the answer:
+### 6. Main reviews and reports evidence
 
-- **Inline:** continue with step 6 in the current session.
-- **Sub-agent:** create a bounded delegation packet containing the complete approved plan, relevant repository instructions, scope/non-goals, acceptance criteria, constraints, and allowed verification. Dispatch `$sk-excute-implementer` in an isolated native sub-agent context.
+The main agent always reviews the final diff and changed files for acceptance, contract/caller-consumer consistency, scope, generated files, debug code, secrets, and unrelated edits. Independent change review is optional for concrete high-risk changes or user request, not a routine extra gate.
 
-If the user chooses Sub-agent but native dispatch is unavailable, state that no delegated implementation occurred and ask the user to select Inline or stop. Do not edit implementation files in the coordinating session while Sub-agent mode is active.
+Run only permitted, relevant checks. Separate:
 
-### 6. Implement, review, and verify
+- **Source:** files/diff/contracts reviewed.
+- **Static or automated:** lint, typecheck, unit/integration/regression results actually obtained.
+- **Build:** supported build/package result actually obtained.
+- **Runtime:** reported API/browser/device/CLI/E2E surface actually exercised.
 
-#### Inline mode
-
-Implement only the approved scope with the smallest working diff. Preserve existing user changes and do not commit. Run only permitted, relevant verification.
-
-#### Sub-agent mode
-
-Review the implementer's diff and evidence against the approved plan; the coordinating session only reviews and does not patch code. If the review identifies missing scope, an incorrect contract, verification failing because of the change, or an unmet acceptance criterion, return actionable findings to `$sk-excute-implementer` and repeat implement → review until the plan is satisfied. Do not impose an artificial iteration limit.
-
-Stop and ask the user for a decision when a blocker cannot be resolved within the approved scope, including missing credentials, environment, data, or permissions; a necessary plan/scope change; or a user decision. Do not claim completion while such a blocker remains.
-
-For either mode, separate evidence levels in the completion report:
-
-- **Source:** contract and caller/consumer path reviewed; final diff contains only intended changes.
-- **Static or automated:** lint, typecheck, unit, integration, or focused regression tests.
-- **Build:** the supported build or package command completes.
-- **Runtime:** the real API, browser, device, CLI, or E2E flow succeeds.
-
-Do not use a lower evidence level to claim a higher one. Build success is not browser, device, E2E, or manual acceptance proof. If a command fails, distinguish a regression caused by the change from a pre-existing or environment failure and report the evidence.
-
-Review the final diff for scope, accidental generated files, debug code, secrets, and unrelated edits. Report changed files, completed behavior, commands run with results, unverified behavior and why, and any commands the user should run.
+A lower evidence level does not establish a higher one. For failures, distinguish change-caused regressions from pre-existing/environment issues using evidence. Report unrun checks and remaining uncertainty. Token/time savings are design intent until measured, not a benchmark claim.
 
 ## Output shape
 
-- **Investigation and research:** packet summaries, sources when used, evidence, unknowns, and portable fallback disclosures.
-- **Diagnosis:** for bugs only, reproduction steps, evidence status, and root cause or hypothesis.
-- **Spec:** behavior, success criteria, scope, non-goals, verification strategy, reviewer verdict/finding disposition, and approval question.
-- **Plan:** ordered file-specific steps, reviewer verdict/finding disposition, and approval question.
-- **Execution mode:** selected `Inline` or `Sub-agent`; for delegated work, delegation and coordinator-review outcome.
-- **Completion:** changed files, completed behavior, evidence by level, unverified behavior, and user-run verification commands. State that no commit was created unless the user requested one.
+- **Evidence/diagnosis:** concise source summaries, citations when researched, bug evidence status, unknowns, and fallback disclosures.
+- **Spec gate:** block-identified spec, reviewer verdict/dispositions, approval question.
+- **Plan gate:** ordered file-specific todos, dependencies/owners, self-review and any targeted independent verdict, approval question.
+- **Delivery:** changed files/behavior, optional worker handoff and main review outcome, evidence by level, blockers/unverified acceptance, and exact user-run commands. State whether any commit was explicitly requested and created.

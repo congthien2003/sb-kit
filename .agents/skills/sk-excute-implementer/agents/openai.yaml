@@ -1,4 +1,9 @@
+---
 interface:
   display_name: "SK Excute Implementer"
-  short_description: "Implement an approved bounded plan"
-  default_prompt: "Use $sk-excute-implementer to implement this approved scoped plan, run only allowed verification, and report diff evidence without committing."
+  short_description: "Optional worker for approved task slices"
+  default_prompt: >-
+    Use $sk-excute-implementer as the optional worker to implement
+    these authorized approved tasks within exclusive file ownership,
+    run only allowed verification, and hand back changed-file
+    evidence without committing.

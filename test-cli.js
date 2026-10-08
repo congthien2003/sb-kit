@@ -520,6 +520,14 @@ try {
   assertVisualizerReferences(defaultCreate.target, ".agents");
   assert.ok(!fs.existsSync(path.join(defaultCreate.target, ".claude")));
   assert.ok(defaultCreate.handoff.includes("$sk-start-next-hono"));
+  assert.match(defaultCreate.handoff, /workflow is inline-first/);
+  assert.match(defaultCreate.handoff, /main agent owns the\s+spec, detailed plan\/todos/);
+  assert.match(defaultCreate.handoff, /approval for the reviewed spec, then the detailed plan/);
+  assert.match(defaultCreate.handoff, /Only native scout, researcher, worker, and reviewer roles/);
+  assert.match(defaultCreate.handoff, /worker is optional and receives authorized approved\s+tasks/);
+  assert.match(defaultCreate.handoff, /Review its changed files after handback/);
+  assert.match(defaultCreate.handoff, /ask before fallback or takeover/);
+  assert.doesNotMatch(defaultCreate.handoff, /choose Inline or Sub-agent/i);
   assert.ok(defaultCreate.logs.join("\n").includes("$sk-start-next-hono"));
 
   const installedSkill = path.join(
