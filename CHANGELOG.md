@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.2.0] - 2026-10-08
+
+### Added
+
+- Add offline selected-skill updates with preview, explicit local/unknown overwrite consent, retained original/receipt backups, per-target rollback and interruption recovery journals.
+- Add `sk-review-diff` for scoped read-only code change reviews, with three eval definitions.
+- Add supporting `sk-debug` with diagnosis evidence labels, privacy boundaries and three eval definitions.
+- Add editable installation presets with explicit required-companion consent; retain Manual as the default.
+- Automatically include all four `sk-excute-*` role skills when `sk-excute` is selected.
+- Add offline, read-only `sb-kit doctor` with text/JSON findings and provenance-aware exit codes.
+- Add per-root install receipts with raw SHA256 fingerprints, safe-path validation and mutation journals. Skipped and legacy skills retain their provenance.
+
+### Fixed
+
+- Close `sk-excute` companion, consent, and routing gaps.
+
+### Changed
+
+- Promote `sk-review-diff` to core and move `sk-review-diff` and `sk-verify-code-ui-only` out of the report picker category.
+
+### Breaking changes
+
+- Remove the packaged `sk-excute-fast` skill; use `sk-excute` for all implementation scopes. Existing project installations are preserved.
+- Keep `sk-create-skill` and `skill-creator` repository-local and exclude them from the package and installer picker; existing project installations are not automatically removed.
+
 ## [3.0.1] - 2026-10-05
 
 ### Fixed

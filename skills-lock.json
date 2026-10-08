@@ -13,6 +13,12 @@
       "skillPath": "skills/frontend-slides/SKILL.md",
       "computedHash": "afd3f7431b1d017c0f330580b2a7f94a2430ee4a32dfd46de3ba06d0634ba499"
     },
+    "herdr": {
+      "source": "herdrdev/herdr",
+      "sourceType": "github",
+      "skillPath": "skills/herdr/SKILL.md",
+      "computedHash": "66715d76e5947497431ec0db32f2693b9c916ad799c3f32b99e6174b4b9c607f"
+    },
     "skill-creator": {
       "source": "anthropics/skills",
       "sourceType": "github",
