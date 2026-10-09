@@ -3,51 +3,29 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const SB_KIT_SKILLS = [
-  "sk-excute",
-  "sk-excute-fast",
-  "sk-excute-explorer",
-  "sk-excute-researcher",
-  "sk-excute-reviewer",
-  "sk-excute-implementer",
-  "sk-visualizer",
-  "sk-create-slide",
-  "sk-release",
-  "sk-doc",
-  "sk-start-next-hono",
-  "sk-explain",
-  "sk-verify-code-ui-only",
-];
-const ASSET_SKILLS = [
-  "frontend-design",
-  "vercel-react-best-practices",
-  "vercel-react-native-skills",
-];
-const REPORT_SKILLS = [
-  "sk-create-slide",
-  "sk-visualizer",
-  "sk-doc",
-  "sk-explain",
-  "sk-verify-code-ui-only",
-];
+const { SB_KIT_SKILLS, ASSET_SKILLS, REPORT_SKILLS } = require("./lib/catalog");
+const stateTools = require("./lib/skill-state");
+const { inspectProject, renderDoctor } = require("./lib/doctor");
+const { chooseInstallSelection } = require("./lib/presets");
+const { runUpdate } = require("./lib/update");
+const PACKAGE_VERSION = require("./package.json").version;
+const LOCAL_ONLY_SKILLS = new Set(["herdr", "skill-creator", "sk-create-skill"]);
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
-  npx sb-kit install                                      Choose skills by category
+  npx sb-kit install                                      Choose preset and editable skill selection
   npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace
+  npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)
+  npx sb-kit update                                       Preview selected updates with retained backups (offline)
   npx sb-kit --help                                       Show this help`;
 
 function usage() {
   console.log(USAGE);
 }
 
-function cpRecursive(src, dest) {
-  fs.cpSync(src, dest, { recursive: true });
-}
-
 function listSkills(dir) {
-  if (!fs.existsSync(dir)) return [];
+  if (!stateTools.statSafe(dir)) return [];
   return fs.readdirSync(dir)
-    .filter((name) => fs.statSync(path.join(dir, name)).isDirectory())
+    .filter((name) => !LOCAL_ONLY_SKILLS.has(name) && stateTools.statSafe(path.join(dir, name))?.isDirectory())
     .sort();
 }
 
@@ -84,10 +62,11 @@ function categoryOptions(allSkills) {
   );
 }
 
-async function chooseSkills(allSkills, prompts) {
+async function chooseSkills(allSkills, prompts, initialValues = []) {
   const choice = await prompts.groupMultiselect({
     message: "Choose skills to install:",
     options: categoryOptions(allSkills),
+    ...(initialValues.length ? { initialValues } : {}),
     required: true,
   });
 
@@ -124,79 +103,111 @@ async function chooseConflictMode(prompts) {
   return choice;
 }
 
-function install(
-  skillNames,
-  root,
-  targetDir = process.cwd(),
-  { replace = false } = {},
-) {
-  const srcSkillsDir = path.resolve(__dirname, ".agents", "skills");
-  const destSkillsDir = path.resolve(targetDir, root, "skills");
-
-  for (const name of skillNames) {
-    if (!fs.existsSync(path.join(srcSkillsDir, name))) {
-      console.error(
-        `Error: .agents/skills/${name} is missing from the package.`,
-      );
-      return false;
-    }
+function install(skillNames, root, targetDir = process.cwd(), { replace = false, io = fs } = {}) {
+  stateTools.assertRoot(root);
+  const names = [...new Set(skillNames)];
+  const targets = names.map((name) => {
+    stateTools.assertName(name);
+    const source = stateTools.skillPath(__dirname, ".agents", name);
+    const destination = stateTools.skillPath(targetDir, root, name);
+    if (!stateTools.statSafe(source, io)?.isDirectory()) return null;
+    const sourceSnapshot = stateTools.snapshot(source, io);
+    const existing = stateTools.statSafe(destination, io);
+    if (existing && !existing.isDirectory()) throw new Error(`Invalid skill destination: ${destination}`);
+    const localSnapshot = existing ? stateTools.snapshot(destination, io) : null;
+    return { name, source, destination, sourceSnapshot, localSnapshot, existing: Boolean(existing) };
+  });
+  if (targets.some((target) => !target)) {
+    console.error("Error: a selected skill is missing from .agents/skills in the package.");
+    return false;
   }
-
-  fs.mkdirSync(destSkillsDir, { recursive: true });
+  stateTools.readState(targetDir, io);
+  stateTools.assertNoPendingOperation(targetDir, io);
+  const skipped = targets.filter((target) => target.existing && !replace).map((target) => target.name);
+  const selected = targets.filter((target) => !target.existing || replace);
   const added = [];
   const replaced = [];
-  const skipped = [];
-
-  for (const name of skillNames) {
-    const srcSkill = path.join(srcSkillsDir, name);
-    const destSkill = path.join(destSkillsDir, name);
-    if (!fs.existsSync(destSkill)) {
-      cpRecursive(srcSkill, destSkill);
-      added.push(name);
-      continue;
-    }
-    if (!replace) {
-      skipped.push(name);
-      continue;
-    }
-
-    const stageDir = fs.mkdtempSync(path.join(destSkillsDir, `.${name}-`));
-    const stagedSkill = path.join(stageDir, name);
-    const backupSkill = path.join(stageDir, "existing-skill");
-    let originalMoved = false;
-    let replacementInstalled = false;
+  if (selected.length) {
+    const mutation = stateTools.beginMutation(targetDir, "install", io);
+    const state = stateTools.readState(targetDir, io);
+    let recoveryRequired = false;
     try {
-      cpRecursive(srcSkill, stagedSkill);
-      fs.renameSync(destSkill, backupSkill);
-      originalMoved = true;
-      fs.renameSync(stagedSkill, destSkill);
-      replacementInstalled = true;
-      replaced.push(name);
-    } catch (error) {
-      if (originalMoved && !fs.existsSync(destSkill)) {
+      for (const target of selected) {
+        const { name, source, destination, sourceSnapshot } = target;
+        const staging = stateTools.managedPath(targetDir, ".sb-kit", "staging", mutation.operation.id, root, name);
+        const stagedSkill = path.join(staging, "incoming");
+        const original = path.join(staging, "original");
+        const before = state.roots[root][name];
+        let originalMoved = false;
+        let installed = false;
+        stateTools.statSafe(staging, io);
+        io.mkdirSync(staging, { recursive: true });
+        mutation.operation.current = { root, skill: name, staging: path.relative(targetDir, staging), before: before || null, phase: "staging" };
+        mutation.record();
         try {
-          fs.renameSync(backupSkill, destSkill);
-        } catch (rollbackError) {
-          error.message += `\nRollback failed: ${rollbackError.message}`;
+          io.cpSync(source, stagedSkill, { recursive: true });
+          if (stateTools.snapshot(stagedSkill, io).treeHash !== sourceSnapshot.treeHash ||
+              stateTools.snapshot(source, io).treeHash !== sourceSnapshot.treeHash) {
+            throw new Error("Packaged skill changed during installation.");
+          }
+          stateTools.statSafe(path.dirname(destination), io);
+          io.mkdirSync(path.dirname(destination), { recursive: true });
+          const current = stateTools.statSafe(destination, io);
+          if (Boolean(current) !== target.existing) throw new Error("Skill destination changed during installation.");
+          if (target.existing) {
+            if (stateTools.snapshot(destination, io).treeHash !== target.localSnapshot.treeHash) {
+              throw new Error("Skill destination changed during installation.");
+            }
+            io.renameSync(destination, original);
+            originalMoved = true;
+          }
+          io.renameSync(stagedSkill, destination);
+          installed = true;
+          state.roots[root][name] = stateTools.receipt(sourceSnapshot, PACKAGE_VERSION);
+          stateTools.writeState(targetDir, state, io);
+          mutation.operation.current.phase = "committed";
+          mutation.operation.completed.push({ root, skill: name });
+          mutation.record();
+        } catch (error) {
+          try {
+            if (installed) {
+              if (stateTools.snapshot(destination, io).treeHash !== sourceSnapshot.treeHash) {
+                throw new Error("Replacement changed after install swap; refusing destructive rollback.");
+              }
+              io.rmSync(destination, { recursive: true, force: true });
+            }
+            if (originalMoved) io.renameSync(original, destination);
+            if (before) state.roots[root][name] = before;
+            else delete state.roots[root][name];
+            stateTools.writeState(targetDir, state, io);
+            mutation.operation.current.phase = "rolled-back";
+            mutation.operation.completed = mutation.operation.completed.filter((item) => item.root !== root || item.skill !== name);
+          } catch (rollbackError) {
+            recoveryRequired = true;
+            error.message += `\nRollback failed: ${rollbackError.message}. Recovery staging: ${staging}`;
+          }
+          throw error;
         }
+        (target.existing ? replaced : added).push(name);
+        io.rmSync(staging, { recursive: true, force: true });
+        mutation.operation.current = null;
+        mutation.record();
       }
+      mutation.finish();
+    } catch (error) {
+      try {
+        mutation.finish(recoveryRequired ? "recovery-required" : "rolled-back");
+      } catch (journalError) {
+        error.message += `\nOperation journal requires recovery: ${journalError.message}`;
+      }
+      error.message += `\nCompleted: ${[...added, ...replaced].join(", ") || "none"}. Inspect .sb-kit/operation.json before retrying.`;
       throw error;
-    } finally {
-      if (
-        replacementInstalled ||
-        !originalMoved ||
-        fs.existsSync(destSkill)
-      ) {
-        fs.rmSync(stageDir, { recursive: true, force: true });
-      }
     }
   }
-
   console.log(`\n✓ ${root}/skills processed`);
   if (added.length) console.log(`  Added:    ${added.join(", ")}`);
   if (replaced.length) console.log(`  Replaced: ${replaced.join(", ")}`);
-  if (skipped.length)
-    console.log(`  Skipped:  ${skipped.join(", ")} (already present)`);
+  if (skipped.length) console.log(`  Skipped:  ${skipped.join(", ")} (already present)`);
   return true;
 }
 
@@ -521,7 +532,11 @@ async function main() {
       const allSkills = listSkills(srcSkillsDir);
       if (!allSkills.length) throw new Error("No packaged skills found.");
 
-      const skillNames = await chooseSkills(allSkills, prompts);
+      const available = stateTools.inventory(process.cwd(), ".agents").filter((name) => {
+        const stat = stateTools.statSafe(path.join(stateTools.skillPath(process.cwd(), ".agents", name), "SKILL.md"));
+        return stat?.isFile();
+      });
+      const skillNames = await chooseInstallSelection(allSkills, prompts, chooseSkills, available);
       if (!skillNames) return;
       const conflictMode = await chooseConflictMode(prompts);
       if (!conflictMode) return;
@@ -533,6 +548,22 @@ async function main() {
         if (!install(skillNames, ".claude", process.cwd(), installOptions))
           throw new Error("Claude Code installation failed.");
       }
+      break;
+    }
+    case "update": {
+      if (process.argv.length > 3) throw new Error("Usage: npx sb-kit update");
+      const prompts = await import("@clack/prompts");
+      await runUpdate(process.cwd(), __dirname, prompts);
+      break;
+    }
+    case "doctor": {
+      const args = process.argv.slice(3);
+      if (args.length > 1 || args.some((arg) => arg !== "--json")) {
+        throw Object.assign(new Error("Usage: npx sb-kit doctor [--json]"), { exitCode: 2 });
+      }
+      const report = inspectProject(process.cwd(), __dirname);
+      console.log(args.includes("--json") ? JSON.stringify(report, null, 2) : renderDoctor(report));
+      process.exitCode = report.exitCode;
       break;
     }
     case "create": {
@@ -560,7 +591,7 @@ async function main() {
 if (require.main === module) {
   main().catch((error) => {
     console.error(`Error: ${error.message}`);
-    process.exitCode = 1;
+    process.exitCode = error.exitCode || 1;
   });
 }
 
@@ -573,6 +604,7 @@ module.exports = {
   chooseConflictMode,
   chooseSkills,
   install,
+  listSkills,
   parseCreateArgs,
   createNextHonoProject,
   runCommand,

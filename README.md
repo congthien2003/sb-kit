@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, `$sk-excute-fast` cho thay đổi nhỏ, cùng các role contracts hỗ trợ scout, researcher, reviewer và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher, reviewer và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
 
 ## Prerequisites
 
@@ -15,13 +15,20 @@ Chạy lệnh trong thư mục project cần sử dụng skills:
 npx sb-kit install
 ```
 
+Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc **Reporting**. Preset chỉ preselect checkbox; bạn có thể chỉnh lại trước khi xác nhận.
+
+- Minimal: `sk-excute`, reviewer, `sk-explain`, `sk-debug`, `sk-review-diff`.
+- Full-stack: toàn bộ core, `vercel-react-best-practices`, `sk-debug`.
+- UI: `sk-excute`, reviewer, frontend design, React practices, landing page, UI audit và `sk-review-diff`.
+- Reporting: report registry.
+
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `deep-research`, workflow/roles `sk-excute*`, `sk-create-skill`, `skill-creator`, `sk-landing-page`, `sk-release`, và `sk-start-next-hono`.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, và `sk-verify-code-ui-only`.
 - **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
-- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, `sk-explain`, và `sk-verify-code-ui-only`.
+- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
-CLI bắt buộc chọn ít nhất một skill. Sau selection, chọn cách xử lý skill đã tồn tại:
+CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ bốn role skills `sk-excute-explorer`, `sk-excute-researcher`, `sk-excute-reviewer`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
 
 1. **Install missing only** — mặc định; giữ folder skill hiện có và báo `Skipped`.
 2. **Replace selected** — chỉ thay đúng các skill đã checkbox, báo `Replaced`; skill không chọn không bị ảnh hưởng.
@@ -98,7 +105,7 @@ npx sb-kit --help
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
-2. Bạn dùng checkbox để chọn từng skill dưới các group `sk-work`, `assets`, và `report`.
+2. Bạn chọn preset rồi chỉnh checkbox từng skill dưới các group `sk-work`, `assets`, và `report`.
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
@@ -118,7 +125,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Package có **20 skills**, gồm **13 core** và **7 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **19 skills**, gồm **13 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -127,7 +134,6 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | Skill | Mục đích |
 | --- | --- |
 | `sk-excute` | Inline-first: agent chính viết spec, plan/todo, triển khai và review; một reviewer kiểm tra toàn spec, giữ hai approval gates và worker tùy chọn; không tự commit. |
-| `sk-excute-fast` | Fast path cho task nhỏ: rapid brainstorm → micro-spec → approve → file-specific mini-plan → approve → triển khai inline và verify; tự escalate sang `sk-excute` khi scope/risk lớn. |
 | `sk-excute-explorer` | Contract cho scout read-only, trả evidence về code/tài liệu local còn thiếu; tái sử dụng packet cho spec/plan, không bắt buộc scout lại. |
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-reviewer` | Review toàn spec theo block; review plan/changes có mục tiêu khi cần. Trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
@@ -139,26 +145,28 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 | `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
+| `sk-review-diff` | Review diff được chọn, findings có severity/location/evidence; phân biệt regression với pre-existing issues, không tự patch/verify. |
 
-Dùng `$sk-create-skill` khi muốn tạo hoặc cải thiện một SaboKit skill (ví dụ `$sk-create-skill Tạo skill kiểm tra migration scripts.`). Trước khi dùng, cài và tự chọn `$sk-excute` cùng các role skills phù hợp, và `skill-creator`; sb-kit không tự cài các companion này. Skill dừng nếu thiếu companion bắt buộc và không tự cài thay.
+`sk-create-skill` và `skill-creator` chỉ được giữ trong checkout của repository để phục vụ tác vụ nội bộ; chúng không thuộc catalog, picker hay npm package của sb-kit. Không dùng `sb-kit install` để phân phối hoặc cài hai skill này.
 
 `$sk-excute` đi theo flow: agent chính điều tra phần cần thiết → tự viết spec có block IDs → một reviewer kiểm tra toàn spec → bạn approve spec → agent chính lập plan chi tiết và todo list → bạn approve plan → triển khai inline → agent chính review changes và báo evidence. Không bắt buộc scout lần hai, reviewer cho plan hay câu hỏi chọn mode. Plan chỉ cần independent review bổ sung khi có rủi ro API/schema, security, migration hoặc cross-subsystem mới chưa được spec review bao phủ; đổi scope/behavior phải duyệt lại spec.
 
 Worker chỉ được dùng khi allocation đã được cho phép trong plan hoặc bạn chấp thuận sau đó. Giao một nhóm task liên quan cùng file scope, dependencies và acceptance criteria, không spawn theo từng todo hay gửi toàn lịch sử. Agent chính không sửa chồng file khi worker đang giữ ownership; sau handback, agent chính đọc files/diff và có thể sửa lỗi trong scope inline. Giữ nguyên tên packaged skills explorer/implementer để tương thích catalog; chúng là contract cho native scout/worker, không phải agent types bổ sung. Chỉ chạy verification được cho phép, công khai checks chưa chạy và không coi source review là runtime proof hoặc số đo tiết kiệm token.
 
-Dùng `$sk-excute-fast` khi task chỉ có blast radius nhỏ (thường 1–3 files): workflow vẫn giữ hai approval gates nhưng thay explorer/reviewer độc lập bằng rapid scan, micro-spec và mini-plan 2–5 bước, rồi triển khai inline. Skill sẽ yêu cầu chuyển sang `$sk-excute` nếu phát hiện thay đổi cross-subsystem, public API/schema, security-sensitive, external research hoặc rủi ro contract đáng kể.
+Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc source, không chạy lệnh.` và `$sk-review-diff Review staged diff, không sửa hoặc verify.` Cả hai mặc định trả report trong chat; muốn patch phải dùng `$sk-excute` và duyệt spec/plan.
+
+`sk-excute-fast` không còn được đóng gói. Dùng `$sk-excute` cho cả task nhỏ và lớn; installer không xóa bản fast đã cài trong project.
 
 ### Supporting skills
 
 | Skill | Mục đích |
 | --- | --- |
+| `sk-debug` | Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence; read-only mặc định, không tự patch/reproduce. |
 | `sk-landing-page` | Tạo landing page sản phẩm tại `landing/index.html` bằng Tailwind CSS CDN, chọn concept và font theo nội dung. |
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
 | `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
-| `sk-create-skill` | Điều phối tạo, cải thiện, đổi tên rõ ràng hoặc tích hợp SaboKit skill theo workflow được tham chiếu; không chép lại quy trình approval/implementation. |
-| `skill-creator` | Hướng dẫn tạo, cải thiện và đánh giá skill; companion được chọn riêng cho `sk-create-skill`. |
 
 Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
 
@@ -168,7 +176,7 @@ $sk-landing-page Tạo landing page cho sản phẩm trong repository này.
 
 Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
 
-`sk-verify-code-ui-only` nằm trong nhóm `report` của `sb-kit install` và được cài trong `create next-hono` như một core skill. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
+`sk-verify-code-ui-only` là core skill, nằm trong nhóm `sk-work` của `sb-kit install` và được cài trong `create next-hono`. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
 
 Ví dụ:
 
@@ -185,10 +193,34 @@ Có thể chia pages/sections cho native sub-agents nếu host hỗ trợ.
 
 Mở checkbox picker theo category và cài các skill được chọn vào project hiện tại.
 
-- Input: checkbox từng skill trong `sk-work`, `assets`, `report`; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
+- Input: preset, editable checkbox trong `sk-work`, `assets`, `report`, xác nhận companion nếu cần; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
 - Output: danh sách skills `Added`, `Replaced`, hoặc `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
 - Conflict mode mặc định **Install missing only** không ghi đè folder skill có sẵn. **Replace selected** chỉ thay folder của skill đã checkbox.
 - Error: lệnh dừng nếu không chọn skill, cancel prompt, hoặc một skill đã chọn không tồn tại trong `.agents/skills` của package.
+
+### `sb-kit doctor [--json]`
+
+Inspect `.agents/skills` và `.claude/skills` offline, chỉ đọc, không chạy code trong skill và không tạo/repair metadata. `--json` trả schema version 1, `skills`, `findings` và `exitCode`; text dùng cùng findings.
+
+- `unchanged`, `local-modified`, `upstream-changed`, `both-changed`: so hash local/package với install baseline.
+- `untracked-identical`: legacy khớp source nhưng chưa có receipt; `unknown`: legacy khác source, không kết luận nguồn thay đổi.
+- `unmanaged`: skill ngoài package, gồm bản fast cũ; không xóa hay update.
+- Companion thiếu và mirror cùng tên khác nội dung được báo riêng. Không có `.claude` không phải lỗi; role reviewer còn phụ thuộc host và explicit fallback consent.
+- Exit `0`: clean/info; `1`: cần chú ý; `2`: lỗi metadata/path/read hoặc mutation đang pending.
+
+### `sb-kit update`
+
+Update interactive, **offline** từ package sb-kit đang chạy; không fetch npm/GitHub. Nếu cần source mới, bạn tự chọn phiên bản CLI trước. Chọn roots (`.agents` mặc định, Claude/both phải opt-in), rồi chọn skill đã cài và còn trong package.
+
+CLI preview file added/removed/changed và excerpts giới hạn; binary, file lớn hoặc nội dung sensitive-like chỉ có summary. Redaction heuristic không bảo đảm phát hiện mọi secret. Bản Unknown/local-modified cần overwrite consent bổ sung, sau đó final confirmation mặc định **No**. Cancel trước apply không tạo metadata, lock hay backup. Bản giống source được Skipped, không reseed receipt.
+
+Trước replace, CLI lưu đầy đủ originals và prior receipt state tại `.sb-kit/backups/<operation-id>/<root>/<skill>/`, gồm `original/`, `before-state.json` và `recovery.md`. Backups được giữ cả khi thành công; không auto-prune hay auto-restore. Swap/recheck/rollback theo từng target, **không atomic toàn selection**: nếu target sau lỗi, target trước đã thành công vẫn giữ và được báo rõ.
+
+Update dùng **strict durability**: file bytes, directory entries của backups/staging, journal và receipts phải qua `fsync` barriers trước destructive swap/commit. CLI preflight directory barriers trên project và các roots đã chọn; nếu Node/platform/filesystem không hỗ trợ open/flush directory thì dừng trước overwrite, không tự fallback sang bảo đảm yếu hơn. Lỗi flush về sau kích hoạt rollback hoặc manual recovery. Đây là yêu cầu đối với filesystem thực sự thực thi `fsync`, không phải bảo đảm về hardware bỏ qua flush. `install` không bị áp strict-update gate này.
+
+Báo cáo lỗi liệt kê Completed, Failed, Skipped và Unattempted, kèm recovery status cấp operation (kể cả lỗi finalize không gắn với target) và backups giữ lại. Nếu rollback không hoàn tất hoặc journal/lock pending, doctor báo lỗi và mutation bị chặn. Dừng active writers, đọc `.sb-kit/operation.json` và `recovery.md`; kiểm tra backup trước khi restore toàn folder cùng receipt tương ứng. Chỉ clear journal/lock thủ công sau khi trạng thái consistent. Không copy receipt snapshot của target cũ đè lên receipts của các target thành công sau đó.
+
+Safe-update backups không áp dụng hồi tố cho `install → Replace selected` cũ. Skill ngoài package, bao gồm fast legacy, không bị update hoặc xóa.
 
 ### `sb-kit --help`
 
@@ -206,6 +238,8 @@ Tạo base pnpm workspace bằng official Next.js và Hono generators, chuẩn h
 ## Configuration
 
 Không cần file cấu hình hoặc environment variable. `install` sử dụng project hiện tại làm thư mục đích; `create next-hono` nhận target từ `<project-name>`.
+
+Khi thực sự cài/thay skill, CLI ghi `.sb-kit/state.json` với package version lúc cài và SHA256 raw bytes theo từng root/skill. `Skipped` không cập nhật baseline; skill legacy chưa có receipt vẫn là Unknown. Đây không phải per-skill SemVer và không thay `skills-lock.json`. Metadata hỏng hoặc mutation chưa hoàn thành sẽ chặn thay đổi tiếp theo; xem `.sb-kit/operation.json` và recovery paths trước khi retry.
 
 ## Examples
 

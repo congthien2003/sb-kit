@@ -405,7 +405,7 @@
       <!-- Header -->
       <header>
         <span class="logo">sb-kit</span>
-        <span class="badge">20 agent skills</span>
+        <span class="badge">19 agent skills</span>
       </header>
 
       <!-- Hero -->
@@ -416,7 +416,10 @@
                     Một câu lệnh — luôn cài vào <code>.agents/skills</code>, rồi
                     bạn chọn có cài thêm cho <code>.claude/skills</code> hay
                     không. Bạn chọn giữ skill đã tồn tại hoặc replace đúng
-                    những skill đã tick.
+                    những skill đã tick. Chọn preset hoặc Manual, và dùng
+                    <code>sb-kit doctor</code> để inspect offline, chỉ đọc.
+                    <code>sb-kit update</code> preview selection trước khi thay,
+                    giữ backup và yêu cầu consent cho bản sửa local.
           </p>
           <div class="install-block">
             <code>npx sb-kit install</code>
@@ -464,7 +467,8 @@
           <div class="step">
             <span class="step-num">2</span
                         ><span
-                            >Dùng checkbox chọn từng skill theo category:
+                            >Chọn Manual hoặc preset Minimal / Full-stack / UI / Reporting,
+                            rồi chỉnh checkbox theo category:
                             <strong>sk-work</strong>, <strong>assets</strong>,
                             hoặc <strong>report</strong>.</span
                         >
@@ -503,16 +507,6 @@
                             kiểm tra → approve spec → plan/todo → approve plan →
                             triển khai và final review. Scout/researcher theo nhu
                             cầu; worker tùy chọn, không hỏi mode riêng.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-excute-fast</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Fast path cho task nhỏ: brainstorm → spec → approval
-                            → mini-plan → triển khai inline và verify.
             </p>
           </article>
           <article class="skill-card">
@@ -627,6 +621,13 @@
           </article>
           <article class="skill-card">
             <div class="skill-card-header">
+              <h3>sk-review-diff</h3>
+              <span class="tag tag-core">core</span>
+            </div>
+            <p>Review diff được chọn với severity, location và evidence. Phân biệt regression và vấn đề có sẵn; không tự patch/verify.</p>
+          </article>
+          <article class="skill-card">
+            <div class="skill-card-header">
               <h3>sk-start-next-hono</h3>
               <span class="tag tag-core">core</span>
             </div>
@@ -640,8 +641,15 @@
 
       <!-- Supporting -->
       <section>
-        <h2 class="section-label">Supporting / 7 skills</h2>
+        <h2 class="section-label">Supporting / 6 skills</h2>
         <div class="skill-list">
+          <article class="skill-card">
+            <div class="skill-card-header">
+              <h3>sk-debug</h3>
+              <span class="tag tag-support">support</span>
+            </div>
+            <p>Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence. Không tự patch hay chạy reproduction.</p>
+          </article>
           <article class="skill-card">
             <div class="skill-card-header">
               <h3>frontend-design</h3>
@@ -697,27 +705,6 @@
               Tạo hoặc cập nhật landing page sản phẩm tại
               <code>landing/index.html</code>, với concept, typography và
               bố cục phù hợp bằng Tailwind CSS CDN.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-create-skill</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-              Điều phối tạo và cải thiện SaboKit skills theo workflow được tham chiếu,
-              không thay thế approval hay quy trình thực thi. Bao gồm hướng dẫn tích hợp
-              CLI, changelog, README, landing page và kiểm thử cài đặt.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>skill-creator</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-              Hướng dẫn tạo, cải thiện và đánh giá skill theo phản hồi.
-              Companion của <code>sk-create-skill</code>, cần được chọn cài riêng.
             </p>
           </article>
         </div>
