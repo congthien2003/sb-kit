@@ -1,5 +1,11 @@
 # Changelog
 
+## [3.2.1] - 2026-10-13
+
+### Changed
+
+- Require an independent, read-only review after each coherent worker handoff; resolve blocking findings and perform targeted re-review before the orchestrator's final review.
+
 ## [3.2.0] - 2026-10-08
 
 ### Added

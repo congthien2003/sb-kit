@@ -26,14 +26,14 @@ Packaged skill names remain unchanged; they are instructions for the four native
 | --- | --- | --- |
 | `scout` | `../sk-excute-explorer/SKILL.md` | Read-only code/local-document evidence for a specific missing answer. |
 | `researcher` | `../sk-excute-researcher/SKILL.md` | Cited public external evidence for a concrete, decision-relevant question. |
-| `reviewer` | `../sk-excute-reviewer/SKILL.md` | One whole-spec review; targeted risk or change review only when needed. |
+| `reviewer` | `../sk-excute-reviewer/SKILL.md` | One whole-spec review; mandatory read-only review after each coherent worker handoff; targeted plan review for new material risk. |
 | `worker` | `../sk-excute-implementer/SKILL.md` | Optional implementation of an authorized approved task or coherent group. |
 
 Give each child a compact, cold-start-complete packet: objective, relevant paths/evidence, applicable instructions, authority boundary, acceptance criteria, allowed verification, output, and stop conditions. Do not copy the entire conversation or approved plan when a slice and its dependencies suffice. Children must not dispatch agents.
 
 - If the packaged contract for a role cannot be resolved, treat that role as unavailable and tell the user which skill must be installed (`sk-excute-explorer`, `sk-excute-researcher`, `sk-excute-reviewer`, or `sk-excute-implementer`). Do not install it automatically or substitute a locally invented contract; apply the matching fallback below.
 - If optional scout/researcher dispatch is unavailable, gather permitted evidence inline or disclose the limitation. Do not guess a decision-critical fact or treat an essential unanswered question as non-blocking.
-- If independent reviewer dispatch is unavailable, disclose that self-review is not independent. Ask the user to explicitly accept a self-review fallback or stop; do not silently pass the review gate.
+- If independent reviewer dispatch is unavailable for a spec or worker change review, disclose that self-review is not independent. Ask the user to explicitly accept a self-review fallback or stop; do not silently pass the review gate.
 - If an authorized worker is unavailable or fails, report status and any partial changes, preserve the ownership boundary, and ask the user before taking over its assigned scope. Do not silently switch execution ownership.
 
 ## Workflow
@@ -98,13 +98,15 @@ An optional worker must earn its overhead through a coherent isolated task/group
 
 The worker packet contains the approved task IDs/slice, scope/non-goals, necessary upstream/downstream contracts, relevant instructions, exact permitted files and user-owned baseline, acceptance/dependencies, allowed verification, stop conditions, and concise reporting requirements.
 
-Keep exclusive file ownership: do not edit the worker's files while it owns them. The worker does not widen scope or delegate. After it returns or stops and ownership is explicitly handed back, the main agent reads its changed files and diff, checks contracts/integration and acceptance, and can correct within-scope issues inline. Redispatch only when substantial remaining work justifies the overhead. Do not impose a blanket parent-patching ban after handback.
+Keep exclusive file ownership: do not edit the worker's files while it owns them. The worker does not widen scope or delegate. After the worker returns or stops and ownership is explicitly handed back, the main agent captures the exact changed files and diff, then dispatches one independent reviewer for that coherent worker task/group. The reviewer receives the approved task IDs, acceptance criteria, exact diff, relevant evidence, and applicable instructions. The review is read-only and checks the changes against the approved scope, contracts, integration points, and acceptance criteria. Do not dispatch one reviewer per todo.
+
+Request `Pass`, `Pass with non-blocking findings`, or `Blocked`. Resolve blockers before continuing; route corrections to the worker or make an authorized in-scope correction after handback, then request targeted re-review of the changed files and affected dependencies. Record non-blocking finding dispositions. Once the worker review is resolved, the main agent performs the final review and integration check described in Step 6. Redispatch the worker only when substantial remaining work justifies the overhead. Do not impose a blanket parent-patching ban after handback.
 
 For scope/architecture changes, obtain renewed approval. Stop for unresolved credentials, environment, data, permissions, or other critical blockers; do not claim completion while they remain.
 
 ### 6. Main reviews and reports evidence
 
-The main agent always reviews the final diff and changed files for acceptance, contract/caller-consumer consistency, scope, generated files, debug code, secrets, and unrelated edits. Independent change review is optional for concrete high-risk changes or user request, not a routine extra gate.
+The main agent always reviews the final diff and changed files for acceptance, contract/caller-consumer consistency, scope, generated files, debug code, secrets, and unrelated edits. When a worker contributed implementation, the independent review in Step 5 is mandatory and does not replace this final review. For inline-only changes, dispatch an independent reviewer only when material risk warrants it or the user requests it; do not routinely dispatch a second reviewer for the main agent's final diff after the required worker review.
 
 Run only permitted, relevant checks. Separate:
 
@@ -120,4 +122,4 @@ A lower evidence level does not establish a higher one. For failures, distinguis
 - **Evidence/diagnosis:** concise source summaries, citations when researched, bug evidence status, unknowns, and fallback disclosures.
 - **Spec gate:** block-identified spec, reviewer verdict/dispositions, approval question.
 - **Plan gate:** ordered file-specific todos, dependencies/owners, self-review and any targeted independent verdict, approval question.
-- **Delivery:** changed files/behavior, optional worker handoff and main review outcome, evidence by level, blockers/unverified acceptance, and exact user-run commands. State whether any commit was explicitly requested and created.
+- **Delivery:** changed files/behavior, worker handoff and independent review verdict/dispositions when applicable, main agent's final review outcome, evidence by level, blockers/unverified acceptance, and exact user-run commands. State whether any commit was explicitly requested and created.

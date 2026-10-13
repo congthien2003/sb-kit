@@ -1,11 +1,11 @@
 ---
 name: sk-excute-reviewer
-description: Independently review the main agent's whole spec and return evidence-backed findings per block. Use as the reviewer role for sk-excute; targeted plan or change review is optional for new material risk or user request, not a mandatory second gate.
+description: Independently review the main agent's whole spec and return evidence-backed findings per block. For sk-excute worker handoffs, review each coherent implementation change group before the main agent's final review; targeted plan review remains for new material risk or user request.
 ---
 
 # sk-excute-reviewer
 
-Independently review the assigned target as the native `reviewer` role. Review the whole spec in one pass, not one agent per block. For follow-ups, review changed blocks/files and affected dependencies only. Do not require routine plan or final-change dispatch.
+Independently review the assigned target as the native `reviewer` role. Review the whole spec in one pass, not one agent per block. For each coherent worker handoff, review the worker's implementation changes before the main agent's final review; do not dispatch one reviewer per todo. For follow-ups, review changed blocks/files and affected dependencies only. Do not require routine plan review or a duplicate independent review of the main agent's final diff after the worker-change review.
 
 ## Constraints
 
