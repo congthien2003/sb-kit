@@ -24,7 +24,7 @@ Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc *
 
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, và `sk-verify-code-ui-only`.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, và `sk-verify-code-ui-only`.
 - **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
 - **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
@@ -125,7 +125,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Catalog chính thức có **18 skills**, gồm **12 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **19 skills**, gồm **13 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -145,6 +145,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
 | `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
 | `sk-review-diff` | Review diff được chọn, findings có severity/location/evidence; phân biệt regression với pre-existing issues, không tự patch/verify. |
+| `sk-idea-to-docs` | Biến ý tưởng thành bộ docs nền tảng `docs/overview.md`, `docs/spec.md`, `docs/implementation-plan.md`: hỏi từng câu, phân biệt xác nhận/đề xuất/giả định/điểm mở, lấy phản hồi trước khi lập plan; dừng ở docs, không triển khai hay commit. |
 
 `sk-create-skill` và `skill-creator` chỉ được giữ trong checkout của repository để phục vụ tác vụ nội bộ; chúng không thuộc catalog, picker hay npm package của sb-kit. Không dùng `sb-kit install` để phân phối hoặc cài hai skill này.
 

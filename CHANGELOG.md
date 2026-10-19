@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Add core `sk-idea-to-docs` to turn an idea into overview, spec and implementation plan docs, with templates and three eval definitions.
+
 ## [3.3.0] - 2026-10-19
 
 ### Changed

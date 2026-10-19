@@ -562,6 +562,7 @@ function assertSbKitSkills(target, root) {
     "sk-explain",
     "sk-verify-code-ui-only",
     "sk-review-diff",
+    "sk-idea-to-docs",
   ];
 
   assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
@@ -606,7 +607,7 @@ function assertVisualizerReferences(target, root) {
   }
 }
 
-const NEW_SKILLS_WITH_EVALS = ["sk-debug", "sk-review-diff"];
+const NEW_SKILLS_WITH_EVALS = ["sk-debug", "sk-review-diff", "sk-idea-to-docs"];
 for (const skill of NEW_SKILLS_WITH_EVALS) {
   const source = path.join(__dirname, ".agents", "skills", skill);
   const instructions = fs.readFileSync(path.join(source, "SKILL.md"), "utf8");
@@ -617,7 +618,7 @@ for (const skill of NEW_SKILLS_WITH_EVALS) {
   assert.strictEqual(evals.skill_name, skill);
   assert.deepStrictEqual(evals.evals.map(({ id }) => id), [1, 2, 3]);
   assert.ok(evals.evals.every((item) => item.prompt && item.expected_output && Array.isArray(item.files) && item.expectations.length));
-  assert.strictEqual(SB_KIT_SKILLS.includes(skill), skill === "sk-review-diff");
+  assert.strictEqual(SB_KIT_SKILLS.includes(skill), ["sk-review-diff", "sk-idea-to-docs"].includes(skill));
   withDisposableTarget("sb-kit-new-skill-", (target) => {
     for (const root of [".agents", ".claude"]) {
       captureLogs(() => install([skill], root, target));
@@ -646,6 +647,8 @@ assert.ok(
 );
 assert.ok(categorized["sk-work"].includes("sk-verify-code-ui-only"));
 assert.ok(categorized["sk-work"].includes("sk-review-diff"));
+assert.ok(categorized["sk-work"].includes("sk-idea-to-docs"));
+assert.ok(!categorized.report.includes("sk-idea-to-docs"));
 assert.ok(SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
 assert.ok(SB_KIT_SKILLS.includes("sk-review-diff"));
 assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-verify-code")));
@@ -701,7 +704,7 @@ assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
 assert.match(changelogSource, /Promote `sk-review-diff` to core/);
-assert.match(readmeSource, /Catalog chính thức có \*\*18 skills\*\*, gồm \*\*12 core\*\* và \*\*6 supporting\*\*/);
+assert.match(readmeSource, /Catalog chính thức có \*\*19 skills\*\*, gồm \*\*13 core\*\* và \*\*6 supporting\*\*/);
 assert.deepStrictEqual(
   [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
   PACKAGED_SKILLS,
