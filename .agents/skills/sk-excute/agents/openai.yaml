@@ -4,6 +4,6 @@ interface:
   short_description: "Inline-first delivery with optional bounded roles"
   default_prompt: >-
     Use $sk-excute to own this task inline: gather needed evidence,
-    obtain approval for a reviewed spec and detailed plan/todos,
-    implement with optional bounded worker support, and report
-    final review and verification limits.
+    get your approval for the spec, then for a self-reviewed
+    plan/todos, implement with optional bounded worker support, and
+    report final review and verification limits.

@@ -426,14 +426,14 @@ build, test, lint, or verification commands unless I explicitly allow them.
 
 The installed sk-excute workflow is inline-first. The main agent owns the
 spec, detailed plan/todos, implementation, integration, and final review.
-Obtain approval for the reviewed spec, then the detailed plan, before edits.
-Only native scout, researcher, worker, and reviewer roles may be dispatched.
-Use scout/researcher only for concrete missing evidence within permissions;
-review the whole spec once, and add plan/change review only for material risk
-or user request. The worker is optional and receives authorized approved
-tasks with exclusive file ownership. Review its changed files after handback.
-If required independent review or an authorized worker is unavailable or
-fails, disclose status and ask before fallback or takeover.`;
+Obtain my approval for the spec, then for the plan the main agent has
+self-reviewed, before edits.
+Only scout, researcher, and worker roles may be dispatched.
+Use scout/researcher only for concrete missing evidence within permissions.
+The worker is optional and receives authorized approved tasks with exclusive
+file ownership. The main agent reviews its changed files after handback.
+If an authorized worker is unavailable or fails, disclose status and ask
+before takeover.`;
 }
 
 function createNextHonoProject(

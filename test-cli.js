@@ -28,7 +28,6 @@ function runInstall({ claude = false } = {}) {
 const CORE_ROLE_SKILLS = [
   "sk-excute-explorer",
   "sk-excute-researcher",
-  "sk-excute-reviewer",
   "sk-excute-implementer",
 ];
 const VISUALIZER_REFERENCE_FILES = [
@@ -520,6 +519,8 @@ withDisposableTarget("sb-kit-legacy-fast-", (target) => {
   }
   assert.ok(!SB_KIT_SKILLS.includes("sk-excute-fast"));
   assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-excute-fast")));
+  assert.ok(!SB_KIT_SKILLS.includes("sk-excute-reviewer"));
+  assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-excute-reviewer")));
 });
 
 const SKILLS_DIR = path.join(__dirname, ".agents", "skills");
@@ -700,7 +701,7 @@ assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
 assert.match(changelogSource, /Promote `sk-review-diff` to core/);
-assert.match(readmeSource, /Catalog chính thức có \*\*19 skills\*\*, gồm \*\*13 core\*\* và \*\*6 supporting\*\*/);
+assert.match(readmeSource, /Catalog chính thức có \*\*18 skills\*\*, gồm \*\*12 core\*\* và \*\*6 supporting\*\*/);
 assert.deepStrictEqual(
   [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
   PACKAGED_SKILLS,
@@ -1042,11 +1043,11 @@ try {
   assert.ok(defaultCreate.handoff.includes("$sk-start-next-hono"));
   assert.match(defaultCreate.handoff, /workflow is inline-first/);
   assert.match(defaultCreate.handoff, /main agent owns the\s+spec, detailed plan\/todos/);
-  assert.match(defaultCreate.handoff, /approval for the reviewed spec, then the detailed plan/);
-  assert.match(defaultCreate.handoff, /Only native scout, researcher, worker, and reviewer roles/);
+  assert.match(defaultCreate.handoff, /approval for the spec, then for the plan the main agent has\s+self-reviewed/);
+  assert.match(defaultCreate.handoff, /Only scout, researcher, and worker roles/);
   assert.match(defaultCreate.handoff, /worker is optional and receives authorized approved\s+tasks/);
-  assert.match(defaultCreate.handoff, /Review its changed files after handback/);
-  assert.match(defaultCreate.handoff, /ask before fallback or takeover/);
+  assert.match(defaultCreate.handoff, /main agent reviews its changed files after handback/);
+  assert.match(defaultCreate.handoff, /ask\s+before takeover/);
   assert.doesNotMatch(defaultCreate.handoff, /choose Inline or Sub-agent/i);
   assert.ok(defaultCreate.logs.join("\n").includes("$sk-start-next-hono"));
 
@@ -1222,7 +1223,6 @@ async function testInstallPrompts() {
   const executionRoles = [
     "sk-excute-explorer",
     "sk-excute-researcher",
-    "sk-excute-reviewer",
     "sk-excute-implementer",
   ];
   const executionSelection = await chooseInstallSelection(
@@ -1241,7 +1241,7 @@ async function testInstallPrompts() {
   let initialSelection;
   await chooseInstallSelection(PACKAGED_SKILLS, { ...selectionPrompts, select: async () => "minimal" }, async (_all, _prompts, initial) => { initialSelection = initial; return ["sk-explain"]; });
   assert.ok(initialSelection.includes("sk-excute"));
-  assert.ok(initialSelection.includes("sk-excute-reviewer"));
+  assert.ok(!initialSelection.includes("sk-excute-reviewer"));
   const cancellations = [];
   let groupConfig;
   const selected = await chooseSkills(PACKAGED_SKILLS, {

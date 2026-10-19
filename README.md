@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher, reviewer và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
 
 ## Prerequisites
 
@@ -17,9 +17,9 @@ npx sb-kit install
 
 Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc **Reporting**. Preset chỉ preselect checkbox; bạn có thể chỉnh lại trước khi xác nhận.
 
-- Minimal: `sk-excute`, reviewer, `sk-explain`, `sk-debug`, `sk-review-diff`.
+- Minimal: `sk-excute`, `sk-explain`, `sk-debug`, `sk-review-diff`.
 - Full-stack: toàn bộ core, `vercel-react-best-practices`, `sk-debug`.
-- UI: `sk-excute`, reviewer, frontend design, React practices, landing page, UI audit và `sk-review-diff`.
+- UI: `sk-excute`, frontend design, React practices, landing page, UI audit và `sk-review-diff`.
 - Reporting: report registry.
 
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
@@ -28,7 +28,7 @@ Sau đó dùng checkbox để chọn từng skill, được chia thành ba categ
 - **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
 - **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
-CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ bốn role skills `sk-excute-explorer`, `sk-excute-researcher`, `sk-excute-reviewer`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
+CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ ba role skills `sk-excute-explorer`, `sk-excute-researcher`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
 
 1. **Install missing only** — mặc định; giữ folder skill hiện có và báo `Skipped`.
 2. **Replace selected** — chỉ thay đúng các skill đã checkbox, báo `Replaced`; skill không chọn không bị ảnh hưởng.
@@ -84,14 +84,14 @@ build, test, lint, or verification commands unless I explicitly allow them.
 
 The installed sk-excute workflow is inline-first. The main agent owns the
 spec, detailed plan/todos, implementation, integration, and final review.
-Obtain approval for the reviewed spec, then the detailed plan, before edits.
-Only native scout, researcher, worker, and reviewer roles may be dispatched.
-Use scout/researcher only for concrete missing evidence within permissions;
-review the whole spec once, and add plan/change review only for material risk
-or user request. The worker is optional and receives authorized approved
-tasks with exclusive file ownership. Review its changed files after handback.
-If required independent review or an authorized worker is unavailable or
-fails, disclose status and ask before fallback or takeover.
+Obtain my approval for the spec, then for the plan the main agent has
+self-reviewed, before edits.
+Only scout, researcher, and worker roles may be dispatched.
+Use scout/researcher only for concrete missing evidence within permissions.
+The worker is optional and receives authorized approved tasks with exclusive
+file ownership. The main agent reviews its changed files after handback.
+If an authorized worker is unavailable or fails, disclose status and ask
+before takeover.
 ```
 
 ## Usage
@@ -109,7 +109,7 @@ Luồng cài đặt:
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
-`$sk-excute` triển khai inline mặc định và chỉ cho phép native roles `scout`, `researcher`, `worker`, `reviewer` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Nếu không có reviewer độc lập, agent phải xin bạn chấp thuận self-review fallback hoặc dừng. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm.
+`$sk-excute` triển khai inline mặc định và chỉ cho phép các role `scout`, `researcher`, `worker` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Không có reviewer sub-agent: bạn review spec, agent chính tự review plan trước khi bạn approve. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm. Role được map theo chức năng (scout = explore/search lấy thông tin, worker = triển khai code, researcher = tra cứu bên ngoài), không theo tên agent của host; sub-agent nên chạy model rẻ hơn main như Haiku, Luna-6 hoặc DeepSeek V4.1.
 
 Ví dụ cấu trúc sau khi dùng lựa chọn mặc định **No**:
 
@@ -125,7 +125,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Catalog chính thức có **19 skills**, gồm **13 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **18 skills**, gồm **12 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -133,10 +133,9 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Inline-first: agent chính viết spec, plan/todo, triển khai và review; một reviewer kiểm tra toàn spec, giữ hai approval gates và worker tùy chọn; không tự commit. |
+| `sk-excute` | Inline-first: agent chính viết spec, plan/todo, tự review plan, triển khai và review; hai approval gates (spec, plan) và worker tùy chọn; không tự commit. |
 | `sk-excute-explorer` | Contract cho scout read-only, trả evidence về code/tài liệu local còn thiếu; tái sử dụng packet cho spec/plan, không bắt buộc scout lại. |
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
-| `sk-excute-reviewer` | Review toàn spec theo block; review plan/changes có mục tiêu khi cần. Trả `Pass`, `Pass with non-blocking findings`, hoặc `Blocked`. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
 | `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
@@ -149,7 +148,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 `sk-create-skill` và `skill-creator` chỉ được giữ trong checkout của repository để phục vụ tác vụ nội bộ; chúng không thuộc catalog, picker hay npm package của sb-kit. Không dùng `sb-kit install` để phân phối hoặc cài hai skill này.
 
-`$sk-excute` đi theo flow: agent chính điều tra phần cần thiết → tự viết spec có block IDs → một reviewer kiểm tra toàn spec → bạn approve spec → agent chính lập plan chi tiết và todo list → bạn approve plan → triển khai inline → agent chính review changes và báo evidence. Không bắt buộc scout lần hai, reviewer cho plan hay câu hỏi chọn mode. Plan chỉ cần independent review bổ sung khi có rủi ro API/schema, security, migration hoặc cross-subsystem mới chưa được spec review bao phủ; đổi scope/behavior phải duyệt lại spec.
+`$sk-excute` đi theo flow: agent chính điều tra phần cần thiết → tự viết spec có block IDs → bạn review và approve spec → agent chính lập plan chi tiết và todo list → agent chính tự review plan → bạn approve plan → triển khai inline (sub-agent phụ tùy chọn) → agent chính review changes và báo evidence. Không có reviewer sub-agent, không bắt buộc scout lần hai hay câu hỏi chọn mode; đổi scope/behavior phải duyệt lại spec.
 
 Worker chỉ được dùng khi allocation đã được cho phép trong plan hoặc bạn chấp thuận sau đó. Giao một nhóm task liên quan cùng file scope, dependencies và acceptance criteria, không spawn theo từng todo hay gửi toàn lịch sử. Agent chính không sửa chồng file khi worker đang giữ ownership; sau handback, agent chính đọc files/diff và có thể sửa lỗi trong scope inline. Giữ nguyên tên packaged skills explorer/implementer để tương thích catalog; chúng là contract cho native scout/worker, không phải agent types bổ sung. Chỉ chạy verification được cho phép, công khai checks chưa chạy và không coi source review là runtime proof hoặc số đo tiết kiệm token.
 
@@ -205,7 +204,7 @@ Inspect `.agents/skills` và `.claude/skills` offline, chỉ đọc, không ch�
 - `unchanged`, `local-modified`, `upstream-changed`, `both-changed`: so hash local/package với install baseline.
 - `untracked-identical`: legacy khớp source nhưng chưa có receipt; `unknown`: legacy khác source, không kết luận nguồn thay đổi.
 - `unmanaged`: skill ngoài package, gồm bản fast cũ; không xóa hay update.
-- Companion thiếu và mirror cùng tên khác nội dung được báo riêng. Không có `.claude` không phải lỗi; role reviewer còn phụ thuộc host và explicit fallback consent.
+- Companion thiếu và mirror cùng tên khác nội dung được báo riêng. Không có `.claude` không phải lỗi.
 - Exit `0`: clean/info; `1`: cần chú ý; `2`: lỗi metadata/path/read hoặc mutation đang pending.
 
 ### `sb-kit update`

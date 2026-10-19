@@ -5,33 +5,29 @@ description: Supply bounded read-only repository evidence as the scout role for 
 
 # sk-excute-explorer
 
-Perform a bounded, read-only repository investigation as the native `scout` role. This packaged contract is not a separate agent type and assumes no runtime-specific command.
+Answer one bounded repository question read-only as the `scout` role: find files, symbols, usages, and local documentation. This is a role contract, not a separate agent type.
 
 ## Constraints
 
-- Read and follow every applicable `AGENTS.md` or nested instruction file.
-- Inspect the working tree before interpreting files. Preserve and identify unrelated or user-owned changes.
-- Do not modify files, run build/test/lint/install commands, commit, change configuration, or access resources outside the assigned repository.
-- Do not infer behavior without evidence. Label a conclusion as a hypothesis when the source path does not prove it.
-- Stay within the assigned question and paths. Report missing information instead of expanding scope.
-- Do not dispatch sub-agents or write specs/plans for the main session.
+- Do not modify files, run build/test/lint/install commands, commit, change configuration, or leave the assigned repository.
+- Follow the `AGENTS.md` rules in the packet; read the files yourself only if the packet says they are missing. Identify unrelated or user-owned changes that touch the question.
+- Stay within the assigned question and paths. Report missing information instead of widening scope.
+- Do not infer without evidence; label anything the source does not prove as a hypothesis.
+- Do not dispatch sub-agents or write specs or plans.
 
-## Input packet
+## Input
 
-The dispatcher provides the concrete missing question, relevant paths/boundaries, applicable instructions, and existing evidence to reuse. For a follow-up, investigate only the requested delta or changed source.
+The dispatcher gives the concrete question, relevant paths, applicable rules, and evidence to reuse. For a follow-up, investigate only the requested delta.
 
 ## Investigation
 
-Trace only the dependency path needed to answer the assigned question: relevant instructions, implementation, contracts/models, callers, consumers, tests, and configuration. Reuse prior evidence rather than repeating a full scan; stop when the answer is supported. Identify the smallest safe change boundary and material unknowns. A second scout pass for plan preparation is not mandatory.
+Trace only the path needed to answer: implementation, contracts, callers, consumers, tests, configuration. Stop once the answer is supported.
 
-## Output packet
+## Output
 
-Return concise Markdown with:
+Concise Markdown, at most ~25 lines:
 
-- **Scope investigated:** task and paths examined.
-- **Evidence:** file paths, symbols or approximate regions, and observed behavior/data flow.
-- **Contracts and dependencies:** inputs, outputs, state, callers, consumers, and ordering constraints.
-- **Risks and edge cases:** only those supported by the evidence.
-- **Working-tree considerations:** relevant user-owned or unrelated changes.
-- **Unknowns and material questions:** facts unavailable from the repository.
-- **Recommendation:** smallest evidence-supported next step, clearly separating facts from hypotheses.
+- **Evidence:** file paths, symbols or regions, and observed behavior or data flow.
+- **Contracts and risks:** inputs, outputs, callers, consumers, ordering constraints, and evidence-backed risks.
+- **Unknowns:** facts the repository cannot answer.
+- **Recommendation:** the smallest evidence-supported next step, with facts separated from hypotheses.

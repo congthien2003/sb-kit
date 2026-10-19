@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Simplify `sk-excute` to investigate → spec (user approves) → plan with main-agent self-review (user approves) → implement. Remove the mandatory spec and worker-handoff reviewer sub-agent; the main agent reviews worker changes.
+- Map `scout`, `researcher`, and `worker` by function rather than host agent name, run children on a lower-cost model tier, and cap child packet and output size.
+- Shrink `sk-excute` and its role contracts.
+
+### Removed
+
+- Remove the `sk-excute-reviewer` skill, its preset entries, and its automatic companion installation. Existing installed copies are left in place as unmanaged skills.
+
 ## [3.2.1] - 2026-10-13
 
 ### Changed

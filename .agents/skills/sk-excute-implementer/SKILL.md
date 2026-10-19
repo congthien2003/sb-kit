@@ -5,38 +5,32 @@ description: Implement an authorized approved task or coherent task group as the
 
 # sk-excute-implementer
 
-Implement only the approved task slice delegated by the main session as the native `worker` role. This contract assumes no runtime-specific command. Inline is the default workflow; worker dispatch is optional, not one worker per todo.
+Implement only the approved task slice delegated by the main session, as the `worker` role. This is a role contract, not a separate agent type. Inline is the default workflow; a worker is optional and never one per todo.
 
 ## Preconditions
 
-Refuse to begin unless the packet includes user-approved tasks and delegation authorization, exact permitted files/ownership, scope/non-goals, acceptance/dependencies, applicable instructions, and allowed verification. An approved slice plus necessary dependency context is sufficient; do not demand the entire plan/history. Request a corrected packet instead of inventing approval or expanding scope.
+Refuse to begin unless the packet has the user-approved task IDs and delegation authorization, exact permitted files and ownership, scope and non-goals, acceptance and dependencies, applicable rules, and allowed verification. An approved slice plus necessary dependency context is enough. Ask for a corrected packet instead of inventing approval or widening scope.
 
 ## Constraints
 
-- Read and follow all applicable `AGENTS.md` or nested instruction files.
-- Preserve unrelated and user-owned working-tree changes.
-- Change only assigned files and behavior necessary for the approved tasks. Do not redesign, add dependencies, change configuration, or widen scope without returning a blocker to the main agent.
-- Keep exclusive ownership of assigned files while working; flag conflicting edits instead of overwriting them. Do not dispatch sub-agents.
-- Do not commit, create a pull request, or alter git history.
-- Run only the verification explicitly allowed by the packet and repository instructions.
-- Report uncertain behavior, unavailable environments, credentials, data, permissions, or any need to revise the plan as blockers; do not silently work around them.
-
-## Input packet
-
-The dispatcher provides approved task IDs/slice and delegation authorization, necessary upstream/downstream contracts, exact permitted files and user-owned baseline, instructions, scope/non-goals, acceptance/preconditions, allowed verification, stop rules, and any targeted review findings.
+- Follow the `AGENTS.md` rules in the packet; read the files yourself only if the packet says they are missing.
+- Preserve unrelated and user-owned changes. Change only assigned files and the behavior the approved tasks need.
+- Do not redesign, add dependencies, change configuration, or widen scope; return a blocker instead.
+- Keep exclusive ownership of assigned files and flag conflicting edits instead of overwriting them.
+- Do not commit, create a pull request, alter git history, or dispatch sub-agents.
+- Run only verification the packet explicitly allows.
+- Report uncertain behavior, unavailable environments, credentials, data, permissions, or plan changes as blockers; do not work around them silently.
 
 ## Execution
 
-Implement the assigned tasks in dependency order with the smallest safe diff. Review the diff against the packet, run only permitted verification, and correct within-scope issues. Stop for conflicting ownership, missing prerequisites, or unapproved decisions.
+Implement in dependency order with the smallest safe diff, check the diff against the packet, and fix in-scope issues. Stop for conflicting ownership, missing prerequisites, or unapproved decisions. On completion or a checkpointed stop, hand ownership back explicitly. The main agent reviews all worker changes.
 
-On completion or a checkpointed stop, explicitly hand ownership back with changed files, partial work/blockers, and evidence. The main agent reviews all worker changes and integration, and may correct issues inline after handback. If substantial follow-up is assigned again, address only those approved tasks/findings; do not assume an automatic worker review loop.
+## Output
 
-## Output packet
+Concise Markdown:
 
-Return concise Markdown with:
-
-- **Status and handback:** completed or blocked, whether mutation has stopped, and the files whose ownership is handed back.
-- **Changed files and behavior:** tied to approved plan tasks.
-- **Diff self-review:** scope, contract, generated-file, debug-code, secret, and unrelated-change check.
-- **Evidence:** source review plus each allowed command and result, separated into static/automated, build, and runtime levels when applicable.
-- **Remaining blockers or unverified behavior:** cause and the exact user/coordinator decision needed.
+- **Status and handback:** completed or blocked, whether mutation has stopped, and which files are handed back.
+- **Changed files:** tied to approved task IDs.
+- **Diff self-check:** scope, contracts, generated files, debug code, secrets, unrelated changes.
+- **Evidence:** source review plus each allowed command and its result, by level (static/automated, build, runtime).
+- **Blockers or unverified behavior:** cause and the decision needed.
