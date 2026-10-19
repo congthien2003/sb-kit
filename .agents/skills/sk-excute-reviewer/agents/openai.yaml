@@ -1,8 +1,0 @@
----
-interface:
-  display_name: "SK Excute Reviewer"
-  short_description: "Whole-spec review and targeted risk findings"
-  default_prompt: >-
-    Use $sk-excute-reviewer to review this whole spec or assigned
-    risk/change target against evidence and return a concise verdict
-    with block/task/file-specific findings.

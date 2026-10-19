@@ -28,7 +28,6 @@ function runInstall({ claude = false } = {}) {
 const CORE_ROLE_SKILLS = [
   "sk-excute-explorer",
   "sk-excute-researcher",
-  "sk-excute-reviewer",
   "sk-excute-implementer",
 ];
 const VISUALIZER_REFERENCE_FILES = [
@@ -520,6 +519,8 @@ withDisposableTarget("sb-kit-legacy-fast-", (target) => {
   }
   assert.ok(!SB_KIT_SKILLS.includes("sk-excute-fast"));
   assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-excute-fast")));
+  assert.ok(!SB_KIT_SKILLS.includes("sk-excute-reviewer"));
+  assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-excute-reviewer")));
 });
 
 const SKILLS_DIR = path.join(__dirname, ".agents", "skills");
@@ -561,6 +562,7 @@ function assertSbKitSkills(target, root) {
     "sk-explain",
     "sk-verify-code-ui-only",
     "sk-review-diff",
+    "sk-idea-to-docs",
   ];
 
   assert.deepStrictEqual(SB_KIT_SKILLS, expectedSkills);
@@ -605,7 +607,7 @@ function assertVisualizerReferences(target, root) {
   }
 }
 
-const NEW_SKILLS_WITH_EVALS = ["sk-debug", "sk-review-diff"];
+const NEW_SKILLS_WITH_EVALS = ["sk-debug", "sk-review-diff", "sk-idea-to-docs"];
 for (const skill of NEW_SKILLS_WITH_EVALS) {
   const source = path.join(__dirname, ".agents", "skills", skill);
   const instructions = fs.readFileSync(path.join(source, "SKILL.md"), "utf8");
@@ -616,7 +618,7 @@ for (const skill of NEW_SKILLS_WITH_EVALS) {
   assert.strictEqual(evals.skill_name, skill);
   assert.deepStrictEqual(evals.evals.map(({ id }) => id), [1, 2, 3]);
   assert.ok(evals.evals.every((item) => item.prompt && item.expected_output && Array.isArray(item.files) && item.expectations.length));
-  assert.strictEqual(SB_KIT_SKILLS.includes(skill), skill === "sk-review-diff");
+  assert.strictEqual(SB_KIT_SKILLS.includes(skill), ["sk-review-diff", "sk-idea-to-docs"].includes(skill));
   withDisposableTarget("sb-kit-new-skill-", (target) => {
     for (const root of [".agents", ".claude"]) {
       captureLogs(() => install([skill], root, target));
@@ -645,6 +647,8 @@ assert.ok(
 );
 assert.ok(categorized["sk-work"].includes("sk-verify-code-ui-only"));
 assert.ok(categorized["sk-work"].includes("sk-review-diff"));
+assert.ok(categorized["sk-work"].includes("sk-idea-to-docs"));
+assert.ok(!categorized.report.includes("sk-idea-to-docs"));
 assert.ok(SB_KIT_SKILLS.includes("sk-verify-code-ui-only"));
 assert.ok(SB_KIT_SKILLS.includes("sk-review-diff"));
 assert.ok(!fs.existsSync(path.join(__dirname, ".agents", "skills", "sk-verify-code")));
@@ -1042,11 +1046,11 @@ try {
   assert.ok(defaultCreate.handoff.includes("$sk-start-next-hono"));
   assert.match(defaultCreate.handoff, /workflow is inline-first/);
   assert.match(defaultCreate.handoff, /main agent owns the\s+spec, detailed plan\/todos/);
-  assert.match(defaultCreate.handoff, /approval for the reviewed spec, then the detailed plan/);
-  assert.match(defaultCreate.handoff, /Only native scout, researcher, worker, and reviewer roles/);
+  assert.match(defaultCreate.handoff, /approval for the spec, then for the plan the main agent has\s+self-reviewed/);
+  assert.match(defaultCreate.handoff, /Only scout, researcher, and worker roles/);
   assert.match(defaultCreate.handoff, /worker is optional and receives authorized approved\s+tasks/);
-  assert.match(defaultCreate.handoff, /Review its changed files after handback/);
-  assert.match(defaultCreate.handoff, /ask before fallback or takeover/);
+  assert.match(defaultCreate.handoff, /main agent reviews its changed files after handback/);
+  assert.match(defaultCreate.handoff, /ask\s+before takeover/);
   assert.doesNotMatch(defaultCreate.handoff, /choose Inline or Sub-agent/i);
   assert.ok(defaultCreate.logs.join("\n").includes("$sk-start-next-hono"));
 
@@ -1222,7 +1226,6 @@ async function testInstallPrompts() {
   const executionRoles = [
     "sk-excute-explorer",
     "sk-excute-researcher",
-    "sk-excute-reviewer",
     "sk-excute-implementer",
   ];
   const executionSelection = await chooseInstallSelection(
@@ -1241,7 +1244,7 @@ async function testInstallPrompts() {
   let initialSelection;
   await chooseInstallSelection(PACKAGED_SKILLS, { ...selectionPrompts, select: async () => "minimal" }, async (_all, _prompts, initial) => { initialSelection = initial; return ["sk-explain"]; });
   assert.ok(initialSelection.includes("sk-excute"));
-  assert.ok(initialSelection.includes("sk-excute-reviewer"));
+  assert.ok(!initialSelection.includes("sk-excute-reviewer"));
   const cancellations = [];
   let groupConfig;
   const selected = await chooseSkills(PACKAGED_SKILLS, {
