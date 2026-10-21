@@ -59,7 +59,15 @@ Thêm `--claude` để mirror cùng bộ core skills vào `.claude/skills`:
 npx sb-kit create next-hono my-app --claude
 ```
 
-CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. Bootstrap cũng cài trọn bộ role contracts của `$sk-excute`; agent chính triển khai inline mặc định và chỉ dùng native sub-agents khi có nhu cầu cụ thể.
+CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. CLI vẫn bootstrap Hono trên Node.js; skill giữ Node.js mặc định hoặc chuyển server hiện có sang Cloudflare Workers khi bạn chọn và duyệt kế hoạch. Chọn Workers cho backend không bắt buộc đổi nơi deploy Next.js. Bootstrap cũng cài trọn bộ role contracts của `$sk-excute`; agent chính triển khai inline mặc định và chỉ dùng native sub-agents khi có nhu cầu cụ thể.
+
+Để chọn backend Workers, thêm yêu cầu này khi gọi skill:
+
+```text
+Use $sk-start-next-hono to set up this existing workspace with a Cloudflare Workers Hono backend. Keep the current Next.js deployment. Present the in-place conversion plan and wait for approval before editing. Do not run verification or deploy commands.
+```
+
+Nhánh Workers dùng Wrangler, typed bindings/secrets và PostgreSQL/Drizzle với Hyperdrive cùng driver tương thích theo tài liệu chính thức; không tự đổi PostgreSQL thành D1. R2 chỉ thêm khi được yêu cầu, ưu tiên native binding trên Workers. Agent cần xác nhận resource IDs, môi trường và quyền thực thi; deploy hoặc tạo tài nguyên cloud không được tự động thực hiện.
 
 Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
 
@@ -142,7 +150,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
-| `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
+| `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap: Node.js mặc định hoặc Cloudflare Workers tùy chọn, với PostgreSQL/Drizzle, auth, proxy và convention modular monolith. |
 | `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
 | `sk-review-diff` | Review diff được chọn, findings có severity/location/evidence; phân biệt regression với pre-existing issues, không tự patch/verify. |
 | `sk-idea-to-docs` | Biến ý tưởng thành bộ docs nền tảng `docs/overview.md`, `docs/spec.md`, `docs/implementation-plan.md`: hỏi từng câu, phân biệt xác nhận/đề xuất/giả định/điểm mở, lấy phản hồi trước khi lập plan; dừng ở docs, không triển khai hay commit. |
