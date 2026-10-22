@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,757 +7,1872 @@
       name="description"
       content="sb-kit — CLI cài agent skills và khởi tạo pnpm workspace Next.js + Hono."
     />
+    <meta name="color-scheme" content="dark light" />
     <title>sb-kit — Sabo Kit CLI</title>
+    <script>
+      try {
+        var savedTheme = localStorage.getItem("sb-kit-theme");
+        if (savedTheme === "light" || savedTheme === "dark") {
+          document.documentElement.setAttribute("data-theme", savedTheme);
+        }
+      } catch (error) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&family=Geist:wght@400;500;600&family=Unbounded:wght@500;600&display=swap"
       rel="stylesheet"
     />
     <style>
+      /* SaboKit tokens — Void (dark) is the default, Daylight is the light theme. */
+      :root,
+      [data-theme="dark"] {
+        --bg-000: #0b0d10;
+        --bg-100: #12151a;
+        --bg-200: #1a1e25;
+        --bg-300: #07080a;
+        --line: #2a303a;
+        --line-strong: #646f80;
+        --ink: #eef1f4;
+        --ink-muted: #9aa3ae;
+        --volt: #c6f432;
+        --volt-deep: #6e8a12;
+        --volt-ink: #c6f432;
+        --volt-soft: #1e2a08;
+        --on-volt: #0b0d10;
+        --flare: #ff6b2c;
+        --flare-ink: #ff8a55;
+        --ion: #4dd8e6;
+        --ion-soft: #0a2a2e;
+        --focus-ring: var(--ion);
+        --shadow-key: 0 4px 0 0 #07080a, inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+        --shadow-key-volt: 0 4px 0 0 #6e8a12, 0 10px 24px -8px rgba(198, 244, 50, 0.35);
+        --shadow-key-pressed: 0 0 0 0 #07080a;
+        --shadow-slab: 6px 6px 0 0 #07080a;
+        --shadow-slab-lift: 10px 10px 0 0 #07080a;
+        --shadow-glow: 0 0 0 1px rgba(198, 244, 50, 0.45), 0 0 28px 0 rgba(198, 244, 50, 0.22);
+      }
+
+      [data-theme="light"] {
+        --bg-000: #f4f5f1;
+        --bg-100: #ffffff;
+        --bg-200: #ebede7;
+        --bg-300: #e2e5dd;
+        --line: #d3d7cc;
+        --line-strong: #7c8476;
+        --ink: #0f1216;
+        --ink-muted: #545c66;
+        --volt: #b4e124;
+        --volt-deep: #7a9a10;
+        --volt-ink: #3d6600;
+        --volt-soft: #eef9cc;
+        --on-volt: #0b0d10;
+        --flare: #f2591a;
+        --flare-ink: #b23c06;
+        --ion: #086577;
+        --ion-soft: #dcf4f7;
+        --shadow-key: 0 4px 0 0 #c3c8bb, inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+        --shadow-key-volt: 0 4px 0 0 #7a9a10, 0 10px 20px -10px rgba(61, 102, 0, 0.35);
+        --shadow-key-pressed: 0 0 0 0 #c3c8bb;
+        --shadow-slab: 6px 6px 0 0 #d3d7cc;
+        --shadow-slab-lift: 10px 10px 0 0 #c3c8bb;
+        --shadow-glow: 0 0 0 1px rgba(61, 102, 0, 0.45), 0 0 24px 0 rgba(180, 225, 36, 0.35);
+      }
+
       :root {
-        --canvas: #fffdf8;
-        --surface: #ffffff;
-        --hairline: #dfe7e1;
-        --ink: #10221d;
-        --slate: #5a6b64;
-        --mint: #16866b;
-        --mint-wash: #e7f6ef;
-        --code-surface: #f3f6f3;
-        --radius: 12px;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 24px;
+        --space-6: 32px;
+        --space-7: 48px;
+        --space-8: 64px;
+        --radius-xs: 4px;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --depth-2: 4px;
+        --depth-3: 6px;
+        --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+        --font-display: "Unbounded", "Geist", system-ui, sans-serif;
+        --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+        --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
       }
 
       *,
       *::before,
       *::after {
         box-sizing: border-box;
-        margin: 0;
-        padding: 0;
       }
 
       html {
-        background: var(--canvas);
+        background: var(--bg-000);
+        scroll-behavior: smooth;
+        scroll-padding-top: 24px;
       }
 
       body {
+        margin: 0;
         min-width: 0;
         overflow-x: hidden;
-        background: var(--canvas);
+        background: var(--bg-000);
         color: var(--ink);
-        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        font-size: 16px;
-        line-height: 1.5;
+        font-family: var(--font-sans);
+        font-size: 15px;
+        line-height: 22px;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
       }
 
-      code,
-      pre,
-      .mono,
-      .logo,
-      .badge,
-      .section-label,
-      .skill-card-header h3,
-      .tag,
-      .step-num,
-      footer,
-      #copy-status,
-      #copy-create-status,
-      .install-block button {
-        font-family: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      h1,
+      h2,
+      h3,
+      p,
+      ol,
+      figure {
+        margin: 0;
+      }
+
+      ol {
+        padding: 0;
+        list-style: none;
+      }
+
+      a {
+        color: var(--volt-ink);
+      }
+
+      a:hover {
+        color: var(--ink);
       }
 
       ::selection {
-        background: #b9ead8;
-        color: var(--ink);
+        background: var(--volt);
+        color: var(--on-volt);
       }
 
-      :focus-visible {
-        outline: 3px solid var(--mint);
-        outline-offset: 3px;
-      }
-
-      .container {
-        width: min(100%, 1180px);
-        margin: 0 auto;
-        padding: 28px 24px 56px;
-      }
-
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 0 2px 20px;
-        border-bottom: 1px solid var(--hairline);
-      }
-
-      .logo {
-        color: var(--ink);
-        font-size: 17px;
-        font-weight: 500;
-        letter-spacing: -0.04em;
-      }
-
-      .badge {
-        border: 1px solid var(--hairline);
-        border-radius: 999px;
-        color: var(--slate);
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.1em;
-        padding: 5px 10px;
-        text-transform: uppercase;
-      }
-
-      .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr);
-        align-items: center;
-        gap: clamp(32px, 6vw, 80px);
-        margin: 28px 0 44px;
-        overflow: hidden;
-        padding: clamp(32px, 6vw, 72px);
-        border: 1px solid #dce9e1;
-        border-radius: 20px;
-        background:
-          radial-gradient(circle at 82% 15%, rgba(180, 234, 214, 0.72), transparent 34%),
-          linear-gradient(135deg, #edf9f5 0%, #f5fbf7 47%, #fff7e7 100%);
-      }
-
-      .hero-copy {
-        min-width: 0;
-      }
-
-      .hero h1 {
-        max-width: 640px;
-        margin-bottom: 16px;
-        font-size: clamp(34px, 4.4vw, 58px);
-        font-weight: 700;
-        letter-spacing: -0.058em;
-        line-height: 1.08;
-      }
-
-      .hero-copy > p:not(#copy-status) {
-        max-width: 610px;
-        color: var(--slate);
-        font-size: 16px;
-        line-height: 1.6;
+      :where(a, button):focus-visible {
+        outline: 2px solid var(--focus-ring);
+        outline-offset: 2px;
       }
 
       code {
-        border-radius: 4px;
-        background: var(--code-surface);
+        padding: 1px 6px;
+        border-radius: var(--radius-xs);
+        background: var(--bg-200);
         color: var(--ink);
-        font-size: 0.875em;
-        padding: 0.1em 0.32em;
+        font-family: var(--font-mono);
+        font-size: 13px;
       }
 
-      .install-block {
-        display: inline-flex;
-        max-width: 100%;
-        min-width: 0;
-        align-items: center;
-        gap: 10px;
-        margin-top: 24px;
-        padding: 6px 6px 6px 14px;
-        border: 1px solid var(--hairline);
-        border-radius: 999px;
-        background: var(--surface);
-        box-shadow: 0 1px 2px rgba(16, 34, 29, 0.04);
-      }
-
-      .install-block code {
-        min-width: 0;
-        overflow-wrap: anywhere;
-        background: transparent;
-        font-size: 14px;
-        padding: 0;
-      }
-
-      .install-block button {
-        min-height: 36px;
-        flex: 0 0 auto;
-        border: 0;
-        border-radius: 999px;
-        background: var(--ink);
-        color: #ffffff;
-        cursor: pointer;
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.07em;
-        padding: 0 14px;
-      }
-
-      .hero-product {
-        min-width: 0;
-        overflow: hidden;
-        border: 1px solid rgba(16, 34, 29, 0.14);
-        border-radius: var(--radius);
-        background: var(--ink);
-        box-shadow: 0 18px 40px rgba(16, 34, 29, 0.12);
-      }
-
-      .hero-product img {
+      .icon {
+        flex: none;
         display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.75;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .wrap {
         width: 100%;
-        height: auto;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 var(--space-5);
       }
 
-      section {
-        margin-bottom: 44px;
+      .grid-bg {
+        background-color: var(--bg-000);
+        background-image: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 1.5px);
+        background-size: var(--space-5) var(--space-5);
       }
 
-      section + section {
-        padding-top: 36px;
-        border-top: 1px solid var(--hairline);
+      /* ---------- Button: keycap ---------- */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        height: 40px;
+        margin-bottom: var(--depth-2);
+        padding: 0 var(--space-4);
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius-sm);
+        background: var(--bg-200);
+        box-shadow: var(--shadow-key);
+        color: var(--ink);
+        font: 600 14px/1 var(--font-sans);
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        transition:
+          transform 90ms var(--ease),
+          box-shadow 90ms var(--ease);
       }
 
-      .section-label {
-        margin-bottom: 14px;
-        color: var(--slate);
-        font-size: 11px;
+      .btn:hover {
+        color: var(--ink);
+        transform: translateY(-1px);
+      }
+
+      .btn:active {
+        box-shadow: var(--shadow-key-pressed);
+        transform: translateY(var(--depth-2));
+      }
+
+      .btn-primary {
+        border-color: var(--volt-deep);
+        background: var(--volt);
+        box-shadow: var(--shadow-key-volt);
+        color: var(--on-volt);
+      }
+
+      .btn-primary:hover {
+        color: var(--on-volt);
+      }
+
+      .btn-sm {
+        height: 32px;
+        padding: 0 var(--space-3);
+        font-size: 13px;
+      }
+
+      /* ---------- Badge ---------- */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 22px;
+        padding: 0 var(--space-2);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xs);
+        background: var(--bg-200);
+        color: var(--ink-muted);
+        font: 500 12px/1 var(--font-mono);
+        white-space: nowrap;
+      }
+
+      .badge-volt {
+        border-color: transparent;
+        background: var(--volt-soft);
+        color: var(--volt-ink);
+      }
+
+      .badge-volt::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: currentColor;
+      }
+
+      .badge-ion {
+        border-color: transparent;
+        background: var(--ion-soft);
+        color: var(--ion);
+      }
+
+      /* ---------- Type ---------- */
+      .eyebrow {
+        font-size: 12px;
+        line-height: 16px;
         font-weight: 500;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.04em;
         text-transform: uppercase;
+        color: var(--ink-muted);
+      }
+
+      .eyebrow-ion {
+        color: var(--ion);
+      }
+
+      .eyebrow-flare {
+        color: var(--flare-ink);
+      }
+
+      .section-title,
+      .section-label {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: clamp(26px, 3.4vw, 40px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        text-transform: none;
+        text-wrap: balance;
+        color: var(--ink);
       }
 
       .section-copy {
-        max-width: 700px;
-        color: var(--slate);
-        font-size: 16px;
-        line-height: 1.6;
+        max-width: 720px;
+        font-size: 17px;
+        line-height: 26px;
+        color: var(--ink-muted);
       }
 
+      .section-head {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        max-width: 760px;
+      }
+
+      section {
+        border-top: 1px solid var(--line);
+      }
+
+      .section-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-7);
+        padding-top: 96px;
+        padding-bottom: 96px;
+      }
+
+      .split {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-7);
+        align-items: center;
+        padding-top: 96px;
+        padding-bottom: 96px;
+      }
+
+      .split > * {
+        flex: 1 1 420px;
+        min-width: 0;
+      }
+
+      .split-top {
+        align-items: flex-start;
+      }
+
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      /* ---------- Nav ---------- */
+      .topbar {
+        border-top: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-3) var(--space-5);
+        padding-top: var(--space-4);
+        padding-bottom: var(--space-4);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ink);
+        text-decoration: none;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: var(--radius-sm);
+        background: var(--volt);
+        box-shadow: 0 3px 0 0 var(--volt-deep);
+        color: var(--on-volt);
+        font: 600 12px/1 var(--font-mono);
+      }
+
+      .brand-name {
+        font: 500 16px/1 var(--font-mono);
+      }
+
+      .nav-links {
+        display: flex;
+        flex: 1 1 auto;
+        flex-wrap: wrap;
+        gap: var(--space-2) 20px;
+        font-size: 14px;
+      }
+
+      .nav-links a,
+      .nav-actions a:not(.btn),
+      .footer-links a {
+        color: var(--ink-muted);
+        text-decoration: none;
+      }
+
+      .nav-links a:hover,
+      .nav-actions a:not(.btn):hover,
+      .footer-links a:hover {
+        color: var(--ink);
+      }
+
+      .nav-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-3);
+        align-items: center;
+        padding-bottom: var(--depth-2);
+      }
+
+      .theme-toggle {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        margin-bottom: 0;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-sm);
+        background: transparent;
+        color: var(--ink-muted);
+        cursor: pointer;
+      }
+
+      .theme-toggle:hover {
+        background: var(--bg-200);
+        color: var(--ink);
+      }
+
+      /* ---------- Hero ---------- */
+      .hero {
+        border-top: 0;
+      }
+
+      .hero-main {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-7);
+        align-items: center;
+        padding-top: 96px;
+        padding-bottom: 80px;
+      }
+
+      .hero-copy {
+        flex: 1 1 520px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-5);
+      }
+
+      .hero h1 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: clamp(36px, 5.2vw, 64px);
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+      }
+
+      .hero-lead {
+        max-width: 560px;
+        font-size: 18px;
+        line-height: 28px;
+        color: var(--ink-muted);
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        align-items: center;
+      }
+
+      .row-actions {
+        gap: var(--space-3);
+      }
+
+      .status {
+        min-height: 16px;
+        font: 400 12px/16px var(--font-mono);
+        color: var(--volt-ink);
+      }
+
+      /* 3D layer stack */
+      .stack3d {
+        flex: 1 1 380px;
+        min-width: 0;
+        height: 420px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1400px;
+      }
+
+      .stack3d-scene {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        transform-style: preserve-3d;
+        transform: rotateX(56deg) rotateZ(-42deg);
+      }
+
+      .plate {
+        position: absolute;
+        inset: 0;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius-lg);
+        transform-style: preserve-3d;
+      }
+
+      .plate span {
+        position: absolute;
+        left: 20px;
+        bottom: 18px;
+        font: 400 13px/1 var(--font-mono);
+      }
+
+      .plate i {
+        position: absolute;
+        display: block;
+        border-radius: var(--radius-md);
+      }
+
+      .plate-0 {
+        background: var(--bg-300);
+        box-shadow: 14px 14px 0 0 var(--bg-300);
+        transform: translateZ(0);
+      }
+
+      .plate-0 span {
+        color: var(--ink-muted);
+      }
+
+      .plate-1 {
+        background: var(--bg-100);
+        box-shadow: 10px 10px 0 0 var(--bg-300);
+        transform: translateZ(56px);
+      }
+
+      .plate-1 span {
+        color: var(--ion);
+      }
+
+      .plate-1 i {
+        top: 20px;
+        right: 20px;
+        width: 64px;
+        height: 64px;
+        background: var(--ion);
+      }
+
+      .plate-2 {
+        background: var(--bg-200);
+        box-shadow: 10px 10px 0 0 var(--bg-300);
+        transform: translateZ(112px);
+      }
+
+      .plate-2 span {
+        color: var(--flare-ink);
+      }
+
+      .plate-2 i {
+        top: 20px;
+        right: 20px;
+        width: 96px;
+        height: 40px;
+        background: var(--flare);
+      }
+
+      .plate-3 {
+        border-color: var(--volt-deep);
+        background: var(--volt);
+        box-shadow: 10px 10px 0 0 var(--volt-deep);
+        transform: translateZ(168px);
+      }
+
+      .plate-3 span {
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--on-volt);
+      }
+
+      .plate-3 i {
+        top: 20px;
+        left: 20px;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background: var(--on-volt);
+        box-shadow:
+          24px 0 0 var(--on-volt),
+          48px 0 0 var(--on-volt),
+          72px 0 0 var(--on-volt);
+      }
+
+      .hero-terminal {
+        padding-bottom: 96px;
+      }
+
+      /* ---------- CodeBlock ---------- */
+      .code {
+        margin: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-300);
+        overflow: hidden;
+      }
+
+      .code-head {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        height: 40px;
+        padding: 0 var(--space-2) 0 var(--space-4);
+        border-bottom: 1px solid var(--line);
+        background: var(--bg-100);
+      }
+
+      .code-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .code-dots i {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: var(--line-strong);
+      }
+
+      .code-file {
+        font: 400 12px/1 var(--font-mono);
+        color: var(--ink-muted);
+      }
+
+      .code-lang {
+        font: 400 12px/1 var(--font-mono);
+        color: var(--ion);
+      }
+
+      .code-copy {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 28px;
+        margin-left: auto;
+        padding: 0 var(--space-2);
+        border: 0;
+        border-radius: var(--radius-xs);
+        background: transparent;
+        color: var(--ink-muted);
+        font: 500 12px/1 var(--font-sans);
+        cursor: pointer;
+      }
+
+      .code-copy:hover {
+        background: var(--bg-200);
+        color: var(--ink);
+      }
+
+      .code-body {
+        margin: 0;
+        padding: var(--space-4);
+        overflow-x: auto;
+        font: 400 13px/20px var(--font-mono);
+        color: var(--ink);
+      }
+
+      .code-body code {
+        padding: 0;
+        background: transparent;
+        font-size: inherit;
+      }
+
+      .tk-prompt {
+        color: var(--ink-muted);
+        user-select: none;
+      }
+
+      .tk-key {
+        color: var(--ion);
+      }
+
+      .tk-on {
+        color: var(--volt-ink);
+      }
+
+      /* ---------- Card: slab ---------- */
+      .card {
+        display: block;
+        margin: 0 var(--depth-3) var(--depth-3) 0;
+        padding: var(--space-5);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
+        box-shadow: var(--shadow-slab);
+      }
+
+      .card .eyebrow {
+        margin-bottom: var(--space-2);
+      }
+
+      .card h3 {
+        margin-bottom: var(--space-2);
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .card p:not(.eyebrow) {
+        color: var(--ink-muted);
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: var(--space-5);
+      }
+
+      /* ---------- Presets ---------- */
+      .preset-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+        padding-top: var(--space-2);
+      }
+
+      .preset-tabs .btn {
+        margin-bottom: var(--depth-2);
+      }
+
+      .preset-tabs .btn[aria-pressed="true"] {
+        border-color: var(--volt-deep);
+        background: var(--volt);
+        box-shadow: var(--shadow-key-volt);
+        color: var(--on-volt);
+      }
+
+      .panel {
+        margin: 0 var(--depth-3) var(--depth-3) 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
+        box-shadow: var(--shadow-slab);
+        overflow: hidden;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-3);
+        padding: var(--space-4) var(--space-5);
+        border-bottom: 1px solid var(--line);
+        font: 400 14px/20px var(--font-mono);
+      }
+
+      .panel-head span:last-child {
+        font-size: 12px;
+        color: var(--ink-muted);
+      }
+
+      .panel-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        padding: var(--space-5);
+      }
+
+      .panel-body > p {
+        color: var(--ink-muted);
+      }
+
+      .panel-note {
+        font-size: 13px;
+        line-height: 18px;
+      }
+
+      /* ---------- Skills ---------- */
       .skill-list {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: var(--space-5);
       }
 
       .skill-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
         min-width: 0;
-        padding: 20px;
-        border: 1px solid var(--hairline);
-        border-radius: var(--radius);
-        background: var(--surface);
-        box-shadow: 0 1px 2px rgba(16, 34, 29, 0.025);
+        margin: 0 var(--depth-3) var(--depth-3) 0;
+        padding: var(--space-5);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
+        box-shadow: var(--shadow-slab);
       }
 
       .skill-card-header {
         display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        gap: 8px;
-        margin-bottom: 8px;
+        align-items: center;
+        gap: var(--space-3);
+      }
+
+      .skill-mark {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--line-strong);
+        border-radius: var(--radius-sm);
+        background: var(--bg-200);
+        box-shadow: 0 2px 0 0 var(--bg-300);
+        color: var(--volt-ink);
       }
 
       .skill-card-header h3 {
+        flex: 1;
         min-width: 0;
-        color: var(--ink);
-        font-size: 14px;
-        font-weight: 500;
-        letter-spacing: -0.025em;
+        font: 500 15px/22px var(--font-mono);
         overflow-wrap: anywhere;
       }
 
-      .skill-card-header .tag {
-        border-radius: 999px;
-        font-size: 10px;
-        font-weight: 500;
-        letter-spacing: 0.07em;
-        padding: 2px 7px;
+      .tag {
+        flex: none;
+        padding: 3px 8px;
+        border-radius: var(--radius-xs);
+        font: 500 11px/1 var(--font-mono);
+        letter-spacing: 0.04em;
         text-transform: uppercase;
       }
 
       .tag-core {
-        background: var(--mint-wash);
-        color: var(--mint);
+        background: var(--volt-soft);
+        color: var(--volt-ink);
       }
 
       .tag-support {
-        border: 1px solid var(--hairline);
-        color: var(--slate);
+        border: 1px solid var(--line);
+        color: var(--ink-muted);
       }
 
       .skill-card > p {
-        color: var(--slate);
-        font-size: 14px;
-        line-height: 1.6;
+        color: var(--ink-muted);
       }
 
-      .steps {
+      /* ---------- Workflow ---------- */
+      .flow {
         display: grid;
-        gap: 14px;
-        margin-top: 16px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
       }
 
-      .step {
+      .flow li {
         display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        margin: 0 var(--depth-3) var(--depth-3) 0;
+        padding: 20px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
+        box-shadow: 6px 6px 0 0 var(--bg-300);
+      }
+
+      .flow li.gate {
+        border-color: var(--volt-deep);
+        box-shadow: 6px 6px 0 0 var(--volt-deep);
+      }
+
+      .flow-n {
+        font: 400 12px/16px var(--font-mono);
+        color: var(--ink-muted);
+      }
+
+      .gate .flow-n {
+        color: var(--volt-ink);
+      }
+
+      .viz .flow-n {
+        color: var(--flare-ink);
+      }
+
+      .flow-title {
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .flow-body {
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--ink-muted);
+      }
+
+      /* ---------- MCP tools ---------- */
+      .tool {
+        display: flex;
+        gap: var(--space-4);
         align-items: flex-start;
-        gap: 12px;
-        color: var(--slate);
-        font-size: 16px;
-        line-height: 1.55;
+        padding: 20px var(--space-5);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
       }
 
-      .step-num {
-        flex: 0 0 22px;
-        color: var(--mint);
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1.9;
+      .tool-n {
+        flex: none;
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        background: var(--ion-soft);
+        color: var(--ion);
+        font: 500 13px/1 var(--font-mono);
       }
 
-      .step strong {
-        color: var(--ink);
+      .tool-name {
+        display: block;
+        font: 400 15px/22px var(--font-mono);
       }
 
-      footer {
+      .tool-body {
+        display: block;
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--ink-muted);
+      }
+
+      .mcp-card {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        margin: 0 var(--depth-3) var(--depth-3) 0;
+        padding: var(--space-5);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-md);
+        background: var(--bg-100);
+        box-shadow:
+          var(--shadow-slab),
+          var(--shadow-glow);
+      }
+
+      .mcp-card .skill-mark {
+        color: var(--ion);
+      }
+
+      .mcp-card p {
+        color: var(--ink-muted);
+      }
+
+      /* ---------- CTA ---------- */
+      .cta {
         display: flex;
         flex-wrap: wrap;
+        gap: var(--space-6);
+        align-items: center;
         justify-content: space-between;
-        gap: 8px;
-        padding: 22px 2px 0;
-        border-top: 1px solid var(--hairline);
-        color: var(--slate);
-        font-size: 11px;
+        margin: 0 10px 10px 0;
+        padding: var(--space-7);
+        border: 1px solid var(--volt-deep);
+        border-radius: var(--radius-lg);
+        background: var(--volt);
+        box-shadow: 10px 10px 0 0 var(--volt-deep);
+        color: var(--on-volt);
       }
 
-      #copy-status,
-      #copy-create-status {
-        min-height: 17px;
-        color: var(--mint);
-        font-size: 11px;
+      .cta-copy {
+        flex: 1 1 420px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+      }
+
+      .cta-copy h2 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: clamp(26px, 3.4vw, 40px);
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      .cta-copy p {
+        font-size: 17px;
+        line-height: 26px;
+      }
+
+      .cta-cmd {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        max-width: 100%;
+        height: 56px;
+        padding: 0 var(--space-2) 0 20px;
+        border-radius: var(--radius-md);
+        background: #0b0d10;
+        box-shadow: 0 4px 0 0 #07080a;
+        color: #eef1f4;
+        font: 400 16px/1 var(--font-mono);
+      }
+
+      .cta-cmd span:first-child {
+        color: #9aa3ae;
+      }
+
+      .cta-cmd button {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: var(--radius-sm);
+        background: #1a1e25;
+        color: #eef1f4;
+        cursor: pointer;
+      }
+
+      .cta-cmd button:focus-visible {
+        outline-color: #4dd8e6;
+      }
+
+      /* ---------- Footer ---------- */
+      footer {
+        border-top: 1px solid var(--line);
+      }
+
+      .footer-body {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4) var(--space-6);
+        align-items: center;
+        justify-content: space-between;
+        padding-top: var(--space-6);
+        padding-bottom: var(--space-6);
+        font-size: 14px;
+        color: var(--ink-muted);
+      }
+
+      .footer-body .mono {
+        font-family: var(--font-mono);
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-5);
       }
 
       @media (max-width: 760px) {
-        .container {
-          padding: 20px 16px 40px;
+        .wrap {
+          padding: 0 var(--space-4);
         }
 
-        .hero {
-          grid-template-columns: minmax(0, 1fr);
-          gap: 32px;
-          margin: 20px 0 36px;
-          padding: 28px 20px;
-          border-radius: 16px;
+        .hero-main,
+        .split,
+        .section-body {
+          padding-top: 64px;
+          padding-bottom: 64px;
         }
 
-        .hero-product {
-          width: 100%;
+        .hero-main {
+          padding-bottom: 48px;
+        }
+
+        .hero-terminal {
+          padding-bottom: 64px;
+        }
+
+        .stack3d {
+          height: 340px;
+        }
+
+        .stack3d-scene {
+          transform: scale(0.8) rotateX(56deg) rotateZ(-42deg);
         }
 
         .skill-list {
           grid-template-columns: minmax(0, 1fr);
         }
 
-        section {
-          margin-bottom: 36px;
+        .cta {
+          padding: var(--space-5);
         }
 
-        section + section {
-          padding-top: 30px;
-        }
-
-        .install-block button {
-          min-height: 44px;
+        .cta-cmd {
+          font-size: 14px;
         }
       }
 
       @media (max-width: 480px) {
-        header {
-          padding-bottom: 16px;
-        }
-
-        .hero h1 {
-          font-size: clamp(31px, 10vw, 42px);
-        }
-
-        .install-block {
+        .nav-actions {
           width: 100%;
-          justify-content: space-between;
         }
 
-        .install-block button {
-          padding: 0 16px;
+        .btn,
+        .code-copy,
+        .cta-cmd button {
+          min-height: 44px;
         }
 
-        .skill-card {
-          padding: 18px;
+        .btn-sm,
+        .theme-toggle {
+          min-height: 44px;
+          min-width: 44px;
+        }
+
+        .stack3d {
+          height: 280px;
+        }
+
+        .stack3d-scene {
+          transform: scale(0.62) rotateX(56deg) rotateZ(-42deg);
         }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-          animation-duration: 0.01ms !important;
-          animation-iteration-count: 1 !important;
-          scroll-behavior: auto !important;
-          transition-duration: 0.01ms !important;
+        html {
+          scroll-behavior: auto;
+        }
+
+        .btn {
+          transition: none;
+        }
+
+        .btn:hover {
+          transform: none;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <!-- Header -->
-      <header>
-        <span class="logo">sb-kit</span>
-        <span class="badge">19 agent skills</span>
-      </header>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+      <symbol id="i-cube" viewBox="0 0 24 24">
+        <path d="M12 2.5 20.5 7v10L12 21.5 3.5 17V7L12 2.5Z M3.5 7 12 11.5 20.5 7 M12 11.5v10" />
+      </symbol>
+      <symbol id="i-plug" viewBox="0 0 24 24">
+        <path d="M9 2.5v5 M15 2.5v5 M6 7.5h12v3a6 6 0 0 1-12 0v-3Z M12 16.5v5" />
+      </symbol>
+      <symbol id="i-terminal" viewBox="0 0 24 24">
+        <path d="M3.5 4.5h17v15h-17z M7 9l3 3-3 3 M12.5 15h4.5" />
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24">
+        <path d="M8.5 8.5h11v11h-11z M15.5 8.5v-4h-11v11h4" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="M4.5 12.5l5 5 10-11" />
+      </symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24">
+        <path d="M12 3 21 8l-9 5-9-5 9-5Z M3 12.5l9 5 9-5 M3 16.5l9 5 9-5" />
+      </symbol>
+      <symbol id="i-contrast" viewBox="0 0 24 24">
+        <path d="M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z M12 3.5v17" />
+      </symbol>
+    </svg>
 
+    <!-- Header -->
+    <header class="topbar">
+      <nav class="wrap nav" aria-label="Chính">
+        <a class="brand" href="#top">
+          <span class="brand-mark" aria-hidden="true">sb</span>
+          <span class="brand-name">sb-kit</span>
+        </a>
+        <div class="nav-links">
+          <a href="#how">Cách hoạt động</a>
+          <a href="#presets">Presets</a>
+          <a href="#skills">Skills</a>
+          <a href="#maintain">Doctor &amp; update</a>
+          <a href="#memorize">memorize-mcp</a>
+        </div>
+        <div class="nav-actions">
+          <span class="badge">19 agent skills</span>
+          <a href="https://github.com/congthien2003/sb-kit">GitHub</a>
+          <button class="btn theme-toggle" id="theme-toggle" type="button" aria-label="Chuyển sang giao diện sáng" aria-pressed="false">
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-contrast" /></svg>
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
       <!-- Hero -->
-      <section class="hero">
-        <div class="hero-copy">
-          <h1>CLI cài agent skills</h1>
-          <p>
-                    Một câu lệnh — luôn cài vào <code>.agents/skills</code>, rồi
-                    bạn chọn có cài thêm cho <code>.claude/skills</code> hay
-                    không. Bạn chọn giữ skill đã tồn tại hoặc replace đúng
-                    những skill đã tick. Chọn preset hoặc Manual, và dùng
-                    <code>sb-kit doctor</code> để inspect offline, chỉ đọc.
-                    <code>sb-kit update</code> preview selection trước khi thay,
-                    giữ backup và yêu cầu consent cho bản sửa local.
-          </p>
-          <div class="install-block">
-            <code>npx sb-kit install</code>
-            <button id="copy-command" type="button">COPY</button>
+      <section class="hero grid-bg" id="top">
+        <div class="wrap hero-main">
+          <div class="hero-copy">
+            <div class="row">
+              <span class="badge badge-volt">v3.4.0</span>
+              <span class="badge">Node.js ≥ 20.12</span>
+            </div>
+            <h1>Skills cho agent,<br />cài bằng một lệnh.</h1>
+            <p class="hero-lead">
+              sb-kit cài bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn vào
+              <code>.agents/skills</code>, tuỳ chọn mirror sang <code>.claude/skills</code>. Skill đã tồn tại được giữ nguyên;
+              <strong>Replace selected</strong> chỉ thay đúng những skill bạn đã tick.
+            </p>
+            <div class="row row-actions">
+              <button class="btn btn-primary" id="copy-command" type="button">
+                <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-terminal" /></svg>
+                <span>npx sb-kit install</span>
+              </button>
+              <a class="btn" href="#presets">
+                <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-layers" /></svg>
+                Xem presets
+              </a>
+            </div>
+            <p class="status" id="copy-status" aria-live="polite"></p>
           </div>
-          <p id="copy-status" style="margin-top: 0.5rem" aria-live="polite"></p>
+
+          <div class="stack3d" aria-hidden="true">
+            <div class="stack3d-scene">
+              <div class="plate plate-0"><span>your-project/</span></div>
+              <div class="plate plate-1"><span>.agents/skills</span><i></i></div>
+              <div class="plate plate-2"><span>sk-visualizer</span><i></i></div>
+              <div class="plate plate-3"><span>sk-excute</span><i></i></div>
+            </div>
+          </div>
         </div>
-        <figure class="hero-product">
-          <img src="assets/choose-skills.png" width="531" height="486" alt="Màn hình CLI chọn skills khi cài sb-kit." />
-        </figure>
+
+        <div class="wrap hero-terminal">
+          <figure class="code">
+            <figcaption class="code-head">
+              <span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="code-file">~/your-project</span>
+              <span class="code-lang">sb-kit install</span>
+            </figcaption>
+            <pre class="code-body"><code><span class="tk-prompt">$ </span>npx sb-kit install
+
+<span class="tk-key">◆</span>  Choose an installation preset:
+│  ○ Manual   <span class="tk-on">● Minimal</span>   ○ Full-stack   ○ UI   ○ Reporting
+│
+<span class="tk-key">◆</span>  Choose skills to install:  (sk-work · assets · report)
+│  ◼ sk-excute   ◼ sk-explain   ◼ sk-debug   ◼ sk-review-diff
+│
+<span class="tk-key">◆</span>  When selected skills already exist:
+│  <span class="tk-on">● Install missing only</span>   ○ Replace selected
+│
+<span class="tk-key">◆</span>  Install for Claude Code too?
+│  ○ Yes   <span class="tk-on">● No</span>
+└  Added skills to .agents/skills</code></pre>
+          </figure>
+        </div>
       </section>
 
-      <!-- Bootstrap -->
+      <!-- How it works -->
+      <section id="how">
+        <div class="wrap section-body">
+          <div class="section-head">
+            <p class="eyebrow">Cách hoạt động</p>
+            <h2 class="section-title">Bốn bước, không có bất ngờ.</h2>
+            <p class="section-copy">Cancel ở bất kỳ bước nào cũng dừng trước khi tạo hay copy skill folder.</p>
+          </div>
+          <ol class="card-grid">
+            <li class="card">
+              <p class="eyebrow">01 · đọc</p>
+              <h3>Đọc catalog</h3>
+              <p>CLI đọc danh sách thư mục skill trong <code>.agents/skills</code> của package.</p>
+            </li>
+            <li class="card">
+              <p class="eyebrow">02 · chọn</p>
+              <h3>Preset rồi checkbox</h3>
+              <p>
+                Chọn Manual hoặc preset Minimal / Full-stack / UI / Reporting, rồi chỉnh checkbox theo category
+                <strong>sk-work</strong>, <strong>assets</strong> hoặc <strong>report</strong>.
+              </p>
+            </li>
+            <li class="card">
+              <p class="eyebrow">03 · xung đột</p>
+              <h3>Giữ hay thay</h3>
+              <p>
+                <strong>Install missing only</strong> giữ nguyên skill đã có; <strong>Replace selected</strong> chỉ thay đúng
+                skill đã chọn. Xem giải thích bằng <code>npx sb-kit --help</code>.
+              </p>
+            </li>
+            <li class="card">
+              <p class="eyebrow">04 · mirror</p>
+              <h3>Claude Code tuỳ chọn</h3>
+              <p>
+                Chọn <strong>Yes</strong> để mirror cùng selection và mode sang <code>.claude/skills</code>.
+                <strong>No</strong> là mặc định.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Presets -->
+      <section class="grid-bg" id="presets">
+        <div class="wrap split split-top">
+          <div class="stack">
+            <p class="eyebrow">Presets</p>
+            <h2 class="section-title">Chọn sẵn, chỉnh lại tuỳ ý.</h2>
+            <p class="section-copy">
+              Preset chỉ preselect checkbox. Bạn vẫn bật tắt từng skill trước khi xác nhận; CLI bắt buộc chọn ít nhất một
+              skill.
+            </p>
+            <div class="preset-tabs" role="group" aria-label="Preset" id="preset-tabs"></div>
+          </div>
+
+          <div id="preset-panels">
+            <div class="panel preset-panel" data-preset="manual" data-label="Manual" data-count="tự chọn" hidden>
+              <div class="panel-head"><span>preset: manual</span><span>tự chọn</span></div>
+              <div class="panel-body">
+                <p>Mặc định. Không preselect gì; bạn tự chọn từng skill trong ba nhóm sk-work, assets và report.</p>
+                <div class="row"><span class="badge">chọn trong picker</span></div>
+              </div>
+            </div>
+            <div class="panel preset-panel" data-preset="minimal" data-label="Minimal" data-count="4 skills">
+              <div class="panel-head"><span>preset: minimal</span><span>4 skills</span></div>
+              <div class="panel-body">
+                <p>Đủ để bắt đầu: workflow chính, giải thích code, debug và review diff.</p>
+                <div class="row">
+                  <span class="badge badge-volt">sk-excute</span>
+                  <span class="badge">sk-explain</span>
+                  <span class="badge">sk-debug</span>
+                  <span class="badge">sk-review-diff</span>
+                </div>
+                <p class="panel-note">Chọn <code>sk-excute</code> sẽ tự thêm ba role skill <code>sk-excute-*</code>.</p>
+              </div>
+            </div>
+            <div class="panel preset-panel" data-preset="full-stack" data-label="Full-stack" data-count="15 skills" hidden>
+              <div class="panel-head"><span>preset: full-stack</span><span>15 skills</span></div>
+              <div class="panel-body">
+                <p>Toàn bộ 13 core skills, thêm React best practices từ Vercel và sk-debug.</p>
+                <div class="row">
+                  <span class="badge badge-volt">13 core skills</span>
+                  <span class="badge">vercel-react-best-practices</span>
+                  <span class="badge">sk-debug</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel preset-panel" data-preset="ui" data-label="UI" data-count="6 skills" hidden>
+              <div class="panel-head"><span>preset: ui</span><span>6 skills</span></div>
+              <div class="panel-body">
+                <p>Cho việc làm giao diện: frontend design, React practices, landing page và UI audit.</p>
+                <div class="row">
+                  <span class="badge badge-volt">sk-excute</span>
+                  <span class="badge">frontend-design</span>
+                  <span class="badge">vercel-react-best-practices</span>
+                  <span class="badge">sk-landing-page</span>
+                  <span class="badge">sk-verify-code-ui-only</span>
+                  <span class="badge">sk-review-diff</span>
+                </div>
+              </div>
+            </div>
+            <div class="panel preset-panel" data-preset="reporting" data-label="Reporting" data-count="4 skills" hidden>
+              <div class="panel-head"><span>preset: reporting</span><span>4 skills</span></div>
+              <div class="panel-body">
+                <p>Report registry: slide, visualizer, tài liệu và giải thích.</p>
+                <div class="row">
+                  <span class="badge">sk-create-slide</span>
+                  <span class="badge">sk-visualizer</span>
+                  <span class="badge">sk-doc</span>
+                  <span class="badge">sk-explain</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section id="skills">
+        <div class="wrap section-body">
+          <div class="section-head">
+            <p class="eyebrow">Core kit</p>
+            <h2 class="section-title">Mỗi skill một việc, làm có evidence.</h2>
+          </div>
+
+          <div class="stack" style="gap: var(--space-5)">
+            <h2 class="section-label">SaboKit core / 13 skills</h2>
+            <div class="skill-list">
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-excute</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Inline-first cho task low/medium: đọc code và docs → bạn duyệt spec → đọc bổ sung, lập plan/todo và tự review →
+                  bạn duyệt plan → triển khai, review/sửa findings và bàn giao. Advisor sẵn có trong session và worker đều tùy
+                  chọn; task nhỏ vẫn giữ đủ hai approval gates.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-excute-explorer</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Contract cho scout read-only: tìm evidence về code và tài liệu local còn thiếu, trả paths, contracts và risks.
+                  Tái sử dụng kết quả, không bắt buộc scout lại cho plan.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-excute-researcher</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary
+                  source đúng version.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-excute-implementer</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Contract cho worker tùy chọn: triển khai nhóm task đã duyệt với exclusive file ownership, rồi handback files và
+                  evidence để agent chính review, integrate và sửa.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-visualizer</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Biến prompt, spec, plan, hoặc nội dung hội thoại thành một file HTML visualization trực quan, dễ đọc. Hỗ trợ
+                  nhiều style preset, tự động responsive, có timeline và diagram.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-create-slide</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX.</p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-release</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Chuẩn bị release với draft changelog, đề xuất SemVer, summary và checklist; không tự commit, push hoặc tag.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-doc</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>Sinh README, API docs, changelog hoặc usage guide từ codebase thành một file Markdown.</p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-explain</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references.</p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-verify-code-ui-only</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Audit tĩnh việc tái sử dụng component, typography và spacing theo chuẩn repo, với bằng chứng file:line. Chỉ kiểm
+                  tra UI; không sửa code, hooks, services hay logic nghiệp vụ, và không chạy autofix. Có thể chia page/section cho
+                  native sub-agents nếu host hỗ trợ và cho phép.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-review-diff</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Review diff được chọn với severity, location và evidence. Phân biệt regression và vấn đề có sẵn; không tự
+                  patch/verify.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-idea-to-docs</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Biến ý tưởng thành overview, spec và implementation plan: hỏi từng câu, lấy phản hồi trước khi lập plan; dừng ở
+                  docs, không triển khai.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-start-next-hono</h3>
+                  <span class="tag tag-core">core</span>
+                </div>
+                <p>
+                  Hoàn thiện workspace Next.js + Hono đã bootstrap: giữ Node.js mặc định hoặc chuyển backend sang Cloudflare
+                  Workers sau khi duyệt plan, không buộc chuyển Next.js. Hướng dẫn PostgreSQL/Drizzle, auth/proxy với Origin
+                  guard, cleanup database và R2 tùy chọn.
+                </p>
+              </article>
+            </div>
+          </div>
+
+          <div class="stack" style="gap: var(--space-5)">
+            <h2 class="section-label">Supporting / 6 skills</h2>
+            <div class="skill-list">
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-debug</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence. Không tự patch hay chạy
+                  reproduction.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>frontend-design</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Thiết kế và xây dựng UI web chất lượng production. Tạo landing page, dashboard, component, React component với
+                  aesthetic distinctive — không generic AI look. Tránh Inter/Roboto/Arial, dùng font pair cá tính, background có
+                  chiều sâu.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>vercel-react-best-practices</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Hướng dẫn tối ưu performance cho React và Next.js từ Vercel. Routing, data fetching, rendering strategies,
+                  bundling, image optimization — best practices cập nhật theo từng phiên bản Next.js.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>vercel-react-native-skills</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Best practices cho React Native và Expo. Navigation, styling, native modules, performance profiling,
+                  deployment — từ dev đến production cho mobile apps.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>deep-research</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và viết báo cáo có trích dẫn cùng source
+                  attribution.
+                </p>
+              </article>
+              <article class="skill-card">
+                <div class="skill-card-header">
+                  <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-cube" /></svg></span>
+                  <h3>sk-landing-page</h3>
+                  <span class="tag tag-support">support</span>
+                </div>
+                <p>
+                  Tạo hoặc cập nhật landing page sản phẩm tại <code>landing/index.html</code>, với concept, typography và bố cục
+                  phù hợp bằng Tailwind CSS CDN.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Workflow -->
+      <section class="grid-bg">
+        <div class="wrap section-body">
+          <div class="section-head">
+            <p class="eyebrow">Works together</p>
+            <h2 class="section-title">Chốt hướng bằng sk-excute, trình bày bằng sk-visualizer.</h2>
+            <p class="section-copy">
+              Agent chính giữ ownership từ spec, plan đến implementation và final review. Bạn duyệt ở hai cổng; khi cần nhìn spec
+              hay plan trực quan, sk-visualizer biến chúng thành một trang HTML.
+            </p>
+          </div>
+          <ol class="flow">
+            <li>
+              <span class="flow-n">01</span>
+              <span class="flow-title">Investigate</span>
+              <span class="flow-body">Agent chính đọc source, scout chỉ đi tìm evidence còn thiếu.</span>
+            </li>
+            <li class="gate">
+              <span class="flow-n">02 · approval gate</span>
+              <span class="flow-title">Spec</span>
+              <span class="flow-body">Viết spec. Bạn duyệt trước khi đi tiếp.</span>
+            </li>
+            <li class="gate">
+              <span class="flow-n">03 · approval gate</span>
+              <span class="flow-title">Plan</span>
+              <span class="flow-body">Plan và todo đã self-review. Bạn duyệt lần hai.</span>
+            </li>
+            <li>
+              <span class="flow-n">04</span>
+              <span class="flow-title">Implement</span>
+              <span class="flow-body">Triển khai inline; worker chỉ nhận task đã duyệt.</span>
+            </li>
+            <li class="viz">
+              <span class="flow-n">05 · tuỳ chọn</span>
+              <span class="flow-title">Visualize</span>
+              <span class="flow-body">sk-visualizer trình bày spec hoặc plan thành trang HTML.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Doctor & update -->
+      <section id="maintain">
+        <div class="wrap section-body">
+          <div class="section-head">
+            <p class="eyebrow">Bảo trì</p>
+            <h2 class="section-title">Kiểm tra và cập nhật, luôn có đường lui.</h2>
+            <p class="section-copy">
+              Hai lệnh này chạy offline từ package sb-kit đang chạy; không fetch npm hay GitHub, không tự xóa skill ngoài
+              package.
+            </p>
+          </div>
+          <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr))">
+            <div class="card">
+              <p class="eyebrow">Chỉ đọc</p>
+              <h3><code>sb-kit doctor</code></h3>
+              <p>
+                Inspect <code>.agents/skills</code> và <code>.claude/skills</code>: skill nào <code>unchanged</code>,
+                <code>local-modified</code> hay <code>upstream-changed</code>, companion nào còn thiếu. Thêm
+                <code>--json</code> cho CI; exit <code>0</code> là clean, <code>1</code> cần chú ý, <code>2</code> là lỗi
+                metadata hoặc mutation đang pending.
+              </p>
+            </div>
+            <div class="card">
+              <p class="eyebrow">Có backup</p>
+              <h3><code>sb-kit update</code></h3>
+              <p>
+                Preview file added/removed/changed trước khi thay, yêu cầu consent thêm cho bản sửa local, và lưu backup tại
+                <code>.sb-kit/backups/</code>. Final confirmation mặc định <strong>No</strong>; cancel trước apply không tạo
+                backup hay metadata.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- memorize-mcp -->
+      <section id="memorize">
+        <div class="wrap split split-top">
+          <div class="stack" style="gap: var(--space-5)">
+            <div class="stack" style="gap: var(--space-3)">
+              <p class="eyebrow eyebrow-ion">MCP server</p>
+              <h2 class="section-title">Một file memory cho mọi session.</h2>
+              <p class="section-copy">
+                memorize-mcp lưu shared Markdown memory vào <code>.memorize/MEMORY.md</code> của workspace. Không cloud sync,
+                không database; file giới hạn 64 KiB để agent đọc và tìm trực tiếp.
+              </p>
+            </div>
+            <article class="mcp-card">
+              <div class="skill-card-header">
+                <span class="skill-mark" aria-hidden="true"><svg class="icon" width="20" height="20"><use href="#i-plug" /></svg></span>
+                <h3 style="flex: 1; min-width: 0; font: 500 15px/22px var(--font-mono)">memorize-mcp</h3>
+                <span class="badge">v2.0.1</span>
+              </div>
+              <p>Đăng ký session, ghi theo section, tìm lại context của workspace.</p>
+              <div class="row">
+                <span class="badge badge-ion">MCP server</span>
+                <span class="badge">3 tools</span>
+                <span class="badge badge-volt">Live</span>
+              </div>
+            </article>
+          </div>
+
+          <div class="stack">
+            <div class="tool">
+              <span class="tool-n" aria-hidden="true">01</span>
+              <div>
+                <span class="tool-name">start_session</span>
+                <span class="tool-body">Đăng ký session mới mà không xoá memory đã có. Nhận goal tuỳ chọn.</span>
+              </div>
+            </div>
+            <div class="tool">
+              <span class="tool-n" aria-hidden="true">02</span>
+              <div>
+                <span class="tool-name">save_memorize</span>
+                <span class="tool-body">Ghi Markdown theo section, mode append để cập nhật tiến độ hoặc replace để thay một section.</span>
+              </div>
+            </div>
+            <div class="tool">
+              <span class="tool-n" aria-hidden="true">03</span>
+              <div>
+                <span class="tool-name">search_memorize</span>
+                <span class="tool-body">Không truyền query để nạp toàn bộ context; truyền query, section hoặc sessionId để lọc.</span>
+              </div>
+            </div>
+            <figure class="code">
+              <figcaption class="code-head">
+                <span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="code-file">Claude Code</span>
+                <span class="code-lang">shell</span>
+              </figcaption>
+              <pre class="code-body"><code><span class="tk-prompt">$ </span>claude mcp add --transport stdio --scope user memorize -- bun "/path/to/memorize-mcp/index.ts"
+<span class="tk-prompt">$ </span>claude mcp list</code></pre>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- Next.js + Hono -->
+      <section class="grid-bg" id="bootstrap">
+        <div class="wrap split">
+          <div class="stack" style="gap: var(--space-3)">
+            <p class="eyebrow eyebrow-flare">Bootstrap</p>
+            <h2 class="section-title">Next.js + Hono, sẵn cho agent.</h2>
+            <p class="section-copy">
+              Tạo pnpm workspace gồm Next.js App Router client, Hono server và bộ core skills, rồi format project. Sau đó mở
+              project bằng coding agent và gọi <code>$sk-start-next-hono</code> để cấu hình Drizzle, auth, proxy và convention
+              sau khi duyệt plan.
+            </p>
+          </div>
+          <div class="stack" style="gap: var(--space-3)">
+            <figure class="code">
+              <figcaption class="code-head">
+                <span class="code-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="code-file">terminal</span>
+                <span class="code-lang">shell</span>
+                <button class="code-copy" id="copy-create-command" type="button">
+                  <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-copy" /></svg>
+                  <span>Copy</span>
+                </button>
+              </figcaption>
+              <pre class="code-body"><code><span class="tk-prompt">$ </span>npx sb-kit create next-hono my-app</code></pre>
+            </figure>
+            <p class="status" id="copy-create-status" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
       <section>
-        <h2 class="section-label">Khởi tạo Next.js + Hono</h2>
-        <p class="section-copy">
-                    Tạo base pnpm workspace, cài bộ core skills và format
-                    project. Sau đó mở project bằng coding agent và gọi
-                    <code>$sk-start-next-hono</code>
-                    để cấu hình Drizzle, auth, proxy và convention sau khi duyệt
-                    plan.
-        </p>
-        <div class="install-block">
-          <code>npx sb-kit create next-hono my-app</code>
-          <button id="copy-create-command" type="button">COPY</button>
-        </div>
-        <p
-                    id="copy-create-status"
-                    style="margin-top: 0.5rem"
-                    aria-live="polite"
-                ></p>
-      </section>
-
-      <!-- Install -->
-      <section>
-        <h2 class="section-label">Cài đặt</h2>
-        <div class="steps">
-          <div class="step">
-            <span class="step-num">1</span
-                        ><span
-                            >Chạy <code>npx sb-kit install</code> trong project
-                            cần skill.</span
-                        >
-          </div>
-          <div class="step">
-            <span class="step-num">2</span
-                        ><span
-                            >Chọn Manual hoặc preset Minimal / Full-stack / UI / Reporting,
-                            rồi chỉnh checkbox theo category:
-                            <strong>sk-work</strong>, <strong>assets</strong>,
-                            hoặc <strong>report</strong>.</span
-                        >
-          </div>
-          <div class="step">
-            <span class="step-num">3</span
-                        ><span
-                            >Chọn <strong>Install missing only</strong> để giữ
-                            skill có sẵn, hoặc <strong>Replace selected</strong>
-                            để chỉ thay các skill đã tick. Xem giải thích hai chế độ
-                            bằng <code>npx sb-kit --help</code>.</span
-                        >
-          </div>
-          <div class="step">
-            <span class="step-num">4</span
-                        ><span
-                            >Dùng radio chọn cài thêm cho Claude Code.
-                            <strong>No</strong> là mặc định; chọn
-                            <strong>Yes</strong> để mirror cùng selection và mode
-                            vào <code>.claude/skills</code>.</span
-                        >
+        <div class="wrap section-body">
+          <div class="cta">
+            <div class="cta-copy">
+              <h2>Mở terminal trong project của bạn.</h2>
+              <p>Cần Node.js 20.12.0 trở lên. Mặc định không ghi đè skill nào đã có.</p>
+            </div>
+            <div class="cta-cmd">
+              <span aria-hidden="true">$</span>
+              <span>npx sb-kit install</span>
+              <button id="copy-cta-command" type="button" aria-label="Copy lệnh cài đặt">
+                <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-copy" /></svg>
+              </button>
+            </div>
           </div>
         </div>
       </section>
+    </main>
 
-      <!-- sb-kit Core -->
-      <section>
-        <h2 class="section-label">SaboKit core / 13 skills</h2>
-        <div class="skill-list">
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-excute</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Inline-first cho task low/medium: đọc code và docs →
-                            bạn duyệt spec → đọc bổ sung, lập plan/todo và tự review →
-                            bạn duyệt plan → triển khai, review/sửa findings và bàn giao.
-                            Advisor sẵn có trong session và worker đều tùy chọn;
-                            task nhỏ vẫn giữ đủ hai approval gates.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-excute-explorer</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Contract cho scout read-only: tìm evidence về code và
-                            tài liệu local còn thiếu, trả paths, contracts và risks.
-                            Tái sử dụng kết quả, không bắt buộc scout lại cho plan.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-excute-researcher</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Researcher trả citations cho câu hỏi public external
-                            cần thiết, tuân thủ consent/privacy và ưu tiên primary
-                            source đúng version.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-excute-implementer</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Contract cho worker tùy chọn: triển khai nhóm task đã
-                            duyệt với exclusive file ownership, rồi handback files
-                            và evidence để agent chính review, integrate và sửa.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-visualizer</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Biến prompt, spec, plan, hoặc nội dung hội thoại
-                            thành một file HTML visualization trực quan, dễ đọc.
-                            Hỗ trợ nhiều style preset, tự động responsive, có
-                            timeline và diagram.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-create-slide</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Tạo HTML presentation từ ý tưởng hoặc chuyển đổi
-                            PPT/PPTX.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-release</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Chuẩn bị release với draft changelog, đề xuất
-                            SemVer, summary và checklist; không tự commit, push
-                            hoặc tag.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-doc</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Sinh README, API docs, changelog hoặc usage guide từ
-                            codebase thành một file Markdown.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-explain</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Giải thích source code, flow, state transition và các
-                            nhánh xử lý dựa trên file references.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-verify-code-ui-only</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Audit tĩnh việc tái sử dụng component, typography và spacing
-                            theo chuẩn repo, với bằng chứng file:line. Chỉ kiểm tra UI;
-                            không sửa code, hooks, services hay logic nghiệp vụ, và
-                            không chạy autofix. Có thể chia page/section cho native
-                            sub-agents nếu host hỗ trợ và cho phép.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-review-diff</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>Review diff được chọn với severity, location và evidence. Phân biệt regression và vấn đề có sẵn; không tự patch/verify.</p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-idea-to-docs</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>Biến ý tưởng thành overview, spec và implementation plan: hỏi từng câu, lấy phản hồi trước khi lập plan; dừng ở docs, không triển khai.</p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-start-next-hono</h3>
-              <span class="tag tag-core">core</span>
-            </div>
-            <p>
-                            Hoàn thiện workspace Next.js + Hono đã bootstrap:
-                            giữ Node.js mặc định hoặc chuyển backend sang Cloudflare
-                            Workers sau khi duyệt plan, không buộc chuyển Next.js.
-                            Hướng dẫn PostgreSQL/Drizzle, auth/proxy với Origin guard,
-                            cleanup database và R2 tùy chọn.
-            </p>
-          </article>
+    <footer>
+      <div class="wrap footer-body">
+        <span class="mono">sb-kit · ISC · Safe merge · Interactive install</span>
+        <div class="footer-links">
+          <a href="https://github.com/congthien2003/sb-kit">sb-kit trên GitHub</a>
+          <a href="https://github.com/congthien2003/memorize-mcp">memorize-mcp trên GitHub</a>
         </div>
-      </section>
-
-      <!-- Supporting -->
-      <section>
-        <h2 class="section-label">Supporting / 6 skills</h2>
-        <div class="skill-list">
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-debug</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence. Không tự patch hay chạy reproduction.</p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>frontend-design</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-                            Thiết kế và xây dựng UI web chất lượng production.
-                            Tạo landing page, dashboard, component, React
-                            component với aesthetic distinctive — không generic
-                            AI look. Tránh Inter/Roboto/Arial, dùng font pair cá
-                            tính, background có chiều sâu.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>vercel-react-best-practices</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-                            Hướng dẫn tối ưu performance cho React và Next.js từ
-                            Vercel. Routing, data fetching, rendering
-                            strategies, bundling, image optimization — best
-                            practices cập nhật theo từng phiên bản Next.js.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>vercel-react-native-skills</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-                            Best practices cho React Native và Expo. Navigation,
-                            styling, native modules, performance profiling,
-                            deployment — từ dev đến production cho mobile apps.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>deep-research</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-                            Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện
-                            và viết báo cáo có trích dẫn cùng source attribution.
-            </p>
-          </article>
-          <article class="skill-card">
-            <div class="skill-card-header">
-              <h3>sk-landing-page</h3>
-              <span class="tag tag-support">support</span>
-            </div>
-            <p>
-              Tạo hoặc cập nhật landing page sản phẩm tại
-              <code>landing/index.html</code>, với concept, typography và
-              bố cục phù hợp bằng Tailwind CSS CDN.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <!-- Footer -->
-      <footer>
-        <span id="copy-status-footer" aria-live="polite"
-                    >ISC · Safe merge · Interactive install</span
-                >
-        <span>npx sb-kit --help</span>
-      </footer>
-    </div>
+      </div>
+    </footer>
 
     <script>
-            function setupCopyButton(
-                buttonId,
-                statusId,
-                command,
-                successMessage,
-            ) {
-                const button = document.getElementById(buttonId);
-                const status = document.getElementById(statusId);
+      function setupCopy(buttonId, statusId, command, successMessage) {
+        var button = document.getElementById(buttonId);
+        var status = document.getElementById(statusId);
+        if (!button) return;
+        var label = button.querySelector("span:last-child");
+        var idleLabel = label ? label.textContent : "";
+        var timer;
 
-                button.addEventListener("click", async () => {
-                    try {
-                        await navigator.clipboard.writeText(command);
-                        button.textContent = "COPIED";
-                        status.textContent = successMessage;
-                    } catch {
-                        button.textContent = "SELECT";
-                        status.textContent = `Sao chép thủ công: ${command}`;
-                    }
-                    setTimeout(() => {
-                        button.textContent = "COPY";
-                        status.textContent = "";
-                    }, 1800);
-                });
-            }
+        button.addEventListener("click", async function () {
+          var copied = true;
+          try {
+            await navigator.clipboard.writeText(command);
+          } catch (error) {
+            copied = false;
+          }
+          if (label) label.textContent = copied ? "Copied" : "Select";
+          if (status) status.textContent = copied ? successMessage : "Sao chép thủ công: " + command;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            if (label) label.textContent = idleLabel;
+            if (status) status.textContent = "";
+          }, 1800);
+        });
+      }
 
-            setupCopyButton(
-                "copy-command",
-                "copy-status",
-                "npx sb-kit install",
-                "Đã sao chép lệnh cài đặt.",
-            );
-            setupCopyButton(
-                "copy-create-command",
-                "copy-create-status",
-                "npx sb-kit create next-hono my-app",
-                "Đã sao chép lệnh khởi tạo.",
-            );
-        </script>
+      setupCopy("copy-command", "copy-status", "npx sb-kit install", "Đã sao chép lệnh cài đặt.");
+      setupCopy("copy-cta-command", "copy-status", "npx sb-kit install", "Đã sao chép lệnh cài đặt.");
+      setupCopy("copy-create-command", "copy-create-status", "npx sb-kit create next-hono my-app", "Đã sao chép lệnh khởi tạo.");
+
+      (function setupPresets() {
+        var tabs = document.getElementById("preset-tabs");
+        var panels = Array.prototype.slice.call(document.querySelectorAll(".preset-panel"));
+        if (!tabs || !panels.length) return;
+        var active = panels.filter(function (panel) {
+          return !panel.hidden;
+        })[0];
+
+        panels.forEach(function (panel) {
+          var tab = document.createElement("button");
+          tab.type = "button";
+          tab.className = "btn";
+          tab.textContent = panel.dataset.label;
+          tab.setAttribute("aria-pressed", String(panel === active));
+          tab.addEventListener("click", function () {
+            panels.forEach(function (other) {
+              other.hidden = other !== panel;
+            });
+            Array.prototype.forEach.call(tabs.children, function (button) {
+              button.setAttribute("aria-pressed", String(button === tab));
+            });
+          });
+          tabs.appendChild(tab);
+        });
+      })();
+
+      (function setupTheme() {
+        var root = document.documentElement;
+        var toggle = document.getElementById("theme-toggle");
+        if (!toggle) return;
+
+        function render() {
+          var light = root.getAttribute("data-theme") === "light";
+          toggle.setAttribute("aria-pressed", String(light));
+          toggle.setAttribute("aria-label", light ? "Chuyển sang giao diện tối" : "Chuyển sang giao diện sáng");
+        }
+
+        toggle.addEventListener("click", function () {
+          var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+          root.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("sb-kit-theme", next);
+          } catch (error) {}
+          render();
+        });
+        render();
+      })();
+    </script>
   </body>
 </html>
