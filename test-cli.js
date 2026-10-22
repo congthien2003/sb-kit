@@ -2,6 +2,7 @@ const assert = require("assert");
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
+const { spawnSync } = require("child_process");
 const {
   ASSET_SKILLS,
   REPORT_SKILLS,
@@ -16,6 +17,24 @@ const {
   parseCreateArgs,
   runCommand,
 } = require("./cli");
+
+const helpResult = spawnSync(process.execPath, [path.join(__dirname, "cli.js"), "--help"], {
+  encoding: "utf8",
+});
+assert.ifError(helpResult.error);
+assert.strictEqual(helpResult.status, 0, helpResult.stderr);
+assert.match(helpResult.stdout, /Install missing only: Install missing skills; preserve existing skills\./);
+assert.match(helpResult.stdout, /Replace selected: Replace only selected existing skills; leave unselected skills unchanged\./);
+assert.deepStrictEqual(
+  helpResult.stdout.split(/\r?\n/).filter((line) => line.trim().startsWith("npx sb-kit ")),
+  [
+    "  npx sb-kit install                                      Choose preset and editable skill selection",
+    "  npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace",
+    "  npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)",
+    "  npx sb-kit update                                       Preview selected updates with retained backups (offline)",
+    "  npx sb-kit --help                                       Show this help",
+  ],
+);
 
 function runInstall({ claude = false } = {}) {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-"));

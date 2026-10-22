@@ -91,7 +91,7 @@ approval. Follow the repository AGENTS.md. Do not commit code. Do not run
 build, test, lint, or verification commands unless I explicitly allow them.
 
 The installed sk-excute workflow is inline-first. The main agent owns the
-spec, detailed plan/todos, implementation, integration, and final review.
+spec, risk-sized plan/todos, implementation, integration, and final review.
 Obtain my approval for the spec, then for the plan the main agent has
 self-reviewed, before edits.
 Only scout, researcher, and worker roles may be dispatched.
@@ -117,7 +117,7 @@ Luồng cài đặt:
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
-`$sk-excute` triển khai inline mặc định và chỉ cho phép các role `scout`, `researcher`, `worker` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Không có reviewer sub-agent: bạn review spec, agent chính tự review plan trước khi bạn approve. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm. Role được map theo chức năng (scout = explore/search lấy thông tin, worker = triển khai code, researcher = tra cứu bên ngoài), không theo tên agent của host; sub-agent nên chạy model rẻ hơn main như Haiku, Luna-6 hoặc DeepSeek V4.1.
+`$sk-excute` triển khai inline mặc định và chỉ cho phép các role `scout`, `researcher`, `worker` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Không mặc định dispatch reviewer sub-agent: bạn review spec, agent chính tự review plan một lượt và sửa findings trước khi bạn approve. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm. Role được map theo chức năng (scout = explore/search lấy thông tin, worker = triển khai code, researcher = tra cứu bên ngoài), không theo tên agent của host; sub-agent nên chạy model rẻ hơn main như Haiku, Luna-6 hoặc DeepSeek V4.1.
 
 Ví dụ cấu trúc sau khi dùng lựa chọn mặc định **No**:
 
@@ -141,7 +141,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Inline-first: agent chính viết spec, plan/todo, tự review plan, triển khai và review; hai approval gates (spec, plan) và worker tùy chọn; không tự commit. |
+| `sk-excute` | Inline-first từ yêu cầu ban đầu, spec và plan/todo co giãn theo rủi ro low/medium; hai approval gates, tự review plan, triển khai rồi review/sửa findings; advisor và worker tùy chọn; không tự commit. |
 | `sk-excute-explorer` | Contract cho scout read-only, trả evidence về code/tài liệu local còn thiếu; tái sử dụng packet cho spec/plan, không bắt buộc scout lại. |
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
@@ -157,7 +157,9 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 `sk-create-skill` và `skill-creator` chỉ được giữ trong checkout của repository để phục vụ tác vụ nội bộ; chúng không thuộc catalog, picker hay npm package của sb-kit. Không dùng `sb-kit install` để phân phối hoặc cài hai skill này.
 
-`$sk-excute` đi theo flow: agent chính điều tra phần cần thiết → tự viết spec có block IDs → bạn review và approve spec → agent chính lập plan chi tiết và todo list → agent chính tự review plan → bạn approve plan → triển khai inline (sub-agent phụ tùy chọn) → agent chính review changes và báo evidence. Không có reviewer sub-agent, không bắt buộc scout lần hai hay câu hỏi chọn mode; đổi scope/behavior phải duyệt lại spec.
+`$sk-excute` nhận yêu cầu ban đầu, không cần spec/plan có sẵn: điều tra code và tài liệu liên quan → viết spec với acceptance IDs → bạn approve spec → đọc bổ sung implementation details còn thiếu hoặc đã thay đổi → lập plan/todo checklist → agent chính tự review một lượt và sửa findings → bạn approve plan → triển khai inline → review changes, sửa findings trong scope và review lại vùng bị ảnh hưởng → bàn giao evidence và phần chưa verify. Low dùng spec/checklist ngắn; medium bổ sung contracts, dependencies và edge cases cần thiết. Đánh giá theo rủi ro, không chỉ số file; cả hai vẫn giữ đủ hai approval gates. Không scan lại repo hoặc gọi scout lần hai mặc định; đổi scope/behavior phải duyệt lại spec.
+
+Trong lúc lên spec/plan, agent có thể hỏi advisor sẵn có và dùng được trong session cho trade-off hoặc rủi ro quan trọng, theo policy của host. Advisor không thay thế self-review hay user approval; nếu không khả dụng thì tiếp tục inline hoặc hỏi user khi thiếu quyết định quan trọng. Chi tiết delegation được đọc khi cần từ `sk-excute/references/delegation.md` và role contract tương ứng. Findings vượt scope phải xin duyệt; không báo hoàn tất khi còn blocker.
 
 Worker chỉ được dùng khi allocation đã được cho phép trong plan hoặc bạn chấp thuận sau đó. Giao một nhóm task liên quan cùng file scope, dependencies và acceptance criteria, không spawn theo từng todo hay gửi toàn lịch sử. Agent chính không sửa chồng file khi worker đang giữ ownership; sau handback, agent chính đọc files/diff và có thể sửa lỗi trong scope inline. Giữ nguyên tên packaged skills explorer/implementer để tương thích catalog; chúng là contract cho native scout/worker, không phải agent types bổ sung. Chỉ chạy verification được cho phép, công khai checks chưa chạy và không coi source review là runtime proof hoặc số đo tiết kiệm token.
 

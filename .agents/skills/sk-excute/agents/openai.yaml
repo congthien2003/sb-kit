@@ -1,9 +1,11 @@
 ---
 interface:
   display_name: "SK Excute"
-  short_description: "Inline-first delivery with optional bounded roles"
+  short_description: "Risk-sized spec, plan, implementation and review"
   default_prompt: >-
-    Use $sk-excute to own this task inline: gather needed evidence,
-    get your approval for the spec, then for a self-reviewed
-    plan/todos, implement with optional bounded worker support, and
-    report final review and verification limits.
+    Use $sk-excute from the initial request: investigate code and docs,
+    get your approval for a risk-sized spec, read missing implementation
+    details, then get your approval for a self-reviewed plan/todo checklist.
+    Implement inline, review and fix in-scope findings, and hand off with
+    evidence and verification limits. Consult an available advisor when useful
+    during spec or plan preparation, subject to host policy.

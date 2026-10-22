@@ -16,7 +16,11 @@ const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono w
   npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace
   npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)
   npx sb-kit update                                       Preview selected updates with retained backups (offline)
-  npx sb-kit --help                                       Show this help`;
+  npx sb-kit --help                                       Show this help
+
+Install conflict modes:
+  Install missing only: Install missing skills; preserve existing skills.
+  Replace selected: Replace only selected existing skills; leave unselected skills unchanged.`;
 
 function usage() {
   console.log(USAGE);
