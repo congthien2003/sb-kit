@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Chế độ mặc định giữ nguyên skill đã tồn tại; **Replace selected** chỉ thay những skill được chọn. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. `$sk-create-skill` là công cụ nội bộ trong checkout để tạo/cải thiện skill SaboKit, không thuộc npm package hoặc installer.
 
 ## Prerequisites
 
@@ -59,7 +59,17 @@ Thêm `--claude` để mirror cùng bộ core skills vào `.claude/skills`:
 npx sb-kit create next-hono my-app --claude
 ```
 
-CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. Bootstrap cũng cài trọn bộ role contracts của `$sk-excute`; agent chính triển khai inline mặc định và chỉ dùng native sub-agents khi có nhu cầu cụ thể.
+CLI chỉ tạo base project có thể mở bằng coding agent. PostgreSQL, Drizzle, auth, same-origin proxy, module conventions và R2 tùy chọn được `$sk-start-next-hono` cấu hình ở bước sau, sau khi agent inspect source và bạn approve plan. CLI vẫn bootstrap Hono trên Node.js; skill giữ Node.js mặc định hoặc chuyển server hiện có sang Cloudflare Workers khi bạn chọn và duyệt kế hoạch. Chọn Workers cho backend không bắt buộc đổi nơi deploy Next.js. Bootstrap cũng cài trọn bộ role contracts của `$sk-excute`; agent chính triển khai inline mặc định và chỉ dùng native sub-agents khi có nhu cầu cụ thể.
+
+Để chọn backend Workers, thêm yêu cầu này khi gọi skill:
+
+```text
+Use $sk-start-next-hono to set up this existing workspace with a Cloudflare Workers Hono backend. Keep the current Next.js deployment. Present the in-place conversion plan and wait for approval before editing. Do not run verification or deploy commands.
+```
+
+Nhánh Workers dùng Wrangler, typed bindings/secrets và PostgreSQL/Drizzle với Hyperdrive cùng driver tương thích theo tài liệu chính thức; không tự đổi PostgreSQL thành D1. R2 chỉ thêm khi được yêu cầu, ưu tiên native binding trên Workers. Agent cần xác nhận resource IDs, môi trường và quyền thực thi; deploy hoặc tạo tài nguyên cloud không được tự động thực hiện.
+
+Khi chọn auth/proxy, skill hướng dẫn kiểm tra Origin trước khi đọc cookie, chuyển cookie thành bearer token qua transport đầy đủ, xác thực response envelope cùng HTTP status và mount Hono auth guard. Hướng dẫn cũng bao gồm cleanup kết nối database theo request và lựa chọn dependency theo bằng chứng security advisory. Đây là yêu cầu triển khai/review; không thay thế test runtime, kiểm tra bảo mật hoặc xác nhận deployment.
 
 Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
 
@@ -83,7 +93,7 @@ approval. Follow the repository AGENTS.md. Do not commit code. Do not run
 build, test, lint, or verification commands unless I explicitly allow them.
 
 The installed sk-excute workflow is inline-first. The main agent owns the
-spec, detailed plan/todos, implementation, integration, and final review.
+spec, risk-sized plan/todos, implementation, integration, and final review.
 Obtain my approval for the spec, then for the plan the main agent has
 self-reviewed, before edits.
 Only scout, researcher, and worker roles may be dispatched.
@@ -102,6 +112,8 @@ Hiển thị hướng dẫn:
 npx sb-kit --help
 ```
 
+Help giải thích rõ **Install missing only** cài skill còn thiếu và giữ nguyên bản hiện có; **Replace selected** chỉ thay các skill hiện có đã chọn, không tác động skill chưa chọn. Nội dung trợ giúp này không thay đổi hành vi installer.
+
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
@@ -109,7 +121,7 @@ Luồng cài đặt:
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
-`$sk-excute` triển khai inline mặc định và chỉ cho phép các role `scout`, `researcher`, `worker` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Không có reviewer sub-agent: bạn review spec, agent chính tự review plan trước khi bạn approve. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm. Role được map theo chức năng (scout = explore/search lấy thông tin, worker = triển khai code, researcher = tra cứu bên ngoài), không theo tên agent của host; sub-agent nên chạy model rẻ hơn main như Haiku, Luna-6 hoặc DeepSeek V4.1.
+`$sk-excute` triển khai inline mặc định và chỉ cho phép các role `scout`, `researcher`, `worker` khi host hỗ trợ. Không bundled orchestrator, CLI delegation hay dependency riêng. Scout/researcher chỉ giải quyết câu hỏi còn thiếu; external research phải tuân thủ consent, offline và privacy policy. Không mặc định dispatch reviewer sub-agent: bạn review spec, agent chính tự review plan một lượt và sửa findings trước khi bạn approve. Worker không khả dụng hoặc thất bại phải báo status/partial changes và xin phép trước khi agent chính takeover; không đổi ownership âm thầm. Role được map theo chức năng (scout = explore/search lấy thông tin, worker = triển khai code, researcher = tra cứu bên ngoài), không theo tên agent của host; sub-agent nên chạy model rẻ hơn main như Haiku, Luna-6 hoặc DeepSeek V4.1.
 
 Ví dụ cấu trúc sau khi dùng lựa chọn mặc định **No**:
 
@@ -133,7 +145,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 | Skill | Mục đích |
 | --- | --- |
-| `sk-excute` | Inline-first: agent chính viết spec, plan/todo, tự review plan, triển khai và review; hai approval gates (spec, plan) và worker tùy chọn; không tự commit. |
+| `sk-excute` | Inline-first từ yêu cầu ban đầu, spec và plan/todo co giãn theo rủi ro low/medium; hai approval gates, tự review plan, triển khai rồi review/sửa findings; advisor và worker tùy chọn; không tự commit. |
 | `sk-excute-explorer` | Contract cho scout read-only, trả evidence về code/tài liệu local còn thiếu; tái sử dụng packet cho spec/plan, không bắt buộc scout lại. |
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
@@ -142,16 +154,26 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
-| `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap với Drizzle, auth, proxy và convention modular monolith. |
+| `sk-start-next-hono` | Hoàn thiện workspace Next.js + Hono đã bootstrap: Node.js mặc định hoặc Cloudflare Workers tùy chọn, với PostgreSQL/Drizzle, auth, proxy và convention modular monolith. |
 | `sk-verify-code-ui-only` | Audit UI-only read-only theo chuẩn repo về component reuse, typography và spacing; báo evidence locations, có thể dùng native sub-agents nếu host hỗ trợ và cho phép. |
 | `sk-review-diff` | Review diff được chọn, findings có severity/location/evidence; phân biệt regression với pre-existing issues, không tự patch/verify. |
 | `sk-idea-to-docs` | Biến ý tưởng thành bộ docs nền tảng `docs/overview.md`, `docs/spec.md`, `docs/implementation-plan.md`: hỏi từng câu, phân biệt xác nhận/đề xuất/giả định/điểm mở, lấy phản hồi trước khi lập plan; dừng ở docs, không triển khai hay commit. |
 
 `sk-create-skill` và `skill-creator` chỉ được giữ trong checkout của repository để phục vụ tác vụ nội bộ; chúng không thuộc catalog, picker hay npm package của sb-kit. Không dùng `sb-kit install` để phân phối hoặc cài hai skill này.
 
-`$sk-excute` đi theo flow: agent chính điều tra phần cần thiết → tự viết spec có block IDs → bạn review và approve spec → agent chính lập plan chi tiết và todo list → agent chính tự review plan → bạn approve plan → triển khai inline (sub-agent phụ tùy chọn) → agent chính review changes và báo evidence. Không có reviewer sub-agent, không bắt buộc scout lần hai hay câu hỏi chọn mode; đổi scope/behavior phải duyệt lại spec.
+`$sk-excute` nhận yêu cầu ban đầu, không cần spec/plan có sẵn: điều tra code và tài liệu liên quan → viết spec với acceptance IDs → bạn approve spec → đọc bổ sung implementation details còn thiếu hoặc đã thay đổi → lập plan/todo checklist → agent chính tự review một lượt và sửa findings → bạn approve plan → triển khai inline → review changes, sửa findings trong scope và review lại vùng bị ảnh hưởng → bàn giao evidence và phần chưa verify. Low dùng spec/checklist ngắn; medium bổ sung contracts, dependencies và edge cases cần thiết. Đánh giá theo rủi ro, không chỉ số file; cả hai vẫn giữ đủ hai approval gates. Không scan lại repo hoặc gọi scout lần hai mặc định; đổi scope/behavior phải duyệt lại spec.
+
+Trong lúc lên spec/plan, agent có thể hỏi advisor sẵn có và dùng được trong session cho trade-off hoặc rủi ro quan trọng, theo policy của host. Advisor không thay thế self-review hay user approval; nếu không khả dụng thì tiếp tục inline hoặc hỏi user khi thiếu quyết định quan trọng. Chi tiết delegation được đọc khi cần từ `sk-excute/references/delegation.md` và role contract tương ứng. Sau khi sửa findings trong plan, agent kiểm tra lại các mục bị ảnh hưởng; không trình plan như đã sẵn sàng duyệt khi còn blocker mà phải nêu quyết định cần giải quyết. Findings vượt scope phải xin duyệt; không báo hoàn tất khi còn blocker.
 
 Worker chỉ được dùng khi allocation đã được cho phép trong plan hoặc bạn chấp thuận sau đó. Giao một nhóm task liên quan cùng file scope, dependencies và acceptance criteria, không spawn theo từng todo hay gửi toàn lịch sử. Agent chính không sửa chồng file khi worker đang giữ ownership; sau handback, agent chính đọc files/diff và có thể sửa lỗi trong scope inline. Giữ nguyên tên packaged skills explorer/implementer để tương thích catalog; chúng là contract cho native scout/worker, không phải agent types bổ sung. Chỉ chạy verification được cho phép, công khai checks chưa chạy và không coi source review là runtime proof hoặc số đo tiết kiệm token.
+
+Ví dụ bắt đầu từ yêu cầu, chưa cần spec/plan có sẵn:
+
+```text
+$sk-excute Bổ sung trạng thái rỗng cho danh sách sản phẩm theo component hiện có.
+Đọc code và tài liệu liên quan, đề xuất spec để tôi duyệt trước khi lên plan.
+Không tự commit hoặc chạy test/verify.
+```
 
 Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc source, không chạy lệnh.` và `$sk-review-diff Review staged diff, không sửa hoặc verify.` Cả hai mặc định trả report trong chat; muốn patch phải dùng `$sk-excute` và duyệt spec/plan.
 
