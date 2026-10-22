@@ -1,6 +1,6 @@
 # sb-kit
 
-CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Skill đã tồn tại sẽ được giữ nguyên. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. Supporting skill `$sk-create-skill` phối hợp quy trình tạo/cải thiện skill SaboKit với các workflow được tham chiếu; installer không tự cài các companion skills.
+CLI cài đặt bộ agent skills được đóng gói sẵn vào project hiện tại. Skills luôn được cài vào `.agents/skills`; bạn có thể chọn cài thêm cho Claude Code vào `.claude/skills`. Chế độ mặc định giữ nguyên skill đã tồn tại; **Replace selected** chỉ thay những skill được chọn. Core kit gồm `$sk-excute` cho workflow inline-first có evidence và approval gates, cùng các role contracts hỗ trợ scout, researcher và worker tùy chọn. Agent chính giữ ownership từ spec, plan/todo đến implementation và final review. `$sk-create-skill` là công cụ nội bộ trong checkout để tạo/cải thiện skill SaboKit, không thuộc npm package hoặc installer.
 
 ## Prerequisites
 
@@ -69,6 +69,8 @@ Use $sk-start-next-hono to set up this existing workspace with a Cloudflare Work
 
 Nhánh Workers dùng Wrangler, typed bindings/secrets và PostgreSQL/Drizzle với Hyperdrive cùng driver tương thích theo tài liệu chính thức; không tự đổi PostgreSQL thành D1. R2 chỉ thêm khi được yêu cầu, ưu tiên native binding trên Workers. Agent cần xác nhận resource IDs, môi trường và quyền thực thi; deploy hoặc tạo tài nguyên cloud không được tự động thực hiện.
 
+Khi chọn auth/proxy, skill hướng dẫn kiểm tra Origin trước khi đọc cookie, chuyển cookie thành bearer token qua transport đầy đủ, xác thực response envelope cùng HTTP status và mount Hono auth guard. Hướng dẫn cũng bao gồm cleanup kết nối database theo request và lựa chọn dependency theo bằng chứng security advisory. Đây là yêu cầu triển khai/review; không thay thế test runtime, kiểm tra bảo mật hoặc xác nhận deployment.
+
 Sau khi scaffold thành công, CLI in prompt sẵn để gửi cho agent:
 
 ```text
@@ -109,6 +111,8 @@ Hiển thị hướng dẫn:
 ```bash
 npx sb-kit --help
 ```
+
+Help giải thích rõ **Install missing only** cài skill còn thiếu và giữ nguyên bản hiện có; **Replace selected** chỉ thay các skill hiện có đã chọn, không tác động skill chưa chọn. Nội dung trợ giúp này không thay đổi hành vi installer.
 
 Luồng cài đặt:
 
@@ -159,9 +163,17 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 
 `$sk-excute` nhận yêu cầu ban đầu, không cần spec/plan có sẵn: điều tra code và tài liệu liên quan → viết spec với acceptance IDs → bạn approve spec → đọc bổ sung implementation details còn thiếu hoặc đã thay đổi → lập plan/todo checklist → agent chính tự review một lượt và sửa findings → bạn approve plan → triển khai inline → review changes, sửa findings trong scope và review lại vùng bị ảnh hưởng → bàn giao evidence và phần chưa verify. Low dùng spec/checklist ngắn; medium bổ sung contracts, dependencies và edge cases cần thiết. Đánh giá theo rủi ro, không chỉ số file; cả hai vẫn giữ đủ hai approval gates. Không scan lại repo hoặc gọi scout lần hai mặc định; đổi scope/behavior phải duyệt lại spec.
 
-Trong lúc lên spec/plan, agent có thể hỏi advisor sẵn có và dùng được trong session cho trade-off hoặc rủi ro quan trọng, theo policy của host. Advisor không thay thế self-review hay user approval; nếu không khả dụng thì tiếp tục inline hoặc hỏi user khi thiếu quyết định quan trọng. Chi tiết delegation được đọc khi cần từ `sk-excute/references/delegation.md` và role contract tương ứng. Findings vượt scope phải xin duyệt; không báo hoàn tất khi còn blocker.
+Trong lúc lên spec/plan, agent có thể hỏi advisor sẵn có và dùng được trong session cho trade-off hoặc rủi ro quan trọng, theo policy của host. Advisor không thay thế self-review hay user approval; nếu không khả dụng thì tiếp tục inline hoặc hỏi user khi thiếu quyết định quan trọng. Chi tiết delegation được đọc khi cần từ `sk-excute/references/delegation.md` và role contract tương ứng. Sau khi sửa findings trong plan, agent kiểm tra lại các mục bị ảnh hưởng; không trình plan như đã sẵn sàng duyệt khi còn blocker mà phải nêu quyết định cần giải quyết. Findings vượt scope phải xin duyệt; không báo hoàn tất khi còn blocker.
 
 Worker chỉ được dùng khi allocation đã được cho phép trong plan hoặc bạn chấp thuận sau đó. Giao một nhóm task liên quan cùng file scope, dependencies và acceptance criteria, không spawn theo từng todo hay gửi toàn lịch sử. Agent chính không sửa chồng file khi worker đang giữ ownership; sau handback, agent chính đọc files/diff và có thể sửa lỗi trong scope inline. Giữ nguyên tên packaged skills explorer/implementer để tương thích catalog; chúng là contract cho native scout/worker, không phải agent types bổ sung. Chỉ chạy verification được cho phép, công khai checks chưa chạy và không coi source review là runtime proof hoặc số đo tiết kiệm token.
+
+Ví dụ bắt đầu từ yêu cầu, chưa cần spec/plan có sẵn:
+
+```text
+$sk-excute Bổ sung trạng thái rỗng cho danh sách sản phẩm theo component hiện có.
+Đọc code và tài liệu liên quan, đề xuất spec để tôi duyệt trước khi lên plan.
+Không tự commit hoặc chạy test/verify.
+```
 
 Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc source, không chạy lệnh.` và `$sk-review-diff Review staged diff, không sửa hoặc verify.` Cả hai mặc định trả report trong chat; muốn patch phải dùng `$sk-excute` và duyệt spec/plan.
 

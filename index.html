@@ -478,7 +478,8 @@
                         ><span
                             >Chọn <strong>Install missing only</strong> để giữ
                             skill có sẵn, hoặc <strong>Replace selected</strong>
-                            để chỉ thay các skill đã tick.</span
+                            để chỉ thay các skill đã tick. Xem giải thích hai chế độ
+                            bằng <code>npx sb-kit --help</code>.</span
                         >
           </div>
           <div class="step">
@@ -503,10 +504,11 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Inline-first: agent chính viết spec → bạn approve →
-                            plan/todo, agent tự review → bạn approve plan →
-                            triển khai và final review. Scout/researcher theo nhu
-                            cầu; worker tùy chọn, không hỏi mode riêng.
+                            Inline-first cho task low/medium: đọc code và docs →
+                            bạn duyệt spec → đọc bổ sung, lập plan/todo và tự review →
+                            bạn duyệt plan → triển khai, review/sửa findings và bàn giao.
+                            Advisor sẵn có trong session và worker đều tùy chọn;
+                            task nhỏ vẫn giữ đủ hai approval gates.
             </p>
           </article>
           <article class="skill-card">
@@ -628,8 +630,11 @@
               <span class="tag tag-core">core</span>
             </div>
             <p>
-                            Hoàn thiện workspace Next.js + Hono đã bootstrap với
-                            Drizzle, auth, proxy và convention modular monolith.
+                            Hoàn thiện workspace Next.js + Hono đã bootstrap:
+                            giữ Node.js mặc định hoặc chuyển backend sang Cloudflare
+                            Workers sau khi duyệt plan, không buộc chuyển Next.js.
+                            Hướng dẫn PostgreSQL/Drizzle, auth/proxy với Origin guard,
+                            cleanup database và R2 tùy chọn.
             </p>
           </article>
         </div>

@@ -1,10 +1,19 @@
 # Changelog
 
-## [Unreleased]
+## [3.4.0] - 2026-10-22
 
 ### Added
 
 - Add core `sk-idea-to-docs` to turn an idea into overview, spec and implementation plan docs, with templates and three eval definitions.
+- Add optional Cloudflare Workers backend setup guidance to `sk-start-next-hono`, including Wrangler, typed bindings, PostgreSQL/Drizzle with Hyperdrive, and optional native R2 bindings. Keep the CLI's Node.js bootstrap and the existing Next.js deployment unchanged.
+
+### Changed
+
+- Size `sk-excute` specs and todo plans for low- and medium-risk tasks from the initial request, retaining separate user approvals for the spec and plan. Reuse evidence and investigate only missing or changed implementation details after spec approval.
+- Allow available-session advisor consultation during spec/plan preparation, require targeted rechecks after fixing plan findings, and review/fix implementation changes before handoff. Move optional delegation details into an on-demand reference.
+- Expand `sk-start-next-hono` guidance for authenticated proxy forwarding, Origin guards, response validation, request-scoped database cleanup, and evidence-based dependency selection. These are setup instructions, not a claim of verified application security.
+- Explain `Install missing only` and `Replace selected` in CLI help and add focused output regression assertions without changing installer behavior.
+- Synchronize the README and landing-page descriptions with the updated workflows and backend choices.
 
 ## [3.3.0] - 2026-10-19
 
