@@ -1,5 +1,20 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Add a shared `sk-visualizer` base template, plus proposal and technical doc document types.
+- Make `sk-visualizer` follow provided source documents, with small linked additions when needed. Technical docs with only a topic use bounded web research, or a stated disclaimer when research is unavailable. Code samples are not compiled or run.
+
+### Changed
+
+- Make `sk-visualizer` pages read top to bottom: every page uses the base template, and each document type lists core and optional sections that guide a valid reading sequence. Agents may adapt sections to the content, checklists are always optional, and empty sections are omitted rather than filled with invented content.
+- Replace per-page visual directions with one soft surface style, and add scroll reveal, hover lift, smooth details, and table row transitions. Content stays visible without JavaScript, in print, and under reduced motion.
+- Make the rendered page the `sk-visualizer` quality bar: pages are rendered at desktop and phone widths and fixed against a UI checklist before delivery.
+- Rebuild the `sk-visualizer` sample page from the base template as a report example.
+- Give `sk-visualizer` an ordered file-generation procedure, a default output path, and render tips that do not depend on one browser or OS. Add tests that keep the template placeholders, snippets, and reference links in step with `SKILL.md`.
+
 ## [3.4.0] - 2026-10-22
 
 ### Added

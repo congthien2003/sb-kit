@@ -1,32 +1,22 @@
-# System change report visualization
+# Report visualization
 
-Use this reference for a report that must help a reader triage proposed, required, or completed system changes. Make urgency and the next decision visible before implementation detail.
+Use this reference for any report: a system change report, audit, review, investigation, or status report. The reader gets the conclusion first, then the evidence behind it, then what to do.
 
-## Information hierarchy
+## Sections
 
-1. State the report title, scope, and the most important takeaway.
-2. Show a severity summary using only the taxonomy provided by the source, such as Critical, High, or Medium.
-3. Group affected areas by severity, then show impact and supporting evidence.
-4. Present the recommended action, owner, status, or due date only when the source supplies it.
-5. Put long logs, evidence, and implementation notes in `<details>`.
+These sections guide the reading sequence. Follow the section rules in `SKILL.md` to adapt them to the content.
 
-Do not invent a severity, status, owner, due date, evidence, or action. If a useful field is unavailable, omit it or label it as unavailable. Use semantic color to reinforce the source-provided severity; do not let color create a severity meaning that the source does not state.
+| # | Vietnamese | English | Presence | Contains |
+|---|---|---|---|---|
+| 1 | Tóm tắt | Summary | Core | The conclusion and the counts that matter, in two or three lines |
+| 2 | Ngữ cảnh và phạm vi | Context and scope | Optional | What was examined, why, and what was left out |
+| 3 | Chi tiết phát hiện | Findings | Core | Findings grouped by severity when the source gives one, otherwise by area; a table for repeated fields |
+| 4 | Tác động | Impact | Optional | Who or what is affected and how |
+| 5 | Đề xuất hành động | Recommended actions | Optional | Actions in priority order in `.steps`, with owner or due date when supplied |
+| 6 | Checklist xác minh | Verification checklist | Optional | What must be or has been checked, in a `.checklist` |
 
-## Visual direction
+The takeaway in the page header states the most important conclusion in one sentence.
 
-Make the severity summary the dominant visual. Use a compact legend only when it clarifies the supplied taxonomy. Follow it with one prioritized list or table of affected areas, then action-oriented detail. Use `rose` for risk, `amber` for caution, `sky` for informational context, and `emerald` only for genuinely positive or resolved states.
+## Source fidelity
 
-Use `rounded-md` or `rounded-lg` for bounded summary surfaces and controls. Reserve `rounded-full` for genuine status or severity badges. Vary containment: a severity strip, a bordered table, and a plain prose section should not all become identical cards.
-
-```html
-<main class="mx-auto max-w-6xl px-6 py-10">
-  <header><!-- title, scope, primary decision --></header>
-  <section><!-- severity summary and optional legend --></section>
-  <section class="max-w-full overflow-x-auto"><!-- affected areas table --></section>
-  <section><!-- impact, evidence, and recommended action --></section>
-  <details><!-- long evidence or logs --></details>
-</main>
-```
-
-Avoid a delivery timeline unless it is essential source-provided evidence. Do not use the editorial, prose-led shape intended for a spec.
-
+Never invent a severity, status, owner, due date, evidence, or action. Use only the severity names the source provides, shown as `.pill` badges: `pill-risk` for the highest level, `pill-warn` for the middle, `pill-info` for the lowest, and `pill-good` for resolved. Put long logs and evidence in `<details class="more">`.

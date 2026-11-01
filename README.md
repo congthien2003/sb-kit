@@ -149,7 +149,7 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-excute-explorer` | Contract cho scout read-only, trả evidence về code/tài liệu local còn thiếu; tái sử dụng packet cho spec/plan, không bắt buộc scout lại. |
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
-| `sk-visualizer` | Biến prompt, spec, plan hoặc docs thành một HTML visualization dễ đọc. |
+| `sk-visualizer` | Biến prompt, spec, đề xuất, báo cáo, plan hoặc tài liệu kỹ thuật thành một trang HTML đọc tuần tự từ trên xuống. Dùng chung một khung, mỗi loại có bộ mục dẫn đường; bám sát tài liệu nguồn, chỉ tra cứu internet có giới hạn khi cần bổ sung hoặc khi tài liệu kỹ thuật chỉ có chủ đề. |
 | `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |

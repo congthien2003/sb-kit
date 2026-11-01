@@ -1,32 +1,21 @@
 # Implementation plan visualization
 
-Use this reference for a delivery plan that must make execution order, tasks, and expected outputs clear at a glance. The page should foreground what will be delivered and what must happen first.
+Use this reference for a delivery plan. The reader finishes knowing what will be delivered, in what order, and how completion is checked.
 
-## Information hierarchy
+## Sections
 
-1. State the intended delivery and the plan's main outcome.
-2. Show milestones or a timeline only when dates, phases, or ordering are supplied.
-3. Map each task to its output or definition of done.
-4. Show dependencies, owners, and status only when the source provides them.
-5. Separate risks, decisions, or blockers from the delivery sequence.
+These sections guide the reading sequence. Follow the section rules in `SKILL.md` to adapt them to the content.
 
-Never invent dates, durations, milestones, owners, statuses, dependencies, outputs, or completion states. When dates are absent, use an ordered task sequence rather than a fabricated timeline. Omit unavailable fields or identify them as unspecified. Put long task detail in `<details>`.
+| # | Vietnamese | English | Presence | Contains |
+|---|---|---|---|---|
+| 1 | Mục tiêu | Goal | Core | The intended delivery and its main outcome |
+| 2 | Phạm vi | Scope | Optional | What the plan covers and leaves out |
+| 3 | Các bước thực hiện | Steps | Core | Ordered tasks or phases in `.steps`, each with its output; a table when tasks share the same fields |
+| 4 | Phụ thuộc và rủi ro | Dependencies and risks | Optional | Dependencies, blockers, and risks in a `callout-warn` or a short list |
+| 5 | Checklist hoàn thành | Completion checklist | Optional | Definition of done in a `.checklist` |
 
-## Visual direction
+The takeaway in the page header states what will be delivered in one sentence.
 
-Make the next delivery milestone or task sequence dominant. Pair a lightweight timeline or ordered steps with a task-to-output table when both are supported by the source. Keep dependencies and risks visually secondary but easy to scan.
+## Source fidelity
 
-Use `rounded-md` or `rounded-lg` for a milestone surface, a decision callout, or a bounded table region. Use `rounded-full` only for genuine provided status badges. Let the timeline, table, and narrative retain different containment instead of turning all of them into matching cards.
-
-```html
-<main class="mx-auto max-w-6xl px-6 py-10">
-  <header><!-- delivery outcome and plan context --></header>
-  <section><!-- source-provided milestones or ordered task sequence --></section>
-  <section class="max-w-full overflow-x-auto"><!-- task, output, and definition of done --></section>
-  <aside><!-- supplied dependencies, risks, or decisions --></aside>
-  <details><!-- longer task notes --></details>
-</main>
-```
-
-Avoid severity-report treatment and prose-first spec framing unless either is the plan's explicit primary purpose.
-
+Never invent dates, durations, milestones, owners, statuses, dependencies, outputs, or completion states. When dates are absent, use the ordered steps without a timeline. Show owners and status only when the source provides them, using `.pill` for a provided status. Put long task detail in `<details class="more">`.

@@ -53,6 +53,9 @@ const VISUALIZER_REFERENCE_FILES = [
   "system-change-report.md",
   "spec-visualization.md",
   "implementation-plan.md",
+  "proposal.md",
+  "technical-doc.md",
+  "base-template.html",
 ];
 const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
@@ -625,6 +628,52 @@ function assertVisualizerReferences(target, root) {
     );
   }
 }
+
+function visualizerShell(html) {
+  const normalized = html.replace(/\r\n/g, "\n");
+  return {
+    style: normalized.match(/<style>[\s\S]*?<\/style>/)[0],
+    script: normalized.match(/<script>\n[\s\S]*?<\/script>\s*<\/body>/)[0],
+  };
+}
+
+const visualizerDir = path.join(__dirname, ".agents", "skills", "sk-visualizer");
+const visualizerTemplate = fs.readFileSync(path.join(visualizerDir, "references", "base-template.html"), "utf8");
+const visualizerSample = fs.readFileSync(path.join(visualizerDir, "index.html"), "utf8");
+assert.ok(visualizerTemplate.includes("{{TITLE}}"));
+assert.ok(!visualizerSample.includes("{{"), "sample must fill every placeholder");
+assert.deepStrictEqual(visualizerShell(visualizerSample), visualizerShell(visualizerTemplate));
+for (const fileName of VISUALIZER_REFERENCE_FILES.filter((name) => name.endsWith(".md"))) {
+  const reference = fs.readFileSync(path.join(visualizerDir, "references", fileName), "utf8");
+  assert.match(reference, /\| Core \|/, `${fileName} must mark core sections`);
+  assert.match(reference, /\| Optional \|/, `${fileName} must mark optional sections`);
+}
+assert.ok(
+  /@media print[\s\S]*\.js \.reveal/.test(visualizerTemplate),
+  "print output must show content hidden by the reveal effect",
+);
+assert.ok(
+  /prefers-reduced-motion: reduce[\s\S]*\.js \.reveal/.test(visualizerTemplate),
+  "reduced motion must show content hidden by the reveal effect",
+);
+
+const visualizerSkill = fs.readFileSync(path.join(visualizerDir, "SKILL.md"), "utf8");
+for (const [, link] of visualizerSkill.matchAll(/\]\((references\/[^)]+)\)/g)) {
+  assert.ok(fs.existsSync(path.join(visualizerDir, link)), `SKILL.md links to missing ${link}`);
+}
+for (const placeholder of [
+  "TITLE", "LANG", "FONT_QUERY", "FONT_FAMILY", "DOCUMENT_TYPE", "TAKEAWAY",
+  "SECTION_NUM", "SECTION_ID", "SECTION_TITLE", "SECTION_CONTENT", "SOURCE_NOTE",
+]) {
+  assert.ok(visualizerTemplate.includes(`{{${placeholder}}}`), `template must keep {{${placeholder}}}`);
+}
+assert.ok(visualizerTemplate.includes("mermaid.esm.min.mjs"), "template must carry the Mermaid snippet");
+assert.ok(visualizerTemplate.includes("highlight.min.js"), "template must carry the highlight.js snippet");
+assert.ok(/<!-- SECTIONS:/.test(visualizerTemplate), "template must keep the SECTIONS comment SKILL.md removes");
+assert.ok(
+  /<!--\r?\n\s+COMPONENTS:/.test(visualizerTemplate),
+  "template must keep the COMPONENTS comment SKILL.md removes",
+);
 
 const NEW_SKILLS_WITH_EVALS = ["sk-debug", "sk-review-diff", "sk-idea-to-docs"];
 for (const skill of NEW_SKILLS_WITH_EVALS) {

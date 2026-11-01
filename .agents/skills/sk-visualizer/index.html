@@ -1,19 +1,31 @@
 <!doctype html>
-<html lang="vi">
+<html lang="vi" style="--font: 'Be Vietnam Pro'">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sk-visualizer · Phiên bản mới</title>
+    <title>Chuẩn hóa template sk-visualizer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>document.documentElement.classList.add("js");</script>
     <style>
       :root {
         color-scheme: light;
+        --bg: #eef2f7;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
+        --line: #e2e8f0;
+        --text: #1e293b;
+        --heading: #0f172a;
+        --muted: #475569;
+        --accent: #0369a1;
+        --accent-soft: #e0f2fe;
+        --radius-block: 1rem;
+        --radius-inner: 0.5rem;
+        --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
+        --shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 14px 32px rgba(15, 23, 42, 0.08);
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
       }
 
       html {
@@ -21,210 +33,651 @@
       }
 
       body {
-        font-family: "Be Vietnam Pro", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        background: #f8fafc;
-        color: #0f172a;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font), system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 1rem;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
       }
 
       :focus-visible {
-        outline: 3px solid #38bdf8;
-        outline-offset: 3px;
+        outline: 2px solid #0284c7;
+        outline-offset: 2px;
+      }
+
+      .page {
+        display: grid;
+        gap: 1rem;
+        box-sizing: border-box;
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 3.5rem 1.25rem 4rem;
+      }
+
+      .page-head {
+        padding: 0 0.5rem 1.5rem;
+      }
+
+      .page-kind {
+        margin: 0 0 0.75rem;
+        color: var(--accent);
+        font-size: 0.9375rem;
+        font-weight: 600;
+      }
+
+      .page-title {
+        margin: 0;
+        color: var(--heading);
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .page-lead {
+        max-width: 42rem;
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-size: 1.1875rem;
+        line-height: 1.65;
+      }
+
+      .page-foot {
+        padding: 1rem 0.5rem 0;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      .block {
+        min-width: 0;
+        padding: 1.75rem;
+        border-radius: var(--radius-block);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transition: transform 0.45s var(--ease), box-shadow 0.25s ease;
+      }
+
+      .block-num {
+        display: inline-block;
+        margin-bottom: 0.625rem;
+        padding: 0.0625rem 0.625rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .block-title {
+        margin: 0;
+        color: var(--heading);
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .block-body {
+        display: grid;
+        gap: 0.875rem;
+        min-width: 0;
+        margin-top: 0.75rem;
+      }
+
+      .block-body p,
+      .block-body ul,
+      .block-body ol {
+        max-width: 68ch;
+        margin: 0;
+      }
+
+      .block-body ul:not([class]),
+      .block-body ol:not([class]) {
+        padding-left: 1.25rem;
+      }
+
+      .block-body ul:not([class]) {
+        list-style: disc;
+      }
+
+      .block-body ol:not([class]) {
+        list-style: decimal;
+      }
+
+      .block-body a,
+      .page-foot a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .block-body h3 {
+        margin: 0.5rem 0 0;
+        color: var(--heading);
+        font-size: 1.0625rem;
+        font-weight: 600;
+      }
+
+      .block-body code {
+        padding: 0.0625rem 0.3125rem;
+        border-radius: 0.25rem;
+        background: var(--surface-soft);
+        font-size: 0.875em;
+      }
+
+      .table-wrap,
+      .code-wrap,
+      .diagram-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-inner);
+      }
+
+      .table-wrap table {
+        width: 100%;
+        min-width: 32rem;
+        border-collapse: collapse;
+        font-size: 0.9375rem;
+      }
+
+      .table-wrap th,
+      .table-wrap td {
+        padding: 0.625rem 0.875rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .table-wrap th {
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .table-wrap td {
+        border-top: 1px solid var(--line);
+      }
+
+      .table-wrap tbody tr {
+        transition: background-color 0.2s ease;
+      }
+
+      .table-wrap tbody tr:hover {
+        background: var(--surface-soft);
+      }
+
+      .code-wrap pre {
+        margin: 0;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+
+      .code-wrap code,
+      .code-wrap code.hljs {
+        padding: 0;
+        background: transparent;
+        font-size: inherit;
+      }
+
+      .diagram-wrap {
+        padding: 1rem;
+      }
+
+      .diagram-wrap svg {
+        max-width: none;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: 0.75rem;
+      }
+
+      .option {
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-inner);
+        font-size: 0.9375rem;
+      }
+
+      .option-title {
+        display: block;
+        color: var(--heading);
+        font-weight: 600;
+      }
+
+      .option-chosen {
+        border-color: #6ee7b7;
+        background: #ecfdf5;
+      }
+
+      .callout {
+        padding: 0.875rem 1rem;
+        border-radius: var(--radius-inner);
+        font-size: 0.9375rem;
+      }
+
+      .callout-info {
+        background: #f0f9ff;
+        color: #0c4a6e;
+      }
+
+      .callout-good {
+        background: #ecfdf5;
+        color: #064e3b;
+      }
+
+      .callout-warn {
+        background: #fffbeb;
+        color: #78350f;
+      }
+
+      .callout-risk {
+        background: #fff1f2;
+        color: #881337;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.0625rem 0.625rem;
+        border-radius: 999px;
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      .pill-info {
+        background: #e0f2fe;
+        color: #075985;
+      }
+
+      .pill-good {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .pill-warn {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .pill-risk {
+        background: #ffe4e6;
+        color: #9f1239;
+      }
+
+      .steps {
+        display: grid;
+        gap: 0.875rem;
+        padding: 0;
+        list-style: none;
+        counter-reset: step;
+      }
+
+      .steps > li {
+        position: relative;
+        padding-left: 2.5rem;
+        counter-increment: step;
+      }
+
+      .steps > li::before {
+        content: counter(step);
+        position: absolute;
+        top: 0.125rem;
+        left: 0;
+        display: grid;
+        place-items: center;
+        width: 1.625rem;
+        height: 1.625rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      .step-title {
+        display: block;
+        color: var(--heading);
+        font-weight: 600;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .checklist > li {
+        position: relative;
+        padding-left: 1.75rem;
+      }
+
+      .checklist > li::before {
+        content: "";
+        position: absolute;
+        top: 0.3125rem;
+        left: 0;
+        box-sizing: border-box;
+        width: 1.0625rem;
+        height: 1.0625rem;
+        border: 1.5px solid #94a3b8;
+        border-radius: 0.25rem;
+      }
+
+      .checklist > li.is-done::before {
+        border-color: #059669;
+        background: #059669;
+      }
+
+      .checklist > li.is-done::after {
+        content: "";
+        position: absolute;
+        top: 0.5rem;
+        left: 0.375rem;
+        width: 0.3125rem;
+        height: 0.5625rem;
+        border-right: 2px solid #ffffff;
+        border-bottom: 2px solid #ffffff;
+        transform: rotate(45deg);
+      }
+
+      .more summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        color: var(--heading);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .more summary::before {
+        content: "";
+        width: 0.4375rem;
+        height: 0.4375rem;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(-45deg);
+        transition: transform 0.3s var(--ease);
+      }
+
+      .more[open] summary::before {
+        transform: rotate(45deg);
+      }
+
+      .more-body {
+        display: grid;
+        gap: 0.75rem;
+        min-width: 0;
+        padding-top: 0.5rem;
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      @supports (interpolate-size: allow-keywords) {
+        :root {
+          interpolate-size: allow-keywords;
+        }
+
+        .more::details-content {
+          overflow: clip;
+          block-size: 0;
+          transition: block-size 0.35s var(--ease), content-visibility 0.35s allow-discrete;
+        }
+
+        .more[open]::details-content {
+          block-size: auto;
+        }
+      }
+
+      .js .reveal {
+        opacity: 0;
+      }
+
+      .js .reveal.is-visible {
+        opacity: 1;
+        animation: reveal 0.6s var(--ease) var(--reveal-delay, 0ms) backwards;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px) scale(0.985);
+        }
+      }
+
+      @media (hover: hover) {
+        .block:hover {
+          box-shadow: var(--shadow-hover);
+          transform: translateY(-2px);
+        }
+      }
+
+      @media (max-width: 40rem) {
+        .page {
+          padding: 2.25rem 0.75rem 3rem;
+        }
+
+        .block {
+          padding: 1.25rem;
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
         html {
           scroll-behavior: auto;
         }
+
+        .js .reveal {
+          opacity: 1;
+        }
+
+        .js .reveal.is-visible {
+          animation: none;
+        }
+
+        .block,
+        .table-wrap tbody tr,
+        .more summary::before,
+        .more::details-content {
+          transition: none;
+        }
+
+        .block:hover {
+          transform: none;
+        }
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+        }
+
+        .js .reveal {
+          opacity: 1;
+        }
+
+        .js .reveal.is-visible {
+          animation: none;
+        }
+
+        .block {
+          box-shadow: none;
+          border: 1px solid var(--line);
+          break-inside: avoid;
+        }
+
+        .more::details-content {
+          block-size: auto;
+          transition: none;
+        }
       }
     </style>
   </head>
   <body>
-    <main class="mx-auto max-w-6xl px-5 py-8 sm:px-8 sm:py-12">
-      <header class="border-b border-slate-200 pb-10 sm:pb-14">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <p class="text-sm font-semibold tracking-wide text-slate-500">SB-KIT / .AGENTS / SK-VISUALIZER</p>
-          <span class="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-sky-700">
-            Bản cập nhật mới
-          </span>
-        </div>
-        <div class="mt-12 max-w-4xl">
-          <p class="text-sm font-bold uppercase tracking-[0.22em] text-sky-700">Từ prompt ngắn đến tài liệu nhìn là hiểu</p>
-          <h1 class="mt-4 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-slate-950 sm:text-6xl">
-            sk-visualizer giờ có một quy trình rõ ràng để tạo visualizer chất lượng hơn.
-          </h1>
-          <p class="mt-6 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-            Skill mới định tuyến nội dung theo archetype phù hợp, kiểm soát ngôn ngữ và typography, rồi đóng gói các reference cần thiết cùng skill.
-          </p>
-        </div>
-        <div class="mt-10 grid max-w-4xl gap-4 sm:grid-cols-3">
-          <div class="border-l-2 border-sky-500 pl-4">
-            <p class="text-3xl font-extrabold text-slate-950">01</p>
-            <p class="mt-1 text-sm leading-6 text-slate-600">Chọn đúng cấu trúc trực quan</p>
-          </div>
-          <div class="border-l-2 border-emerald-500 pl-4">
-            <p class="text-3xl font-extrabold text-slate-950">02</p>
-            <p class="mt-1 text-sm leading-6 text-slate-600">Giữ hierarchy, accessibility và responsive nhất quán</p>
-          </div>
-          <div class="border-l-2 border-amber-500 pl-4">
-            <p class="text-3xl font-extrabold text-slate-950">03</p>
-            <p class="mt-1 text-sm leading-6 text-slate-600">Bàn giao rõ dependency và trạng thái kiểm tra</p>
-          </div>
-        </div>
+    <main class="page">
+      <header class="page-head">
+        <p class="page-kind">Báo cáo</p>
+        <h1 class="page-title">Chuẩn hóa template sk-visualizer</h1>
+        <p class="page-lead">Mọi trang giờ dùng chung một khung và đọc theo thứ tự hợp lệ từ trên xuống.</p>
       </header>
 
-      <section class="border-b border-slate-200 py-10 sm:py-12" aria-labelledby="change-summary">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Tóm tắt thay đổi</p>
-            <h2 id="change-summary" class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Bốn lớp nâng cấp cùng hướng về một mục tiêu</h2>
+      <section class="block reveal" aria-labelledby="section-1">
+        <span class="block-num">01</span>
+        <h2 class="block-title" id="section-1">Tóm tắt</h2>
+        <div class="block-body">
+          <p>Skill từng để mỗi trang tự nghĩ bố cục, nên kết quả không nhất quán. Bản này dùng một khung HTML chung, và mỗi trong năm loại tài liệu có một bộ mục dẫn đường.</p>
+        </div>
+      </section>
+
+      <section class="block reveal" aria-labelledby="section-2">
+        <span class="block-num">02</span>
+        <h2 class="block-title" id="section-2">Ngữ cảnh và phạm vi</h2>
+        <div class="block-body">
+          <p>Yêu cầu là trình bày spec, đề xuất và báo cáo theo tuần tự từ trên xuống, với style mềm mại hơn và có chuyển động nhẹ.</p>
+          <p>Phạm vi gồm <code>SKILL.md</code>, các file trong <code>references/</code> và trang mẫu này. Logic cài đặt của CLI không đổi.</p>
+        </div>
+      </section>
+
+      <section class="block reveal" aria-labelledby="section-3">
+        <span class="block-num">03</span>
+        <h2 class="block-title" id="section-3">Chi tiết phát hiện</h2>
+        <div class="block-body">
+          <div class="table-wrap" tabindex="0" role="region" aria-label="So sánh trước đây và hiện tại">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Phát hiện</th>
+                  <th scope="col">Trước đây</th>
+                  <th scope="col">Hiện tại</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Quy tắc bố cục</td>
+                  <td>Reference chỉ là recipe, cấm gộp layout</td>
+                  <td>Mọi trang dùng chung một khung</td>
+                </tr>
+                <tr>
+                  <td>Thứ tự trình bày</td>
+                  <td>Báo cáo mở đầu bằng mức độ nghiêm trọng</td>
+                  <td>Mỗi loại có bộ mục dẫn đường theo thứ tự đọc</td>
+                </tr>
+                <tr>
+                  <td>Loại tài liệu</td>
+                  <td>Chưa có loại đề xuất</td>
+                  <td>Spec, đề xuất, báo cáo, plan và tài liệu kỹ thuật</td>
+                </tr>
+                <tr>
+                  <td>Chuyển động</td>
+                  <td>Chỉ transition CSS</td>
+                  <td>Thêm hiệu ứng hiện khi cuộn</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
-          <p class="max-w-sm text-sm leading-6 text-slate-500">Biến nội dung dài thành một trang có thể đọc nhanh, hiểu đúng và kiểm tra được.</p>
-        </div>
-        <div class="mt-8 grid gap-4 md:grid-cols-2">
-          <article class="rounded-lg border border-sky-200 bg-sky-50 p-5">
-            <div class="flex items-start justify-between gap-4">
-              <span class="rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-800">Thông tin</span>
-              <span class="text-sm font-bold text-sky-700">01</span>
+          <details class="more">
+            <summary>Xem các quy tắc đã thay đổi</summary>
+            <div class="more-body">
+              <p>Khối bo tròn và bóng nhẹ giờ được phép, nhưng chỉ dùng đúng giá trị trong khung. Các cấm về gradient, emoji, theme toggle và mục lục vẫn giữ nguyên.</p>
             </div>
-            <h3 class="mt-5 text-lg font-bold text-slate-950">Ngôn ngữ và typography có chủ đích</h3>
-            <p class="mt-2 text-sm leading-7 text-slate-700">Skill hỏi ngôn ngữ khi cần, dùng <code class="rounded bg-white px-1.5 py-0.5 text-xs font-semibold text-sky-800">Be Vietnam Pro</code> cho tiếng Việt và <code class="rounded bg-white px-1.5 py-0.5 text-xs font-semibold text-sky-800">Poppins</code> cho tiếng Anh.</p>
-          </article>
-          <article class="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-            <div class="flex items-start justify-between gap-4">
-              <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-800">Đã định hình</span>
-              <span class="text-sm font-bold text-emerald-700">02</span>
-            </div>
-            <h3 class="mt-5 text-lg font-bold text-slate-950">Reference routing theo ý định nội dung</h3>
-            <p class="mt-2 text-sm leading-7 text-slate-700">Ba recipe tách biệt giúp chọn đúng hình thức cho system change report, spec visualization hoặc implementation plan.</p>
-          </article>
-          <article class="rounded-lg border border-amber-200 bg-amber-50 p-5">
-            <div class="flex items-start justify-between gap-4">
-              <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-amber-900">Cần lưu ý</span>
-              <span class="text-sm font-bold text-amber-800">03</span>
-            </div>
-            <h3 class="mt-5 text-lg font-bold text-slate-950">Workflow có thêm bước quyết định</h3>
-            <p class="mt-2 text-sm leading-7 text-slate-700">Trước khi viết HTML, skill xác định ngôn ngữ, archetype, takeaway và các block tối thiểu cần dùng.</p>
-          </article>
-          <article class="rounded-lg border border-rose-200 bg-rose-50 p-5">
-            <div class="flex items-start justify-between gap-4">
-              <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-rose-800">Rủi ro được kiểm soát</span>
-              <span class="text-sm font-bold text-rose-700">04</span>
-            </div>
-            <h3 class="mt-5 text-lg font-bold text-slate-950">Không ép nội dung vào một template</h3>
-            <p class="mt-2 text-sm leading-7 text-slate-700">Nếu tài liệu không thể hiện tốt bằng các block sẵn có, skill cho phép trả lời trực tiếp thay vì tạo HTML gượng ép.</p>
-          </article>
-        </div>
-      </section>
-
-      <section class="border-b border-slate-200 py-10 sm:py-12" aria-labelledby="workflow">
-        <div class="max-w-2xl">
-          <p class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Quy trình mới</p>
-          <h2 id="workflow" class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Từ material đến một takeaway dễ nhớ</h2>
-        </div>
-        <ol class="mt-8 grid gap-0 md:grid-cols-5">
-          <li class="relative border-l border-slate-300 pb-7 pl-5 md:border-l-0 md:border-t md:pb-0 md:pl-0 md:pr-5 md:pt-5">
-            <span class="absolute -left-2 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white md:-top-2 md:left-0">1</span>
-            <h3 class="font-bold text-slate-950">Resolve</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Chốt ngôn ngữ và font.</p>
-          </li>
-          <li class="relative border-l border-slate-300 pb-7 pl-5 md:border-l-0 md:border-t md:pb-0 md:pl-0 md:pr-5 md:pt-5">
-            <span class="absolute -left-2 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white md:-top-2 md:left-0">2</span>
-            <h3 class="font-bold text-slate-950">Route</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Chọn archetype phù hợp.</p>
-          </li>
-          <li class="relative border-l border-slate-300 pb-7 pl-5 md:border-l-0 md:border-t md:pb-0 md:pl-0 md:pr-5 md:pt-5">
-            <span class="absolute -left-2 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white md:-top-2 md:left-0">3</span>
-            <h3 class="font-bold text-slate-950">Focus</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Làm nổi takeaway chính.</p>
-          </li>
-          <li class="relative border-l border-slate-300 pb-7 pl-5 md:border-l-0 md:border-t md:pb-0 md:pl-0 md:pr-5 md:pt-5">
-            <span class="absolute -left-2 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-slate-700 text-[10px] font-bold text-white md:-top-2 md:left-0">4</span>
-            <h3 class="font-bold text-slate-950">Compose</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Dùng ít block nhưng đủ nghĩa.</p>
-          </li>
-          <li class="relative border-l border-slate-300 pl-5 md:border-l-0 md:border-t md:pl-0 md:pt-5">
-            <span class="absolute -left-2 top-0 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-[10px] font-bold text-white md:-top-2 md:left-0">5</span>
-            <h3 class="font-bold text-slate-950">Inspect</h3>
-            <p class="mt-2 text-sm leading-6 text-slate-600">Kiểm tra readability và CDN.</p>
-          </li>
-        </ol>
-      </section>
-
-      <section class="border-b border-slate-200 py-10 sm:py-12" aria-labelledby="reference-map">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Reference map</p>
-            <h2 id="reference-map" class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Chọn recipe theo câu hỏi người đọc cần trả lời</h2>
-          </div>
-          <p class="max-w-sm text-sm leading-6 text-slate-500">Mỗi reference là một hướng dẫn riêng, không phải template dùng chung cho mọi nội dung.</p>
-        </div>
-        <div class="mt-8 max-w-full overflow-x-auto rounded-lg border border-slate-200 bg-white">
-          <table class="w-full min-w-[680px] border-collapse text-left text-sm">
-            <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
-              <tr>
-                <th class="px-5 py-4 font-bold">Reference</th>
-                <th class="px-5 py-4 font-bold">Dùng khi</th>
-                <th class="px-5 py-4 font-bold">Trọng tâm</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-200 text-slate-700">
-              <tr>
-                <td class="px-5 py-4 font-semibold text-slate-950">system-change-report.md</td>
-                <td class="px-5 py-4">Cần triage thay đổi hệ thống</td>
-                <td class="px-5 py-4">Severity, affected areas, impact và action</td>
-              </tr>
-              <tr>
-                <td class="px-5 py-4 font-semibold text-slate-950">spec-visualization.md</td>
-                <td class="px-5 py-4">Cần làm spec dễ đọc</td>
-                <td class="px-5 py-4">Reading-first document và key decisions</td>
-              </tr>
-              <tr>
-                <td class="px-5 py-4 font-semibold text-slate-950">implementation-plan.md</td>
-                <td class="px-5 py-4">Cần truyền đạt kế hoạch triển khai</td>
-                <td class="px-5 py-4">Delivery path, scope và verification</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section class="grid gap-8 py-10 sm:py-12 lg:grid-cols-[1.1fr_0.9fr]" aria-labelledby="contract">
-        <div>
-          <p class="text-sm font-bold uppercase tracking-[0.18em] text-slate-500">Output contract</p>
-          <h2 id="contract" class="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">Một file, một mục tiêu, dependency minh bạch</h2>
-          <p class="mt-5 max-w-2xl text-base leading-8 text-slate-600">Mỗi lần chạy tạo đúng một file <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm font-semibold text-slate-800">.html</code>. Trang chỉ thêm CDN khi có block tương ứng và không mô tả file là self-contained nếu cần tài nguyên bên ngoài.</p>
-          <details class="mt-7 max-w-2xl rounded-lg border border-slate-200 bg-white px-5 py-4">
-            <summary class="cursor-pointer font-semibold text-slate-900">Các block được hỗ trợ</summary>
-            <p class="mt-3 text-sm leading-7 text-slate-600">Hero, Steps, Matrix/Table, Callout, Details, Diagram, Code, Compare và Checklist. Skill chọn số block ít nhất để truyền tải takeaway.</p>
           </details>
         </div>
-        <aside class="rounded-lg border border-slate-200 bg-slate-950 p-6 text-slate-100" aria-label="Tóm tắt đóng gói">
-          <p class="text-xs font-bold uppercase tracking-[0.18em] text-sky-300">Packaging surface</p>
-          <dl class="mt-6 divide-y divide-slate-700">
-            <div class="flex items-start justify-between gap-5 py-4 first:pt-0">
-              <dt class="text-sm text-slate-400">Skill source</dt>
-              <dd class="text-right text-sm font-semibold text-white">SKILL.md</dd>
-            </div>
-            <div class="flex items-start justify-between gap-5 py-4">
-              <dt class="text-sm text-slate-400">Reference files</dt>
-              <dd class="text-right text-sm font-semibold text-white">3 recipe riêng</dd>
-            </div>
-            <div class="flex items-start justify-between gap-5 py-4">
-              <dt class="text-sm text-slate-400">Installer coverage</dt>
-              <dd class="text-right text-sm font-semibold text-emerald-300">Đã thêm assertion</dd>
-            </div>
-            <div class="flex items-start justify-between gap-5 py-4 last:pb-0">
-              <dt class="text-sm text-slate-400">Runtime verification</dt>
-              <dd class="text-right text-sm font-semibold text-amber-300">Chưa chạy trong task này</dd>
-            </div>
-          </dl>
-        </aside>
       </section>
 
-      <footer class="border-t border-slate-200 pt-6 text-sm leading-6 text-slate-500">
-        <p><span class="font-semibold text-slate-700">Nguồn:</span> `.agents/skills/sk-visualizer/SKILL.md` và các file trong `references/` của repository `sb-kit`.</p>
-        <p class="mt-1">Trang này dùng Tailwind CDN và Google Fonts CDN với font Be Vietnam Pro.</p>
-      </footer>
+      <section class="block reveal" aria-labelledby="section-4">
+        <span class="block-num">04</span>
+        <h2 class="block-title" id="section-4">Tác động</h2>
+        <div class="block-body">
+          <p>Người đọc biết trước mỗi thông tin nằm ở đâu, và AI không phải tự nghĩ lại bố cục mỗi lần chạy.</p>
+          <div class="callout callout-warn">Trang dùng chung một style nên không còn đổi diện mạo theo từng nội dung. Tài liệu thiếu dữ liệu sẽ có ít mục hơn.</div>
+        </div>
+      </section>
+
+      <section class="block reveal" aria-labelledby="section-5">
+        <span class="block-num">05</span>
+        <h2 class="block-title" id="section-5">Đề xuất hành động</h2>
+        <div class="block-body">
+          <ol class="steps">
+            <li><span class="step-title">Chọn đúng loại tài liệu</span>Loại tài liệu cho biết các mục cần có và thứ tự đọc hợp lệ.</li>
+            <li><span class="step-title">Lấy nguồn theo loại tài liệu</span>Bám sát tài liệu được cung cấp. Tài liệu kỹ thuật chỉ có chủ đề thì tra cứu internet có giới hạn.</li>
+            <li><span class="step-title">Sinh file bằng script</span>Giữ nguyên style và script của khung, bố cục trong từng mục thì tự do.</li>
+            <li><span class="step-title">Bỏ mục không có dữ liệu</span>Checklist luôn là tùy chọn, các số mục vẫn liền mạch.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="block reveal" aria-labelledby="section-6">
+        <span class="block-num">06</span>
+        <h2 class="block-title" id="section-6">Checklist xác minh</h2>
+        <div class="block-body">
+          <ul class="checklist">
+            <li class="is-done">Chạy <code>node test-cli.js</code></li>
+            <li class="is-done">Xem trang mẫu ở bề rộng máy tính và điện thoại</li>
+            <li class="is-done">Kiểm tra nội dung vẫn hiện khi tắt JavaScript</li>
+            <li class="is-done">Kiểm tra nội dung vẫn hiện khi in</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="page-foot">Nguồn: SKILL.md và các file trong references/ của sk-visualizer. Trang dùng Tailwind CDN và Google Fonts CDN với font Be Vietnam Pro.</footer>
     </main>
+
+    <script>
+      (function () {
+        var blocks = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function show(element) {
+          element.classList.add("is-visible");
+        }
+
+        if (reduced || !("IntersectionObserver" in window)) {
+          blocks.forEach(show);
+        } else {
+          var observer = new IntersectionObserver(function (entries) {
+            entries
+              .filter(function (entry) { return entry.isIntersecting; })
+              .forEach(function (entry, index) {
+                entry.target.style.setProperty("--reveal-delay", Math.min(index, 4) * 70 + "ms");
+                show(entry.target);
+                observer.unobserve(entry.target);
+              });
+          }, { rootMargin: "0px 0px -6% 0px" });
+
+          blocks.forEach(function (block) { observer.observe(block); });
+
+          window.setTimeout(function () {
+            if (!document.querySelector(".reveal.is-visible")) {
+              blocks.forEach(show);
+            }
+          }, 1500);
+        }
+
+        var openedForPrint = [];
+
+        window.addEventListener("beforeprint", function () {
+          blocks.forEach(show);
+          openedForPrint = Array.prototype.slice.call(document.querySelectorAll("details:not([open])"));
+          openedForPrint.forEach(function (item) { item.open = true; });
+        });
+
+        window.addEventListener("afterprint", function () {
+          openedForPrint.forEach(function (item) { item.open = false; });
+        });
+      })();
+    </script>
   </body>
 </html>
