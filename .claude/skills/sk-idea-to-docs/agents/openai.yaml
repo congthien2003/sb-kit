@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Idea to Docs"
+  short_description: "Turn an idea into overview, spec and implementation plan docs"
+  default_prompt: "$sk-idea-to-docs"

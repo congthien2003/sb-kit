@@ -1,0 +1,38 @@
+{
+  "skill_name": "sk-idea-to-docs",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Tôi muốn làm một app giúp các nhóm nhỏ chia tiền chung khi đi chơi, chủ yếu dùng trên điện thoại. Hãy giúp tôi lên bộ tài liệu cho dự án này.",
+      "expected_output": "One focused question at a time that skips the already stated idea, platform and user group, followed by a labeled summary of understanding before any file is drafted.",
+      "files": [],
+      "expectations": [
+        "Questions are asked one at a time and none repeats information the user already gave.",
+        "The summary labels items as Confirmed, Proposed, Assumption or Open and waits for the user's confirmation.",
+        "No document is written before the understanding is confirmed."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Repo này đã có README.md mô tả ý tưởng và một docs/spec.md cũ. Tôi muốn viết lại bộ docs nền tảng cho dự án. Chỉ đọc ngữ cảnh có sẵn, hỏi những gì còn thiếu, và không ghi đè file nào đang tồn tại.",
+      "expected_output": "Existing README and spec reused as context, only missing points asked, a proposed replacement for the existing spec instead of an overwrite, and a stop for feedback after overview and spec before the plan.",
+      "files": [],
+      "expectations": [
+        "Existing README and spec content is reused rather than asked about again.",
+        "The existing docs/spec.md is not overwritten without explicit confirmation of a shown proposal or diff.",
+        "The agent stops for feedback after the overview and spec and does not write the implementation plan yet."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Ý tưởng: nền tảng đặt lịch cho phòng khám nhỏ. Tôi chưa biết nên làm web app hay app di động, và chưa rõ có cần thanh toán online ở bản đầu không. Hãy dẫn tôi qua các lựa chọn và hoàn thiện đủ ba tài liệu. Chỉ tạo docs, không triển khai, commit hay chạy test.",
+      "expected_output": "Options with trade-offs and a recommendation for the platform and payment choices left to the user, a complete overview, spec and phased plan in which every in-scope feature maps to a phase, a consistency review, and no implementation, commit or tests.",
+      "files": [],
+      "expectations": [
+        "Important choices are presented as options with trade-offs and a recommendation, and the user decides.",
+        "Every in-scope feature in the spec is assigned to a phase and each phase has specific completion criteria.",
+        "The agent stops at the three documents and does not scaffold, commit or run tests."
+      ]
+    }
+  ]
+}

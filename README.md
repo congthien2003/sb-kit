@@ -24,7 +24,7 @@ Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc *
 
 Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, và `sk-verify-code-ui-only`.
+- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, `sk-app-context`, và `sk-verify-code-ui-only`.
 - **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
 - **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
@@ -137,7 +137,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Catalog chính thức có **19 skills**, gồm **13 core** và **6 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **20 skills**, gồm **13 core** và **7 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -184,11 +184,14 @@ Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc sou
 | Skill | Mục đích |
 | --- | --- |
 | `sk-debug` | Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence; read-only mặc định, không tự patch/reproduce. |
+| `sk-app-context` | Tạo hoặc cập nhật `PRODUCT.md` ngắn cho app đã có: ai dùng, thao tác chính, ưu tiên UI/UX và quy tắc quyết định để agent không lạc đề. Điền trước từ repo, gắn nhãn xác nhận/giả định, không ghi đè file có sẵn và không tự sửa `AGENTS.md`. |
 | `sk-landing-page` | Tạo landing page sản phẩm tại `landing/index.html` bằng Tailwind CSS CDN, chọn concept và font theo nội dung. |
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
 | `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
+
+Ví dụ `$sk-app-context App này dành cho nội bộ, ưu tiên table, input và modal chi tiết dễ đọc.` Skill đề xuất `PRODUCT.md`, chỉ ghi sau khi bạn xác nhận.
 
 Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
 

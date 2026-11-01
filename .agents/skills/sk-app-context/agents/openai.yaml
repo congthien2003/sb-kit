@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK App Context"
+  short_description: "Define who the app is for and its main tasks in PRODUCT.md"
+  default_prompt: "$sk-app-context"

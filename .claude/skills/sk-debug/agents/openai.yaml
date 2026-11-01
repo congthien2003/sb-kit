@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Debug"
+  short_description: "Diagnose errors with source-backed root-cause hypotheses"
+  default_prompt: "$sk-debug"

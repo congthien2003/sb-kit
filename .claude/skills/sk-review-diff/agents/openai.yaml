@@ -1,0 +1,4 @@
+interface:
+  display_name: "SK Review Diff"
+  short_description: "Review selected diffs for source-backed regression risks"
+  default_prompt: "$sk-review-diff"

@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="{{LANG}}" style="--font: '{{FONT_FAMILY}}'">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{TITLE}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family={{FONT_QUERY}}:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>document.documentElement.classList.add("js");</script>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #eef2f7;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
+        --line: #e2e8f0;
+        --text: #1e293b;
+        --heading: #0f172a;
+        --muted: #475569;
+        --accent: #0369a1;
+        --accent-soft: #e0f2fe;
+        --radius-block: 1rem;
+        --radius-inner: 0.5rem;
+        --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
+        --shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.05), 0 14px 32px rgba(15, 23, 42, 0.08);
+        --ease: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font), system-ui, -apple-system, "Segoe UI", sans-serif;
+        font-size: 1rem;
+        line-height: 1.75;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      :focus-visible {
+        outline: 2px solid #0284c7;
+        outline-offset: 2px;
+      }
+
+      .page {
+        display: grid;
+        gap: 1rem;
+        box-sizing: border-box;
+        max-width: 52rem;
+        margin: 0 auto;
+        padding: 3.5rem 1.25rem 4rem;
+      }
+
+      .page-head {
+        padding: 0 0.5rem 1.5rem;
+      }
+
+      .page-kind {
+        margin: 0 0 0.75rem;
+        color: var(--accent);
+        font-size: 0.9375rem;
+        font-weight: 600;
+      }
+
+      .page-title {
+        margin: 0;
+        color: var(--heading);
+        font-size: clamp(2rem, 5vw, 2.75rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .page-lead {
+        max-width: 42rem;
+        margin: 1rem 0 0;
+        color: var(--muted);
+        font-size: 1.1875rem;
+        line-height: 1.65;
+      }
+
+      .page-foot {
+        padding: 1rem 0.5rem 0;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      .block {
+        min-width: 0;
+        padding: 1.75rem;
+        border-radius: var(--radius-block);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transition: transform 0.45s var(--ease), box-shadow 0.25s ease;
+      }
+
+      .block-num {
+        display: inline-block;
+        margin-bottom: 0.625rem;
+        padding: 0.0625rem 0.625rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .block-title {
+        margin: 0;
+        color: var(--heading);
+        font-size: 1.375rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        line-height: 1.4;
+      }
+
+      .block-body {
+        display: grid;
+        gap: 0.875rem;
+        min-width: 0;
+        margin-top: 0.75rem;
+      }
+
+      .block-body p,
+      .block-body ul,
+      .block-body ol {
+        max-width: 68ch;
+        margin: 0;
+      }
+
+      .block-body ul:not([class]),
+      .block-body ol:not([class]) {
+        padding-left: 1.25rem;
+      }
+
+      .block-body ul:not([class]) {
+        list-style: disc;
+      }
+
+      .block-body ol:not([class]) {
+        list-style: decimal;
+      }
+
+      .block-body a,
+      .page-foot a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .block-body h3 {
+        margin: 0.5rem 0 0;
+        color: var(--heading);
+        font-size: 1.0625rem;
+        font-weight: 600;
+      }
+
+      .block-body code {
+        padding: 0.0625rem 0.3125rem;
+        border-radius: 0.25rem;
+        background: var(--surface-soft);
+        font-size: 0.875em;
+      }
+
+      .table-wrap,
+      .code-wrap,
+      .diagram-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-inner);
+      }
+
+      .table-wrap table {
+        width: 100%;
+        min-width: 32rem;
+        border-collapse: collapse;
+        font-size: 0.9375rem;
+      }
+
+      .table-wrap th,
+      .table-wrap td {
+        padding: 0.625rem 0.875rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .table-wrap th {
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .table-wrap td {
+        border-top: 1px solid var(--line);
+      }
+
+      .table-wrap tbody tr {
+        transition: background-color 0.2s ease;
+      }
+
+      .table-wrap tbody tr:hover {
+        background: var(--surface-soft);
+      }
+
+      .code-wrap pre {
+        margin: 0;
+        padding: 0.875rem 1rem;
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+
+      .code-wrap code,
+      .code-wrap code.hljs {
+        padding: 0;
+        background: transparent;
+        font-size: inherit;
+      }
+
+      .diagram-wrap {
+        padding: 1rem;
+      }
+
+      .diagram-wrap svg {
+        max-width: none;
+      }
+
+      .options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        gap: 0.75rem;
+      }
+
+      .option {
+        padding: 0.875rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: var(--radius-inner);
+        font-size: 0.9375rem;
+      }
+
+      .option-title {
+        display: block;
+        color: var(--heading);
+        font-weight: 600;
+      }
+
+      .option-chosen {
+        border-color: #6ee7b7;
+        background: #ecfdf5;
+      }
+
+      .callout {
+        padding: 0.875rem 1rem;
+        border-radius: var(--radius-inner);
+        font-size: 0.9375rem;
+      }
+
+      .callout-info {
+        background: #f0f9ff;
+        color: #0c4a6e;
+      }
+
+      .callout-good {
+        background: #ecfdf5;
+        color: #064e3b;
+      }
+
+      .callout-warn {
+        background: #fffbeb;
+        color: #78350f;
+      }
+
+      .callout-risk {
+        background: #fff1f2;
+        color: #881337;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.0625rem 0.625rem;
+        border-radius: 999px;
+        background: var(--surface-soft);
+        color: var(--muted);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      .pill-info {
+        background: #e0f2fe;
+        color: #075985;
+      }
+
+      .pill-good {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .pill-warn {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .pill-risk {
+        background: #ffe4e6;
+        color: #9f1239;
+      }
+
+      .steps {
+        display: grid;
+        gap: 0.875rem;
+        padding: 0;
+        list-style: none;
+        counter-reset: step;
+      }
+
+      .steps > li {
+        position: relative;
+        padding-left: 2.5rem;
+        counter-increment: step;
+      }
+
+      .steps > li::before {
+        content: counter(step);
+        position: absolute;
+        top: 0.125rem;
+        left: 0;
+        display: grid;
+        place-items: center;
+        width: 1.625rem;
+        height: 1.625rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 0.8125rem;
+        font-weight: 600;
+      }
+
+      .step-title {
+        display: block;
+        color: var(--heading);
+        font-weight: 600;
+      }
+
+      .checklist {
+        display: grid;
+        gap: 0.5rem;
+        padding: 0;
+        list-style: none;
+      }
+
+      .checklist > li {
+        position: relative;
+        padding-left: 1.75rem;
+      }
+
+      .checklist > li::before {
+        content: "";
+        position: absolute;
+        top: 0.3125rem;
+        left: 0;
+        box-sizing: border-box;
+        width: 1.0625rem;
+        height: 1.0625rem;
+        border: 1.5px solid #94a3b8;
+        border-radius: 0.25rem;
+      }
+
+      .checklist > li.is-done::before {
+        border-color: #059669;
+        background: #059669;
+      }
+
+      .checklist > li.is-done::after {
+        content: "";
+        position: absolute;
+        top: 0.5rem;
+        left: 0.375rem;
+        width: 0.3125rem;
+        height: 0.5625rem;
+        border-right: 2px solid #ffffff;
+        border-bottom: 2px solid #ffffff;
+        transform: rotate(45deg);
+      }
+
+      .more summary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        color: var(--heading);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+        list-style: none;
+      }
+
+      .more summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .more summary::before {
+        content: "";
+        width: 0.4375rem;
+        height: 0.4375rem;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(-45deg);
+        transition: transform 0.3s var(--ease);
+      }
+
+      .more[open] summary::before {
+        transform: rotate(45deg);
+      }
+
+      .more-body {
+        display: grid;
+        gap: 0.75rem;
+        min-width: 0;
+        padding-top: 0.5rem;
+        color: var(--muted);
+        font-size: 0.9375rem;
+      }
+
+      @supports (interpolate-size: allow-keywords) {
+        :root {
+          interpolate-size: allow-keywords;
+        }
+
+        .more::details-content {
+          overflow: clip;
+          block-size: 0;
+          transition: block-size 0.35s var(--ease), content-visibility 0.35s allow-discrete;
+        }
+
+        .more[open]::details-content {
+          block-size: auto;
+        }
+      }
+
+      .js .reveal {
+        opacity: 0;
+      }
+
+      .js .reveal.is-visible {
+        opacity: 1;
+        animation: reveal 0.6s var(--ease) var(--reveal-delay, 0ms) backwards;
+      }
+
+      @keyframes reveal {
+        from {
+          opacity: 0;
+          transform: translateY(14px) scale(0.985);
+        }
+      }
+
+      @media (hover: hover) {
+        .block:hover {
+          box-shadow: var(--shadow-hover);
+          transform: translateY(-2px);
+        }
+      }
+
+      @media (max-width: 40rem) {
+        .page {
+          padding: 2.25rem 0.75rem 3rem;
+        }
+
+        .block {
+          padding: 1.25rem;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .js .reveal {
+          opacity: 1;
+        }
+
+        .js .reveal.is-visible {
+          animation: none;
+        }
+
+        .block,
+        .table-wrap tbody tr,
+        .more summary::before,
+        .more::details-content {
+          transition: none;
+        }
+
+        .block:hover {
+          transform: none;
+        }
+      }
+
+      @media print {
+        body {
+          background: #ffffff;
+        }
+
+        .js .reveal {
+          opacity: 1;
+        }
+
+        .js .reveal.is-visible {
+          animation: none;
+        }
+
+        .block {
+          box-shadow: none;
+          border: 1px solid var(--line);
+          break-inside: avoid;
+        }
+
+        .more::details-content {
+          block-size: auto;
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-head">
+        <p class="page-kind">{{DOCUMENT_TYPE}}</p>
+        <h1 class="page-title">{{TITLE}}</h1>
+        <p class="page-lead">{{TAKEAWAY}}</p>
+      </header>
+
+      <!-- SECTIONS: repeat one block per section, in the order the document type sets. Fill {{SECTION_NUM}} with 01, 02, 03 with no gaps, and {{SECTION_ID}} with section-1, section-2, section-3. -->
+      <section class="block reveal" aria-labelledby="{{SECTION_ID}}">
+        <span class="block-num">{{SECTION_NUM}}</span>
+        <h2 class="block-title" id="{{SECTION_ID}}">{{SECTION_TITLE}}</h2>
+        <div class="block-body">
+          {{SECTION_CONTENT}}
+        </div>
+      </section>
+
+      <!--
+        COMPONENTS: use inside .block-body as the content needs. Do not copy this comment into the output. Copy the <head> snippets below out of it before stripping it.
+
+        Scroll wrappers take tabindex="0" role="region" and an aria-label, so keyboard users can scroll them.
+
+        Table:     <div class="table-wrap" tabindex="0" role="region" aria-label="..."><table>...</table></div>
+        Code:      <div class="code-wrap" tabindex="0" role="region" aria-label="..."><pre><code class="language-js">...</code></pre></div>
+                   When code is central to the page, add to <head>, right after the Tailwind <script> line:
+                   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css" />
+                   <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+                   <script>hljs.highlightAll();</script>
+        Diagram:   <div class="diagram-wrap" tabindex="0" role="region" aria-label="..."><pre class="mermaid">...</pre></div>
+                   When the page has a diagram, add to <head>, right after the Tailwind <script> line:
+                   <script type="module">
+                     import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+                     mermaid.initialize({ startOnLoad: true, theme: "neutral", flowchart: { useMaxWidth: false }, sequence: { useMaxWidth: false } });
+                   </script>
+        Options:   <div class="options">
+                     <div class="option"><span class="option-title">...</span>...</div>
+                     <div class="option option-chosen"><span class="option-title">...</span>...</div>
+                   </div>
+        Callout:   <div class="callout callout-info">...</div>
+                   Variants: callout-info, callout-good, callout-warn, callout-risk
+        Badge:     <span class="pill pill-risk">...</span>
+                   Variants: pill-info, pill-good, pill-warn, pill-risk, or plain pill
+        Steps:     <ol class="steps"><li><span class="step-title">...</span>...</li></ol>
+        Checklist: <ul class="checklist"><li>...</li><li class="is-done">...</li></ul>
+                   Use is-done only when the source confirms completion.
+        Details:   <details class="more"><summary>...</summary><div class="more-body">...</div></details>
+      -->
+
+      <footer class="page-foot">{{SOURCE_NOTE}}</footer>
+    </main>
+
+    <script>
+      (function () {
+        var blocks = Array.prototype.slice.call(document.querySelectorAll(".reveal"));
+        var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        function show(element) {
+          element.classList.add("is-visible");
+        }
+
+        if (reduced || !("IntersectionObserver" in window)) {
+          blocks.forEach(show);
+        } else {
+          var observer = new IntersectionObserver(function (entries) {
+            entries
+              .filter(function (entry) { return entry.isIntersecting; })
+              .forEach(function (entry, index) {
+                entry.target.style.setProperty("--reveal-delay", Math.min(index, 4) * 70 + "ms");
+                show(entry.target);
+                observer.unobserve(entry.target);
+              });
+          }, { rootMargin: "0px 0px -6% 0px" });
+
+          blocks.forEach(function (block) { observer.observe(block); });
+
+          window.setTimeout(function () {
+            if (!document.querySelector(".reveal.is-visible")) {
+              blocks.forEach(show);
+            }
+          }, 1500);
+        }
+
+        var openedForPrint = [];
+
+        window.addEventListener("beforeprint", function () {
+          blocks.forEach(show);
+          openedForPrint = Array.prototype.slice.call(document.querySelectorAll("details:not([open])"));
+          openedForPrint.forEach(function (item) { item.open = true; });
+        });
+
+        window.addEventListener("afterprint", function () {
+          openedForPrint.forEach(function (item) { item.open = false; });
+        });
+      })();
+    </script>
+  </body>
+</html>

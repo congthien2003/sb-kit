@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
+## [3.5.0] - 2026-11-01
+
 ### Added
 
+- Add supporting `sk-app-context` to create or update a short `PRODUCT.md` that records who the app is for, its main tasks, and UI/UX priorities. It labels confirmed facts and assumptions, never overwrites an existing file, and edits `AGENTS.md` only with approval.
 - Add a shared `sk-visualizer` base template, plus proposal and technical doc document types.
 - Make `sk-visualizer` follow provided source documents, with small linked additions when needed. Technical docs with only a topic use bounded web research, or a stated disclaimer when research is unavailable. Code samples are not compiled or run.
 

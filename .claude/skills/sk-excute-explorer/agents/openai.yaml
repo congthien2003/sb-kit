@@ -1,0 +1,8 @@
+---
+interface:
+  display_name: "SK Excute Explorer"
+  short_description: "Optional scout for missing repository evidence"
+  default_prompt: >-
+    Use $sk-excute-explorer as the scout contract to answer this
+    bounded repository question read-only, reuse existing evidence,
+    and return only the missing findings.

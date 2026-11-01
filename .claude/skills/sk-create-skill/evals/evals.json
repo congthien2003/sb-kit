@@ -1,0 +1,36 @@
+{
+  "skill_name": "sk-create-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Help me create a SaboKit skill for reviewing migration scripts. I have not approved a spec or implementation plan yet.",
+      "expected_output": "The skill follows the referenced approval workflow, stops before writing repository files, and asks for the required approval rather than implementing prematurely.",
+      "files": [],
+      "expectations": [
+        "No repository files are written before the required spec and plan approvals.",
+        "The response identifies the sk-excute approval gates and keeps skill intent/design distinct from implementation."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "The user approved this spec and file-scoped plan in the supplied, reviewed `approved-packet.json` fixture and selected Inline. Implement the complete approved UI copy review skill and eval/docs/landing/CLI-install integration, changing exactly these eight repository paths: `.agents/skills/sk-ui-copy-review/SKILL.md`, `.agents/skills/sk-ui-copy-review/agents/openai.yaml`, `.agents/skills/sk-ui-copy-review/evals/evals.json`, `cli.js` (add this skill to `REPORT_SKILLS` only, not `SB_KIT_SKILLS`), `README.md`, `CHANGELOG.md`, `index.html`, and `test-cli.js`. The supplied `approved-packet.json` is separate, read-only approval context, not a repository change. Preserve existing files and non-overwrite behavior. Use only `node test-cli.js` and `node cli.js --help` for verification. Do not start a recursive evaluation of the generated skill.",
+      "expected_output": "The approved fixture skill and its metadata, eval/docs/landing/CLI-install test integration are implemented within the exact approved scope, with no unapproved registry or product changes.",
+      "files": [],
+      "expectations": [
+        "The complete approved change is implemented without modifying files outside the listed plan.",
+        "The skill is selected as report-only and is not added to the SB_KIT_SKILLS core set.",
+        "Integration coverage checks both install roots and preserves existing user-owned content."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create a skill for me in this checkout. The requested skill-creator companion is missing, and I have not authorized installing it.",
+      "expected_output": "The coordinator identifies the missing skill-creator prerequisite and stops without installing a substitute, writing files, or starting skill creation checks.",
+      "files": [],
+      "expectations": [
+        "No files are written and no implementation or evaluation workflow is started.",
+        "The response names skill-creator as the missing prerequisite and requests that it be made available."
+      ]
+    }
+  ]
+}

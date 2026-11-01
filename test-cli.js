@@ -733,6 +733,25 @@ assert.deepStrictEqual(
 );
 assert.ok(categorized["sk-work"].includes("deep-research"));
 assert.ok(categorized["sk-work"].includes("sk-excute"));
+for (const skill of ["sk-app-context"]) {
+  const source = path.join(__dirname, ".agents", "skills", skill);
+  const instructions = fs.readFileSync(path.join(source, "SKILL.md"), "utf8");
+  const metadata = fs.readFileSync(path.join(source, "agents", "openai.yaml"), "utf8");
+  assert.ok(instructions.includes(`name: ${skill}`));
+  assert.ok(metadata.includes(`default_prompt: "$${skill}"`));
+  assert.ok(!SB_KIT_SKILLS.includes(skill));
+  assert.ok(categorized["sk-work"].includes(skill));
+  withDisposableTarget("sb-kit-app-context-", (target) => {
+    for (const root of [".agents", ".claude"]) {
+      captureLogs(() => install([skill], root, target));
+      const installed = path.join(target, root, "skills", skill);
+      assert.strictEqual(stateTools.snapshot(installed).treeHash, stateTools.snapshot(source).treeHash);
+      fs.writeFileSync(path.join(installed, "SKILL.md"), "user-owned sentinel");
+      captureLogs(() => install([skill], root, target));
+      assert.strictEqual(fs.readFileSync(path.join(installed, "SKILL.md"), "utf8"), "user-owned sentinel");
+    }
+  });
+}
 assert.ok(!categorized["sk-work"].includes("sk-create-skill"));
 assert.ok(!categorized.report.includes("sk-create-skill"));
 assert.ok(!categorized["sk-work"].includes("skill-creator"));
@@ -772,7 +791,7 @@ assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
 assert.match(changelogSource, /Promote `sk-review-diff` to core/);
-assert.match(readmeSource, /Catalog chính thức có \*\*19 skills\*\*, gồm \*\*13 core\*\* và \*\*6 supporting\*\*/);
+assert.match(readmeSource, /Catalog chính thức có \*\*20 skills\*\*, gồm \*\*13 core\*\* và \*\*7 supporting\*\*/);
 assert.deepStrictEqual(
   [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
   PACKAGED_SKILLS,

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Documentation"
+  short_description: "Generate Markdown docs from a codebase"
+  default_prompt: "Use $sk-doc to create a detailed README from this codebase."
