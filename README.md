@@ -15,18 +15,7 @@ Chạy lệnh trong thư mục project cần sử dụng skills:
 npx sb-kit install
 ```
 
-Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc **Reporting**. Preset chỉ preselect checkbox; bạn có thể chỉnh lại trước khi xác nhận.
-
-- Minimal: `sk-excute`, `sk-explain`, `sk-debug`, `sk-review-diff`.
-- Full-stack: toàn bộ core, `vercel-react-best-practices`, `sk-debug`.
-- UI: `sk-excute`, frontend design, React practices, landing page, UI audit và `sk-review-diff`.
-- Reporting: report registry.
-
-Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
-
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, `sk-app-context`, và `sk-verify-code-ui-only`.
-- **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
-- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
+Sau khi chạy lệnh, CLI hiển thị trực tiếp toàn bộ skill có thể cài trong một danh sách checkbox. Chọn một hoặc nhiều skill rồi tiếp tục.
 
 CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ ba role skills `sk-excute-explorer`, `sk-excute-researcher`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
 
@@ -117,7 +106,7 @@ Help giải thích rõ **Install missing only** cài skill còn thiếu và gi�
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
-2. Bạn chọn preset rồi chỉnh checkbox từng skill dưới các group `sk-work`, `assets`, và `report`.
+2. CLI mở trực tiếp danh sách đầy đủ skill; bạn chọn một hoặc nhiều skill.
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
@@ -137,7 +126,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Catalog chính thức có **20 skills**, gồm **13 core** và **7 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **15 skills**, gồm **12 core** và **3 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -150,7 +139,6 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
 | `sk-visualizer` | Biến prompt, spec, đề xuất, báo cáo, plan hoặc tài liệu kỹ thuật thành một trang HTML đọc tuần tự từ trên xuống. Dùng chung một khung, mỗi loại có bộ mục dẫn đường; bám sát tài liệu nguồn, chỉ tra cứu internet có giới hạn khi cần bổ sung hoặc khi tài liệu kỹ thuật chỉ có chủ đề. |
-| `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
@@ -185,21 +173,19 @@ Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc sou
 | --- | --- |
 | `sk-debug` | Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence; read-only mặc định, không tự patch/reproduce. |
 | `sk-app-context` | Tạo hoặc cập nhật `PRODUCT.md` ngắn cho app đã có: ai dùng, thao tác chính, ưu tiên UI/UX và quy tắc quyết định để agent không lạc đề. Điền trước từ repo, gắn nhãn xác nhận/giả định, không ghi đè file có sẵn và không tự sửa `AGENTS.md`. |
-| `sk-landing-page` | Tạo landing page sản phẩm tại `landing/index.html` bằng Tailwind CSS CDN, chọn concept và font theo nội dung. |
-| `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
-| `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
-| `vercel-react-native-skills` | Best practices cho React Native và Expo. |
-| `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
+| `sk-landing-page` | Xác định loại landing page, chọn nội dung nổi bật và CTA, đề xuất màu và phong cách, rồi dựng `landing/index.html` bằng Tailwind CSS CDN. |
 
 Ví dụ `$sk-app-context App này dành cho nội bộ, ưu tiên table, input và modal chi tiết dễ đọc.` Skill đề xuất `PRODUCT.md`, chỉ ghi sau khi bạn xác nhận.
 
 Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
 
 ```text
-$sk-landing-page Tạo landing page cho sản phẩm trong repository này.
+$sk-landing-page Tạo landing page giới thiệu agent skill trong repo này. Làm nổi bật cách dùng và một ví dụ prompt thật.
 ```
 
-Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
+Skill đọc brief và nguồn trong repo để nhận diện trang giới thiệu agent skill, SaaS, repo GitHub hoặc loại nội dung khác. Trước khi dựng, agent tóm tắt trong chat loại trang, điểm cần nhấn, CTA và hướng thị giác. Màu và phong cách người dùng chỉ định được ưu tiên. Nếu chỉ yêu cầu tư vấn, brief được trả trong chat.
+
+Khi dựng, skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html` và tạo thư mục `landing` nếu cần. Trang dùng Tailwind CSS CDN và CSS/JS bổ sung inline. Cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
 
 `sk-verify-code-ui-only` là core skill, nằm trong nhóm `sk-work` của `sb-kit install` và được cài trong `create next-hono`. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
 
@@ -216,9 +202,9 @@ Có thể chia pages/sections cho native sub-agents nếu host hỗ trợ.
 
 ### `sb-kit install`
 
-Mở checkbox picker theo category và cài các skill được chọn vào project hiện tại.
+Mở danh sách đầy đủ skill có thể cài và cài các skill được chọn vào project hiện tại.
 
-- Input: preset, editable checkbox trong `sk-work`, `assets`, `report`, xác nhận companion nếu cần; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
+- Input: chọn skill từ danh sách đầy đủ, xác nhận companion nếu cần; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
 - Output: danh sách skills `Added`, `Replaced`, hoặc `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
 - Conflict mode mặc định **Install missing only** không ghi đè folder skill có sẵn. **Replace selected** chỉ thay folder của skill đã checkbox.
 - Error: lệnh dừng nếu không chọn skill, cancel prompt, hoặc một skill đã chọn không tồn tại trong `.agents/skills` của package.
@@ -274,7 +260,7 @@ Cài toàn bộ skills vào project hiện tại:
 npx sb-kit install
 ```
 
-Khi checkbox picker hiển thị, dùng phím mũi tên và Space để tick từng skill trong category phù hợp, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
+Khi danh sách skill hiển thị, dùng phím mũi tên và Space để chọn skill, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
 
 Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills` với cùng selection/mode.
 

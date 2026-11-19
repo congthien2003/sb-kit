@@ -4,7 +4,6 @@ const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const {
-  ASSET_SKILLS,
   REPORT_SKILLS,
   SB_KIT_SKILLS,
   categorizedSkills,
@@ -28,7 +27,7 @@ assert.match(helpResult.stdout, /Replace selected: Replace only selected existin
 assert.deepStrictEqual(
   helpResult.stdout.split(/\r?\n/).filter((line) => line.trim().startsWith("npx sb-kit ")),
   [
-    "  npx sb-kit install                                      Choose preset and editable skill selection",
+    "  npx sb-kit install                                      Choose skills to install",
     "  npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace",
     "  npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)",
     "  npx sb-kit update                                       Preview selected updates with retained backups (offline)",
@@ -59,7 +58,7 @@ const VISUALIZER_REFERENCE_FILES = [
 ];
 const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
-const { presetSelections, resolveCompanions, chooseInstallSelection } = require("./lib/presets");
+const { resolveCompanions, chooseInstallSelection } = require("./lib/presets");
 const { planUpdate, renderUpdate, applyUpdate, runUpdate } = require("./lib/update");
 
 // Source-level/control-flow fixtures emulate directory fsync support, including on
@@ -547,10 +546,8 @@ withDisposableTarget("sb-kit-legacy-fast-", (target) => {
 
 const SKILLS_DIR = path.join(__dirname, ".agents", "skills");
 const PACKAGED_SKILLS = listSkills(SKILLS_DIR);
-const LOCAL_ONLY_SKILLS = ["herdr", "skill-creator", "sk-create-skill"];
+const LOCAL_ONLY_SKILLS = ["herdr", "skill-creator", "sk-create-skill", "sk-release", "deep-research", "frontend-design", "vercel-react-best-practices", "vercel-react-native-skills"];
 for (const skill of LOCAL_ONLY_SKILLS) assert.ok(!PACKAGED_SKILLS.includes(skill));
-const npmIgnore = fs.readFileSync(path.join(SKILLS_DIR, ".npmignore"), "utf8");
-for (const skill of LOCAL_ONLY_SKILLS) assert.ok(npmIgnore.includes(`${skill}/`));
 
 function captureLogs(callback) {
   const originalLog = console.log;
@@ -578,7 +575,6 @@ function assertSbKitSkills(target, root) {
     ...CORE_ROLE_SKILLS,
     "sk-visualizer",
     "sk-create-slide",
-    "sk-release",
     "sk-doc",
     "sk-start-next-hono",
     "sk-explain",
@@ -701,9 +697,7 @@ for (const skill of NEW_SKILLS_WITH_EVALS) {
 
 const categorized = categorizedSkills(PACKAGED_SKILLS);
 const pickerOptions = categoryOptions(PACKAGED_SKILLS);
-assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "assets", "report"]);
-assert.deepStrictEqual(categorized.assets, [...ASSET_SKILLS].sort());
-assert.ok(!categorized.assets.includes("sk-create-skill"));
+assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "report"]);
 assert.deepStrictEqual(categorized.report, [...REPORT_SKILLS].sort());
 assert.ok(!categorized.report.includes("sk-verify-code-ui-only"));
 assert.ok(!categorized.report.includes("sk-review-diff"));
@@ -731,7 +725,10 @@ assert.deepStrictEqual(
     .sort(),
   PACKAGED_SKILLS,
 );
-assert.ok(categorized["sk-work"].includes("deep-research"));
+assert.ok(!PACKAGED_SKILLS.includes("deep-research"));
+assert.ok(!PACKAGED_SKILLS.includes("frontend-design"));
+assert.ok(!PACKAGED_SKILLS.some((skill) => skill.startsWith("vercel-")));
+assert.ok(!PACKAGED_SKILLS.includes("sk-release"));
 assert.ok(categorized["sk-work"].includes("sk-excute"));
 for (const skill of ["sk-app-context"]) {
   const source = path.join(__dirname, ".agents", "skills", skill);
@@ -755,28 +752,8 @@ for (const skill of ["sk-app-context"]) {
 assert.ok(!categorized["sk-work"].includes("sk-create-skill"));
 assert.ok(!categorized.report.includes("sk-create-skill"));
 assert.ok(!categorized["sk-work"].includes("skill-creator"));
-const landingSource = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
-const landingCards = [...landingSource.matchAll(/<article class="skill-card">([\s\S]*?)<\/article>/g)];
-const landingSkillNames = landingCards.map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
-assert.deepStrictEqual([...landingSkillNames].sort(), PACKAGED_SKILLS);
-const landingCoreNames = landingCards
-  .filter(([, article]) => /<span class="tag tag-core">core<\/span>/.test(article))
-  .map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
-assert.deepStrictEqual(landingCoreNames.sort(), [...SB_KIT_SKILLS].sort());
-const coreVerifySkillCards = landingCards
-  .filter(([, article]) => /<h3>sk-verify-code-ui-only<\/h3>/.test(article));
-assert.strictEqual(coreVerifySkillCards.length, 1);
-assert.match(coreVerifySkillCards[0][1], /<span class="tag tag-core">core<\/span>/);
-const coreReviewDiffCards = landingCards
-  .filter(([, article]) => /<h3>sk-review-diff<\/h3>/.test(article));
-assert.strictEqual(coreReviewDiffCards.length, 1);
-assert.match(coreReviewDiffCards[0][1], /<span class="tag tag-core">core<\/span>/);
-assert.ok(!landingCards.some(([, article]) => /<h3>(?:sk-create-skill|skill-creator)<\/h3>/.test(article)));
-const supportingCount = PACKAGED_SKILLS.length - SB_KIT_SKILLS.length;
-assert.ok(landingSource.includes(`<h2 class="section-label">SaboKit core / ${SB_KIT_SKILLS.length} skills</h2>`));
-assert.ok(landingSource.includes(`<h2 class="section-label">Supporting / ${supportingCount} skills</h2>`));
-assert.ok(landingSource.includes(`<span class="badge">${PACKAGED_SKILLS.length} agent skills</span>`));
-assert.doesNotMatch(landingSource, /<h3>sk-verify-code<\/h3>/);
+assert.ok(!fs.existsSync(path.join(__dirname, "index.html")));
+assert.ok(fs.existsSync(path.join(__dirname, "landing", "src", "app", "[lang]", "page.tsx")));
 const readmeSource = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
 const changelogSource = fs.readFileSync(path.join(__dirname, "CHANGELOG.md"), "utf8");
 const packageMetadata = parseJson(
@@ -791,7 +768,7 @@ assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
 assert.match(changelogSource, /Promote `sk-review-diff` to core/);
-assert.match(readmeSource, /Catalog chính thức có \*\*20 skills\*\*, gồm \*\*13 core\*\* và \*\*7 supporting\*\*/);
+assert.match(readmeSource, /Catalog chính thức có \*\*15 skills\*\*, gồm \*\*12 core\*\* và \*\*3 supporting\*\*/);
 assert.deepStrictEqual(
   [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
   PACKAGED_SKILLS,
@@ -847,12 +824,11 @@ for (const approvedPath of [
   "cli.js",
   "README.md",
   "CHANGELOG.md",
-  "index.html",
   "test-cli.js",
 ]) {
   assert.ok(approvedIntegrationPrompt.includes(approvedPath), approvedPath);
 }
-assert.match(approvedIntegrationPrompt, /exactly these eight repository paths/);
+assert.match(approvedIntegrationPrompt, /exactly these seven repository paths/);
 assert.match(approvedIntegrationPrompt, /`approved-packet\.json` is separate, read-only approval context/);
 assert.match(approvedIntegrationPrompt, /selected Inline/);
 assert.match(approvedIntegrationPrompt, /node test-cli\.js.*node cli\.js --help/);
@@ -1294,8 +1270,6 @@ try {
 }
 
 async function testInstallPrompts() {
-  assert.ok(!Object.values(presetSelections()).flat().includes("sk-excute-fast"));
-  assert.ok(!Object.values(presetSelections()).flat().includes("sk-handoff"));
   assert.throws(() => resolveCompanions(["sk-create-skill"], PACKAGED_SKILLS), /Skill is not packaged/);
   assert.throws(() => resolveCompanions(["a"], ["a", "b"], [], { a: ["b"], b: ["a"] }), /cycle/);
   assert.throws(() => resolveCompanions(["missing"], PACKAGED_SKILLS), /not packaged/);
@@ -1328,33 +1302,32 @@ async function testInstallPrompts() {
     ["sk-excute-explorer"],
   );
   assert.deepStrictEqual([...partialExecutionSelection].sort(), ["sk-excute", ...executionRoles].sort());
-  let initialSelection;
-  await chooseInstallSelection(PACKAGED_SKILLS, { ...selectionPrompts, select: async () => "minimal" }, async (_all, _prompts, initial) => { initialSelection = initial; return ["sk-explain"]; });
-  assert.ok(initialSelection.includes("sk-excute"));
-  assert.ok(!initialSelection.includes("sk-excute-reviewer"));
+  let pickerSkills;
+  await chooseInstallSelection(PACKAGED_SKILLS, selectionPrompts, async (skills) => { pickerSkills = skills; return ["sk-explain"]; });
+  assert.deepStrictEqual(pickerSkills, PACKAGED_SKILLS);
   const cancellations = [];
-  let groupConfig;
+  let pickerConfig;
   const selected = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async (config) => {
-      groupConfig = config;
+    multiselect: async (config) => {
+      pickerConfig = config;
       return ["sk-doc", "sk-excute"];
     },
     isCancel: () => false,
     cancel: (message) => cancellations.push(message),
   });
   assert.deepStrictEqual(selected, ["sk-doc", "sk-excute"]);
-  assert.strictEqual(groupConfig.required, true);
-  assert.deepStrictEqual(groupConfig.options, pickerOptions);
+  assert.strictEqual(pickerConfig.required, true);
+  assert.deepStrictEqual(pickerConfig.options, PACKAGED_SKILLS.map((skill) => ({ value: skill, label: skill })));
 
   const cancelledSelection = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async () => Symbol.for("cancel"),
+    multiselect: async () => Symbol.for("cancel"),
     isCancel: (value) => value === Symbol.for("cancel"),
     cancel: (message) => cancellations.push(message),
   });
   assert.strictEqual(cancelledSelection, null);
 
   const emptySelection = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async () => [],
+    multiselect: async () => [],
     isCancel: () => false,
     cancel: (message) => cancellations.push(message),
   });
@@ -1423,7 +1396,7 @@ async function testUpdatePrompts() {
 
 testInstallPrompts()
   .then(testUpdatePrompts)
-  .then(() => console.log("sb-kit bootstrap, presets and update prompts passed"))
+  .then(() => console.log("sb-kit bootstrap and update prompts passed"))
   .catch((error) => {
     console.error(error);
     process.exitCode = 1;

@@ -1,0 +1,191 @@
+{
+  "Metadata": {
+    "description": "Cài và quản lý skill cho coding agent bằng sb-kit, hoặc khởi tạo dự án Next.js và Hono."
+  },
+  "Header": {
+    "home": "Trang chủ sb-kit",
+    "primaryNavigation": "Điều hướng chính",
+    "mobileNavigation": "Điều hướng trên điện thoại",
+    "skipToContent": "Chuyển đến nội dung chính",
+    "features": "Tính năng",
+    "approach": "Bắt đầu",
+    "contact": "Liên hệ",
+    "openMenu": "Mở điều hướng",
+    "closeMenu": "Đóng điều hướng",
+    "switchLanguage": "Đổi ngôn ngữ",
+    "toggleTheme": "Đổi giao diện sáng hoặc tối"
+  },
+  "Landing": {
+    "Hero": {
+      "eyebrow": "CLI cài skill cho coding agent",
+      "title": "Đưa quy trình làm việc vào dự án.",
+      "description": "Cài skill để lập kế hoạch, tìm lỗi, review và viết tài liệu. Chọn quy trình phù hợp với dự án hoặc bắt đầu ứng dụng mới với Next.js và Hono.",
+      "primaryCta": "Bắt đầu",
+      "dockInstruction": "Chọn một module để xem cách skill hoạt động.",
+      "copy": "Sao chép lệnh cài đặt",
+      "copied": "Đã sao chép lệnh cài đặt.",
+      "copyFailed": "Không thể sao chép tự động. Hãy chọn lệnh để sao chép thủ công."
+    },
+    "Features": {
+      "eyebrow": "Bộ công cụ",
+      "title": "Skill và bộ khung cho dự án của bạn.",
+      "description": "Chọn skill cần dùng, xem trạng thái cài đặt và khởi tạo ứng dụng mới khi cần.",
+      "items": {
+        "clarity": {
+          "title": "Cài các skill bạn chọn",
+          "description": "Chọn các skill cần dùng từ một danh sách checkbox. sb-kit cài vào .agents/skills và có thể cài thêm cho Claude Code vào .claude/skills."
+        },
+        "context": {
+          "title": "Kiểm tra và cập nhật",
+          "description": "Dùng doctor để kiểm tra cài đặt cục bộ mà không cần mạng. Dùng update để xem trước và cập nhật các skill do sb-kit quản lý."
+        },
+        "action": {
+          "title": "Khởi tạo dự án full-stack",
+          "description": "Tạo dự án với giao diện Next.js và API Hono bằng mẫu next-hono."
+        }
+      }
+    },
+    "Approach": {
+      "eyebrow": "Bắt đầu",
+      "title": "Chạy lệnh trong terminal.",
+      "items": {
+        "focus": {
+          "label": "Cài skill",
+          "title": "npx sb-kit install",
+          "description": "Chọn một hoặc nhiều skill trong danh sách. Chế độ mặc định Install missing only giữ nguyên những skill đã có."
+        },
+        "explain": {
+          "label": "Kiểm tra",
+          "title": "npx sb-kit doctor",
+          "description": "Xem những skill đang có trong dự án hiện tại."
+        },
+        "invite": {
+          "label": "Tạo dự án",
+          "title": "npx sb-kit create next-hono my-app",
+          "description": "Tạo dự án Next.js và Hono mới trong thư mục my-app."
+        },
+        "update": {
+          "label": "Cập nhật",
+          "title": "npx sb-kit update",
+          "description": "Xem trước bản cập nhật cho các skill được quản lý. Nội dung hiện có được sao lưu trước khi áp dụng bản cập nhật đã duyệt."
+        }
+      },
+      "requirements": "Cần Node.js từ phiên bản 20.12 và npm. Chạy lệnh cài đặt trong thư mục dự án muốn dùng skill.",
+      "readme": "Đọc hướng dẫn cài đặt",
+      "picker": {
+        "title": "Chọn skill để cài",
+        "description": "↑ ↓ Di chuyển · Space Chọn · Enter Tiếp tục",
+        "example": "Ví dụ danh sách chọn skill",
+        "selected": "đã chọn",
+        "unselected": "chưa chọn"
+      }
+    }
+  },
+  "SkillExamples": {
+    "title": "Xem skill hoạt động",
+    "description": "Xem agent xử lý ra sao khi nhận một yêu cầu tính năng hoặc một ý tưởng dự án.",
+    "execute": {
+      "title": "Từ yêu cầu đến triển khai",
+      "description": "Dùng quy trình này khi cần thay đổi một dự án đang có. Bạn duyệt nội dung cần thay đổi và cách agent dự định thực hiện.",
+      "run": "Chạy demo",
+      "running": "Đang chạy",
+      "rerun": "Chạy lại",
+      "demoNote": "Mô phỏng · 2 giây mỗi bước",
+      "progress": "Bước {step}/{total} · {title}",
+      "complete": "Đã chạy hết quy trình.",
+      "steps": {
+        "investigate": {
+          "title": "Đọc code hiện tại",
+          "description": "Lần theo phần code liên quan và thu thập thông tin."
+        },
+        "spec": {
+          "title": "Viết spec",
+          "description": "Mô tả thay đổi cần làm và đặt tiêu chí chấp nhận."
+        },
+        "approveSpec": {
+          "title": "Bạn duyệt spec",
+          "description": "Xác nhận hành vi và phạm vi trước khi lập kế hoạch."
+        },
+        "plan": {
+          "title": "Lập plan và checklist",
+          "description": "Xác định các file cần sửa và rà lại thứ tự thực hiện."
+        },
+        "approvePlan": {
+          "title": "Bạn duyệt plan",
+          "description": "Xem lại các thay đổi dự kiến trước khi agent bắt đầu sửa code."
+        },
+        "deliver": {
+          "title": "Triển khai, rà soát và bàn giao",
+          "description": "Thực hiện thay đổi đã duyệt, rà lại diff và báo cáo kết quả."
+        }
+      }
+    },
+    "nextHono": {
+      "title": "Hoàn thiện workspace Next.js và Hono",
+      "description": "Dùng skill này sau khi khởi tạo workspace pnpm để thiết lập runtime cho Hono, tầng dữ liệu và cách frontend gọi API.",
+      "input": "Bắt đầu từ workspace đã tạo",
+      "runtime": "Runtime của Hono",
+      "diagram": "Sơ đồ Next.js và Hono",
+      "client": "Giao diện dùng App Router. Khi đổi runtime của Hono, Next.js vẫn chạy trên runtime hiện tại.",
+      "server": {
+        "node": "Chạy Hono API bằng adapter Node.js. Đây là cấu hình mặc định khi tạo workspace.",
+        "workers": "Điều chỉnh Hono API hiện có để chạy trên Workers với Wrangler và bindings có kiểu."
+      },
+      "data": "Server Hono quản lý kết nối PostgreSQL, schema Drizzle và migration.",
+      "authTitle": "Xác thực và API proxy",
+      "auth": "Khi chọn xác thực, Next.js chuyển tiếp các request cần đăng nhập qua proxy cùng origin. Hono kiểm tra quyền theo vai trò.",
+      "storage": "Thêm lưu trữ tệp khi dự án cần."
+    },
+    "idea": {
+      "title": "Từ một ý tưởng đến ba tài liệu dự án",
+      "description": "Agent hỏi từng câu để làm rõ các quyết định, soạn overview và spec để bạn góp ý, rồi mới viết kế hoạch triển khai.",
+      "outputs": "Các file bạn nhận được",
+      "run": "Chạy demo Idea",
+      "rerun": "Chạy lại demo Idea",
+      "hint": "Bấm Idea để xem ba file mà skill này soạn.",
+      "running": "Đang tạo bộ tài liệu minh họa…",
+      "complete": "Đã hiện 3 tài liệu. Bấm Idea để xem lại.",
+      "files": {
+        "overview": "Bài toán, người dùng và mục tiêu của dự án.",
+        "spec": "Phạm vi, luồng sử dụng và tiêu chí chấp nhận.",
+        "plan": "Các giai đoạn, thứ tự phụ thuộc và điều kiện hoàn thành."
+      }
+    }
+  },
+  "Contact": {
+    "eyebrow": "Hỗ trợ dự án",
+    "title": "Bạn có câu hỏi hoặc góp ý?",
+    "description": "Báo lỗi hoặc đề xuất cải tiến qua GitHub Issues. Bạn cũng có thể xem thông tin gói trên npm.",
+    "name": "Họ và tên",
+    "mail": "Email",
+    "phone": "Điện thoại",
+    "companyName": "Doanh nghiệp",
+    "message": "Nội dung",
+    "send": "Gửi lời nhắn",
+    "sending": "Đang gửi…",
+    "successMessage": "Đã gửi lời nhắn.",
+    "errorMessage": "Chưa thể gửi lời nhắn. Vui lòng thử lại sau.",
+    "formUnavailable": "Biểu mẫu liên hệ hiện chưa được bật.",
+    "validation": {
+      "required": "Vui lòng điền trường này.",
+      "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "messageTooShort": "Vui lòng nhập ít nhất 10 ký tự.",
+      "fieldInvalid": "Vui lòng kiểm tra lại trường này."
+    },
+    "issues": "GitHub Issues"
+  },
+  "Footer": {
+    "description": "CLI cài skill cho agent và khởi tạo bộ khung dự án.",
+    "navigation": "Điều hướng cuối trang",
+    "top": "Về đầu trang",
+    "features": "Tính năng",
+    "contact": "Liên hệ",
+    "socialLinks": "Mạng xã hội",
+    "copyright": "© {year} {name}. Bảo lưu mọi quyền."
+  },
+  "Error": {
+    "we-cant-find-that-page": "Không tìm thấy trang này.",
+    "sorry-the-page-you-are-looking-for-doesnt-exist-or-has-been-moved": "Trang có thể đã được chuyển hoặc địa chỉ không chính xác.",
+    "take-me-home": "Về trang chủ"
+  }
+}

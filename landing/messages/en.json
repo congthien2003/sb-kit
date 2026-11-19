@@ -1,0 +1,191 @@
+{
+  "Metadata": {
+    "description": "Install reusable agent skills, manage them with sb-kit, or scaffold a Next.js and Hono project."
+  },
+  "Header": {
+    "home": "sb-kit home",
+    "primaryNavigation": "Primary navigation",
+    "mobileNavigation": "Mobile navigation",
+    "skipToContent": "Skip to main content",
+    "features": "Features",
+    "approach": "Quick start",
+    "contact": "Contact",
+    "openMenu": "Open navigation",
+    "closeMenu": "Close navigation",
+    "switchLanguage": "Switch language",
+    "toggleTheme": "Switch color theme"
+  },
+  "Landing": {
+    "Hero": {
+      "eyebrow": "The CLI for coding agent skills",
+      "title": "Give your agents a workflow.",
+      "description": "Install skills for planning, debugging, review, and documentation. Pick the workflows your project needs, or start a new app with Next.js and Hono.",
+      "primaryCta": "Get started",
+      "dockInstruction": "Select a module to explore its workflow.",
+      "copy": "Copy install command",
+      "copied": "Install command copied.",
+      "copyFailed": "Couldn’t copy automatically. Select the command to copy it."
+    },
+    "Features": {
+      "eyebrow": "Toolkit",
+      "title": "Skills and scaffolding for your projects.",
+      "description": "Choose the skills your project needs, inspect what’s installed, and start a new app when you need one.",
+      "items": {
+        "clarity": {
+          "title": "Install selected skills",
+          "description": "Pick the skills you want from a single checklist. sb-kit installs them in .agents/skills and can also install them for Claude Code in .claude/skills."
+        },
+        "context": {
+          "title": "Inspect and update",
+          "description": "Use doctor to inspect your local setup without network access. Use update to refresh managed skills and review the changes before applying them."
+        },
+        "action": {
+          "title": "Scaffold a full-stack app",
+          "description": "Create a project with a Next.js client and Hono API using the next-hono template."
+        }
+      }
+    },
+    "Approach": {
+      "eyebrow": "Quick start",
+      "title": "Start from your terminal.",
+      "items": {
+        "focus": {
+          "label": "Install",
+          "title": "npx sb-kit install",
+          "description": "Select one or more skills from the checklist. The default Install missing only mode keeps existing skills in place."
+        },
+        "explain": {
+          "label": "Inspect",
+          "title": "npx sb-kit doctor",
+          "description": "Check which skills are present in the current project."
+        },
+        "invite": {
+          "label": "Create",
+          "title": "npx sb-kit create next-hono my-app",
+          "description": "Scaffold a new Next.js and Hono project in the my-app directory."
+        },
+        "update": {
+          "label": "Update",
+          "title": "npx sb-kit update",
+          "description": "Preview updates to managed skills. Existing content is backed up before an approved update is applied."
+        }
+      },
+      "requirements": "You’ll need Node.js 20.12 or newer and npm. Run the install command inside the project where you want to use the skills.",
+      "readme": "Read the installation guide",
+      "picker": {
+        "title": "Choose skills to install",
+        "description": "↑ ↓ Move · Space Select · Enter Continue",
+        "example": "Example skill selection",
+        "selected": "selected",
+        "unselected": "not selected"
+      }
+    }
+  },
+  "SkillExamples": {
+    "title": "See the skills in action",
+    "description": "See what happens after you give your agent a feature request or a project idea.",
+    "execute": {
+      "title": "From request to implementation",
+      "description": "Use this workflow when you want to change an existing project. You approve both what will change and how the agent plans to change it.",
+      "run": "Run",
+      "running": "Running",
+      "rerun": "Run again",
+      "demoNote": "Demo · 2 seconds per step",
+      "progress": "Step {step} of {total} · {title}",
+      "complete": "Workflow complete.",
+      "steps": {
+        "investigate": {
+          "title": "Read the existing code",
+          "description": "Trace the affected code and gather evidence."
+        },
+        "spec": {
+          "title": "Write the spec",
+          "description": "Describe what should change and define the acceptance criteria."
+        },
+        "approveSpec": {
+          "title": "You approve the spec",
+          "description": "Confirm the behavior and scope before planning."
+        },
+        "plan": {
+          "title": "Draft the plan and checklist",
+          "description": "Identify the files to change and review the order of work."
+        },
+        "approvePlan": {
+          "title": "You approve the plan",
+          "description": "Review the proposed changes before implementation starts."
+        },
+        "deliver": {
+          "title": "Implement, review, and hand off",
+          "description": "Make the approved changes, review the diff, and report the result."
+        }
+      }
+    },
+    "nextHono": {
+      "title": "Set up your Next.js and Hono workspace",
+      "description": "Run this skill after scaffolding the pnpm workspace to configure the Hono runtime, data layer, and frontend-to-API setup.",
+      "input": "Start with a generated workspace",
+      "runtime": "Hono runtime",
+      "diagram": "Next.js and Hono architecture",
+      "client": "App Router frontend. It stays on its existing runtime when you change the Hono runtime.",
+      "server": {
+        "node": "Runs the Hono API with the Node.js adapter. This is the default scaffold.",
+        "workers": "Adapts the existing Hono API to Workers with Wrangler and typed bindings."
+      },
+      "data": "The Hono server owns the database connection, Drizzle schema, and migrations.",
+      "authTitle": "Authentication and API proxy",
+      "auth": "When authentication is selected, Next.js proxies protected browser requests on the same origin and Hono enforces role boundaries.",
+      "storage": "Add object storage when your project needs it."
+    },
+    "idea": {
+      "title": "From one idea to three project docs",
+      "description": "The agent clarifies one decision at a time, drafts an overview and spec for your feedback, then writes the implementation plan.",
+      "outputs": "Files you get",
+      "run": "Run the Idea demo",
+      "rerun": "Run the Idea demo again",
+      "hint": "Click Idea to see the three files this skill prepares.",
+      "running": "Preparing the example documents…",
+      "complete": "3 documents ready. Click Idea to replay.",
+      "files": {
+        "overview": "Problem, target users, and project goals.",
+        "spec": "Scope, user flows, and acceptance criteria.",
+        "plan": "Implementation phases, dependencies, and completion criteria."
+      }
+    }
+  },
+  "Contact": {
+    "eyebrow": "Project support",
+    "title": "Questions or feedback?",
+    "description": "Report a bug or suggest an improvement through GitHub Issues, or find the package on npm.",
+    "name": "Name",
+    "mail": "Email",
+    "phone": "Phone",
+    "companyName": "Company",
+    "message": "Message",
+    "send": "Send message",
+    "sending": "Sending…",
+    "successMessage": "Your message was sent.",
+    "errorMessage": "We could not send your message. Please try again later.",
+    "formUnavailable": "The contact form is not enabled yet.",
+    "validation": {
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "messageTooShort": "Please provide at least 10 characters.",
+      "fieldInvalid": "Check this field and try again."
+    },
+    "issues": "GitHub Issues"
+  },
+  "Footer": {
+    "description": "Reusable agent skills and project scaffolding from the sb-kit CLI.",
+    "navigation": "Footer navigation",
+    "top": "Back to top",
+    "features": "Features",
+    "contact": "Contact",
+    "socialLinks": "Social links",
+    "copyright": "© {year} {name}. All rights reserved."
+  },
+  "Error": {
+    "we-cant-find-that-page": "We can’t find that page.",
+    "sorry-the-page-you-are-looking-for-doesnt-exist-or-has-been-moved": "The page may have moved or the address may be incorrect.",
+    "take-me-home": "Return to the home page"
+  }
+}
