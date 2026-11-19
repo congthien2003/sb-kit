@@ -3,13 +3,13 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { SB_KIT_SKILLS, ASSET_SKILLS, REPORT_SKILLS } = require("./lib/catalog");
+const { SB_KIT_SKILLS, REPORT_SKILLS } = require("./lib/catalog");
 const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
 const { chooseInstallSelection } = require("./lib/presets");
 const { runUpdate } = require("./lib/update");
 const PACKAGE_VERSION = require("./package.json").version;
-const LOCAL_ONLY_SKILLS = new Set(["herdr", "skill-creator", "sk-create-skill"]);
+const LOCAL_ONLY_SKILLS = new Set(["herdr", "skill-creator", "sk-create-skill", "sk-release", "deep-research", "frontend-design", "vercel-react-best-practices", "vercel-react-native-skills"]);
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
   npx sb-kit install                                      Choose preset and editable skill selection
@@ -34,18 +34,14 @@ function listSkills(dir) {
 }
 
 function categorizedSkills(allSkills) {
-  const assets = new Set(ASSET_SKILLS);
   const report = new Set(REPORT_SKILLS);
   const categories = {
     "sk-work": [],
-    assets: [],
     report: [],
   };
 
   for (const skill of [...allSkills].sort()) {
-    if (assets.has(skill)) {
-      categories.assets.push(skill);
-    } else if (report.has(skill)) {
+    if (report.has(skill)) {
       categories.report.push(skill);
     } else {
       categories["sk-work"].push(skill);

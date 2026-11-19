@@ -18,14 +18,13 @@ npx sb-kit install
 Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc **Reporting**. Preset chỉ preselect checkbox; bạn có thể chỉnh lại trước khi xác nhận.
 
 - Minimal: `sk-excute`, `sk-explain`, `sk-debug`, `sk-review-diff`.
-- Full-stack: toàn bộ core, `vercel-react-best-practices`, `sk-debug`.
-- UI: `sk-excute`, frontend design, React practices, landing page, UI audit và `sk-review-diff`.
+- Full-stack: toàn bộ core và `sk-debug`.
+- UI: `sk-excute`, landing page, UI audit và `sk-review-diff`.
 - Reporting: report registry.
 
-Sau đó dùng checkbox để chọn từng skill, được chia thành ba category:
+Sau đó dùng checkbox để chọn từng skill, được chia thành hai category:
 
-- **sk-work** — mọi skill không thuộc hai category dưới: hiện gồm `sk-debug`, `deep-research`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-release`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, `sk-app-context`, và `sk-verify-code-ui-only`.
-- **assets** — `frontend-design`, `vercel-react-best-practices`, và `vercel-react-native-skills`.
+- **sk-work** — mọi skill không thuộc category report: hiện gồm `sk-debug`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, `sk-app-context`, và `sk-verify-code-ui-only`.
 - **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
 
 CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ ba role skills `sk-excute-explorer`, `sk-excute-researcher`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
@@ -137,7 +136,7 @@ Chọn **Yes** sẽ tạo thêm `.claude/skills` với cùng các skill đã ch�
 
 ## Skill catalog
 
-Catalog chính thức có **20 skills**, gồm **13 core** và **7 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
+Catalog chính thức có **15 skills**, gồm **12 core** và **3 supporting**. Các supporting skills chỉ được cài khi bạn chọn, không tự cài trong `create next-hono`.
 
 Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiển thị trong picker. Installer không xóa bản đã cài trong project; bạn có thể giữ bản hiện có nếu vẫn cần workflow này.
 
@@ -150,7 +149,6 @@ Từ **v3.0.0**, `herdr-orchestra` không còn được đóng gói hoặc hiể
 | `sk-excute-researcher` | Researcher trả citations cho câu hỏi public external cần thiết, tuân thủ consent/privacy và ưu tiên primary source đúng version. |
 | `sk-excute-implementer` | Contract cho worker tùy chọn: triển khai nhóm task đã duyệt, giữ exclusive file ownership rồi handback để agent chính review/integrate; không commit. |
 | `sk-visualizer` | Biến prompt, spec, đề xuất, báo cáo, plan hoặc tài liệu kỹ thuật thành một trang HTML đọc tuần tự từ trên xuống. Dùng chung một khung, mỗi loại có bộ mục dẫn đường; bám sát tài liệu nguồn, chỉ tra cứu internet có giới hạn khi cần bổ sung hoặc khi tài liệu kỹ thuật chỉ có chủ đề. |
-| `sk-release` | Chuẩn bị release: draft changelog, đề xuất SemVer, release summary và checklist; không tự commit/push/tag. |
 | `sk-doc` | Sinh một Markdown document từ codebase, gồm README, API docs, changelog hoặc usage guide. |
 | `sk-explain` | Giải thích source code, flow, state transition và các nhánh xử lý dựa trên file references. |
 | `sk-create-slide` | Tạo HTML presentation từ ý tưởng hoặc chuyển đổi PPT/PPTX. |
@@ -186,10 +184,6 @@ Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc sou
 | `sk-debug` | Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence; read-only mặc định, không tự patch/reproduce. |
 | `sk-app-context` | Tạo hoặc cập nhật `PRODUCT.md` ngắn cho app đã có: ai dùng, thao tác chính, ưu tiên UI/UX và quy tắc quyết định để agent không lạc đề. Điền trước từ repo, gắn nhãn xác nhận/giả định, không ghi đè file có sẵn và không tự sửa `AGENTS.md`. |
 | `sk-landing-page` | Xác định loại landing page, chọn nội dung nổi bật và CTA, đề xuất màu và phong cách, rồi dựng `landing/index.html` bằng Tailwind CSS CDN. |
-| `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
-| `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
-| `vercel-react-native-skills` | Best practices cho React Native và Expo. |
-| `deep-research` | Nghiên cứu chuyên sâu từ nhiều nguồn web, tổng hợp phát hiện và cung cấp báo cáo có trích dẫn. |
 
 Ví dụ `$sk-app-context App này dành cho nội bộ, ưu tiên table, input và modal chi tiết dễ đọc.` Skill đề xuất `PRODUCT.md`, chỉ ghi sau khi bạn xác nhận.
 

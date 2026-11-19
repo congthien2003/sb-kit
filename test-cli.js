@@ -547,7 +547,7 @@ withDisposableTarget("sb-kit-legacy-fast-", (target) => {
 
 const SKILLS_DIR = path.join(__dirname, ".agents", "skills");
 const PACKAGED_SKILLS = listSkills(SKILLS_DIR);
-const LOCAL_ONLY_SKILLS = ["herdr", "skill-creator", "sk-create-skill"];
+const LOCAL_ONLY_SKILLS = ["herdr", "skill-creator", "sk-create-skill", "sk-release", "deep-research", "frontend-design", "vercel-react-best-practices", "vercel-react-native-skills"];
 for (const skill of LOCAL_ONLY_SKILLS) assert.ok(!PACKAGED_SKILLS.includes(skill));
 const npmIgnore = fs.readFileSync(path.join(SKILLS_DIR, ".npmignore"), "utf8");
 for (const skill of LOCAL_ONLY_SKILLS) assert.ok(npmIgnore.includes(`${skill}/`));
@@ -578,7 +578,6 @@ function assertSbKitSkills(target, root) {
     ...CORE_ROLE_SKILLS,
     "sk-visualizer",
     "sk-create-slide",
-    "sk-release",
     "sk-doc",
     "sk-start-next-hono",
     "sk-explain",
@@ -701,9 +700,7 @@ for (const skill of NEW_SKILLS_WITH_EVALS) {
 
 const categorized = categorizedSkills(PACKAGED_SKILLS);
 const pickerOptions = categoryOptions(PACKAGED_SKILLS);
-assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "assets", "report"]);
-assert.deepStrictEqual(categorized.assets, [...ASSET_SKILLS].sort());
-assert.ok(!categorized.assets.includes("sk-create-skill"));
+assert.deepStrictEqual(Object.keys(categorized), ["sk-work", "report"]);
 assert.deepStrictEqual(categorized.report, [...REPORT_SKILLS].sort());
 assert.ok(!categorized.report.includes("sk-verify-code-ui-only"));
 assert.ok(!categorized.report.includes("sk-review-diff"));
@@ -731,7 +728,10 @@ assert.deepStrictEqual(
     .sort(),
   PACKAGED_SKILLS,
 );
-assert.ok(categorized["sk-work"].includes("deep-research"));
+assert.ok(!PACKAGED_SKILLS.includes("deep-research"));
+assert.ok(!PACKAGED_SKILLS.includes("frontend-design"));
+assert.ok(!PACKAGED_SKILLS.some((skill) => skill.startsWith("vercel-")));
+assert.ok(!PACKAGED_SKILLS.includes("sk-release"));
 assert.ok(categorized["sk-work"].includes("sk-excute"));
 for (const skill of ["sk-app-context"]) {
   const source = path.join(__dirname, ".agents", "skills", skill);
@@ -791,7 +791,7 @@ assert.strictEqual(packageLock.version, packageMetadata.version);
 assert.strictEqual(packageLock.packages[""].version, packageMetadata.version);
 assert.ok(changelogSource.includes(`## [${packageMetadata.version}] - `));
 assert.match(changelogSource, /Promote `sk-review-diff` to core/);
-assert.match(readmeSource, /Catalog chính thức có \*\*20 skills\*\*, gồm \*\*13 core\*\* và \*\*7 supporting\*\*/);
+assert.match(readmeSource, /Catalog chính thức có \*\*15 skills\*\*, gồm \*\*12 core\*\* và \*\*3 supporting\*\*/);
 assert.deepStrictEqual(
   [...readmeSource.matchAll(/^\| `([^`]+)` \|/gm)].map(([, name]) => name).sort(),
   PACKAGED_SKILLS,
