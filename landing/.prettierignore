@@ -1,0 +1,11 @@
+node_modules/
+.next/
+coverage/
+dist/
+out/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+package-lock.json
+.agents
