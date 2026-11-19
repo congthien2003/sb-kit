@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 
-const { SB_KIT_SKILLS, REPORT_SKILLS } = require("./lib/catalog");
+const { SB_KIT_SKILLS, ASSET_SKILLS, REPORT_SKILLS } = require("./lib/catalog");
 const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
 const { chooseInstallSelection } = require("./lib/presets");
@@ -12,7 +12,7 @@ const PACKAGE_VERSION = require("./package.json").version;
 const LOCAL_ONLY_SKILLS = new Set(["herdr", "skill-creator", "sk-create-skill", "sk-release", "deep-research", "frontend-design", "vercel-react-best-practices", "vercel-react-native-skills"]);
 const USAGE = `sb-kit — install agent skills or bootstrap a Next.js and Hono workspace
 
-  npx sb-kit install                                      Choose preset and editable skill selection
+  npx sb-kit install                                      Choose skills to install
   npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace
   npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)
   npx sb-kit update                                       Preview selected updates with retained backups (offline)
@@ -35,38 +35,24 @@ function listSkills(dir) {
 
 function categorizedSkills(allSkills) {
   const report = new Set(REPORT_SKILLS);
-  const categories = {
-    "sk-work": [],
-    report: [],
-  };
-
+  const categories = { "sk-work": [], report: [] };
   for (const skill of [...allSkills].sort()) {
-    if (report.has(skill)) {
-      categories.report.push(skill);
-    } else {
-      categories["sk-work"].push(skill);
-    }
+    categories[report.has(skill) ? "report" : "sk-work"].push(skill);
   }
-
   return categories;
 }
 
 function categoryOptions(allSkills) {
-  return Object.fromEntries(
-    Object.entries(categorizedSkills(allSkills)).map(([category, skills]) => {
-      return [
-        category,
-        skills.map((skill) => ({ value: skill, label: skill })),
-      ];
-    }),
-  );
+  return Object.fromEntries(Object.entries(categorizedSkills(allSkills)).map(([category, skills]) => [
+    category,
+    skills.map((skill) => ({ value: skill, label: skill })),
+  ]));
 }
 
-async function chooseSkills(allSkills, prompts, initialValues = []) {
-  const choice = await prompts.groupMultiselect({
+async function chooseSkills(allSkills, prompts) {
+  const choice = await prompts.multiselect({
     message: "Choose skills to install:",
-    options: categoryOptions(allSkills),
-    ...(initialValues.length ? { initialValues } : {}),
+    options: allSkills.map((skill) => ({ value: skill, label: skill })),
     required: true,
   });
 

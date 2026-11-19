@@ -1178,7 +1178,7 @@
         </a>
         <div class="nav-links">
           <a href="#how">Cách hoạt động</a>
-          <a href="#presets">Presets</a>
+          <a href="#selection">Skill selection</a>
           <a href="#skills">Skills</a>
           <a href="#maintain">Doctor &amp; update</a>
           <a href="#memorize">memorize-mcp</a>
@@ -1213,9 +1213,9 @@
                 <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-terminal" /></svg>
                 <span>npx sb-kit install</span>
               </button>
-              <a class="btn" href="#presets">
+              <a class="btn" href="#skills">
                 <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-layers" /></svg>
-                Xem presets
+                Xem danh sách skill
               </a>
             </div>
             <p class="status" id="copy-status" aria-live="polite"></p>
@@ -1240,11 +1240,10 @@
             </figcaption>
             <pre class="code-body"><code><span class="tk-prompt">$ </span>npx sb-kit install
 
-<span class="tk-key">◆</span>  Choose an installation preset:
-│  ○ Manual   <span class="tk-on">● Minimal</span>   ○ Full-stack   ○ UI   ○ Reporting
-│
-<span class="tk-key">◆</span>  Choose skills to install:  (sk-work · assets · report)
-│  ◼ sk-excute   ◼ sk-explain   ◼ sk-debug   ◼ sk-review-diff
+<span class="tk-key">◆</span>  Choose skills to install:
+│  ◻ sk-app-context   ◻ sk-create-slide   ◻ sk-debug   ◻ sk-doc
+│  ◻ sk-excute   ◻ sk-explain   ◻ sk-landing-page   ◻ sk-review-diff
+│  ◻ sk-start-next-hono   ◻ sk-visualizer   ◻ sk-verify-code-ui-only
 │
 <span class="tk-key">◆</span>  When selected skills already exist:
 │  <span class="tk-on">● Install missing only</span>   ○ Replace selected
@@ -1272,11 +1271,8 @@
             </li>
             <li class="card">
               <p class="eyebrow">02 · chọn</p>
-              <h3>Preset rồi checkbox</h3>
-              <p>
-                Chọn Manual hoặc preset Minimal / Full-stack / UI / Reporting, rồi chỉnh checkbox theo category
-                <strong>sk-work</strong>, <strong>assets</strong> hoặc <strong>report</strong>.
-              </p>
+              <h3>Chọn toàn bộ skill trực tiếp</h3>
+              <p>CLI mở danh sách đầy đủ các skill có thể cài; chọn một hoặc nhiều skill ngay tại đây.</p>
             </li>
             <li class="card">
               <p class="eyebrow">03 · xung đột</p>
@@ -1298,78 +1294,12 @@
         </div>
       </section>
 
-      <!-- Presets -->
-      <section class="grid-bg" id="presets">
-        <div class="wrap split split-top">
-          <div class="stack">
-            <p class="eyebrow">Presets</p>
-            <h2 class="section-title">Chọn sẵn, chỉnh lại tuỳ ý.</h2>
-            <p class="section-copy">
-              Preset chỉ preselect checkbox. Bạn vẫn bật tắt từng skill trước khi xác nhận; CLI bắt buộc chọn ít nhất một
-              skill.
-            </p>
-            <div class="preset-tabs" role="group" aria-label="Preset" id="preset-tabs"></div>
-          </div>
-
-          <div id="preset-panels">
-            <div class="panel preset-panel" data-preset="manual" data-label="Manual" data-count="tự chọn" hidden>
-              <div class="panel-head"><span>preset: manual</span><span>tự chọn</span></div>
-              <div class="panel-body">
-                <p>Mặc định. Không preselect gì; bạn tự chọn từng skill trong ba nhóm sk-work, assets và report.</p>
-                <div class="row"><span class="badge">chọn trong picker</span></div>
-              </div>
-            </div>
-            <div class="panel preset-panel" data-preset="minimal" data-label="Minimal" data-count="4 skills">
-              <div class="panel-head"><span>preset: minimal</span><span>4 skills</span></div>
-              <div class="panel-body">
-                <p>Đủ để bắt đầu: workflow chính, giải thích code, debug và review diff.</p>
-                <div class="row">
-                  <span class="badge badge-volt">sk-excute</span>
-                  <span class="badge">sk-explain</span>
-                  <span class="badge">sk-debug</span>
-                  <span class="badge">sk-review-diff</span>
-                </div>
-                <p class="panel-note">Chọn <code>sk-excute</code> sẽ tự thêm ba role skill <code>sk-excute-*</code>.</p>
-              </div>
-            </div>
-            <div class="panel preset-panel" data-preset="full-stack" data-label="Full-stack" data-count="15 skills" hidden>
-              <div class="panel-head"><span>preset: full-stack</span><span>15 skills</span></div>
-              <div class="panel-body">
-                <p>Toàn bộ 13 core skills, thêm React best practices từ Vercel và sk-debug.</p>
-                <div class="row">
-                  <span class="badge badge-volt">13 core skills</span>
-                  <span class="badge">vercel-react-best-practices</span>
-                  <span class="badge">sk-debug</span>
-                </div>
-              </div>
-            </div>
-            <div class="panel preset-panel" data-preset="ui" data-label="UI" data-count="6 skills" hidden>
-              <div class="panel-head"><span>preset: ui</span><span>6 skills</span></div>
-              <div class="panel-body">
-                <p>Cho việc làm giao diện: frontend design, React practices, landing page và UI audit.</p>
-                <div class="row">
-                  <span class="badge badge-volt">sk-excute</span>
-                  <span class="badge">frontend-design</span>
-                  <span class="badge">vercel-react-best-practices</span>
-                  <span class="badge">sk-landing-page</span>
-                  <span class="badge">sk-verify-code-ui-only</span>
-                  <span class="badge">sk-review-diff</span>
-                </div>
-              </div>
-            </div>
-            <div class="panel preset-panel" data-preset="reporting" data-label="Reporting" data-count="4 skills" hidden>
-              <div class="panel-head"><span>preset: reporting</span><span>4 skills</span></div>
-              <div class="panel-body">
-                <p>Report registry: slide, visualizer, tài liệu và giải thích.</p>
-                <div class="row">
-                  <span class="badge">sk-create-slide</span>
-                  <span class="badge">sk-visualizer</span>
-                  <span class="badge">sk-doc</span>
-                  <span class="badge">sk-explain</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- Skill selection -->
+      <section class="grid-bg" id="selection">
+        <div class="wrap section-body">
+          <p class="eyebrow">Skill selection</p>
+          <h2 class="section-title">Chọn trực tiếp từ toàn bộ danh sách.</h2>
+          <p class="section-copy">CLI hiển thị tất cả skill có thể cài ngay từ đầu; bạn chọn những skill cần dùng.</p>
         </div>
       </section>
 

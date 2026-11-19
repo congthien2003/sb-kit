@@ -15,17 +15,7 @@ Chạy lệnh trong thư mục project cần sử dụng skills:
 npx sb-kit install
 ```
 
-Chọn **Manual** (mặc định), **Minimal**, **Full-stack**, **UI**, hoặc **Reporting**. Preset chỉ preselect checkbox; bạn có thể chỉnh lại trước khi xác nhận.
-
-- Minimal: `sk-excute`, `sk-explain`, `sk-debug`, `sk-review-diff`.
-- Full-stack: toàn bộ core và `sk-debug`.
-- UI: `sk-excute`, landing page, UI audit và `sk-review-diff`.
-- Reporting: report registry.
-
-Sau đó dùng checkbox để chọn từng skill, được chia thành hai category:
-
-- **sk-work** — mọi skill không thuộc category report: hiện gồm `sk-debug`, workflow/roles `sk-excute*`, `sk-landing-page`, `sk-start-next-hono`, `sk-review-diff`, `sk-idea-to-docs`, `sk-app-context`, và `sk-verify-code-ui-only`.
-- **report** — `sk-create-slide`, `sk-visualizer`, `sk-doc`, và `sk-explain`.
+Sau khi chạy lệnh, CLI hiển thị trực tiếp toàn bộ skill có thể cài trong một danh sách checkbox. Chọn một hoặc nhiều skill rồi tiếp tục.
 
 CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, installer tự thêm đủ ba role skills `sk-excute-explorer`, `sk-excute-researcher`, và `sk-excute-implementer` vào selection. Bản đã có được giữ nguyên trong **Install missing only**; các role được chọn vẫn được mirror nếu bạn chọn cài cho Claude Code. Required companions còn thiếu được đề nghị riêng; chỉ thêm sau khi bạn xác nhận **Yes** (mặc định **No**). Decline giữ selection và cảnh báo chức năng thiếu; cancel dừng trước copy. Sau selection, chọn cách xử lý skill đã tồn tại:
 
@@ -116,7 +106,7 @@ Help giải thích rõ **Install missing only** cài skill còn thiếu và gi�
 Luồng cài đặt:
 
 1. CLI đọc danh sách thư mục skill trong `.agents/skills` của package.
-2. Bạn chọn preset rồi chỉnh checkbox từng skill dưới các group `sk-work`, `assets`, và `report`.
+2. CLI mở trực tiếp danh sách đầy đủ skill; bạn chọn một hoặc nhiều skill.
 3. Bạn chọn **Install missing only** hoặc **Replace selected**; mode này chỉ tác động những skill đã chọn.
 4. CLI cài selection vào `.agents/skills`, rồi bạn chọn **No** hoặc **Yes** ở prompt Claude Code. Khi chọn **Yes**, CLI áp dụng cùng selection và conflict mode từ source `.agents/skills` sang `.claude/skills`.
 
@@ -212,9 +202,9 @@ Có thể chia pages/sections cho native sub-agents nếu host hỗ trợ.
 
 ### `sb-kit install`
 
-Mở checkbox picker theo category và cài các skill được chọn vào project hiện tại.
+Mở danh sách đầy đủ skill có thể cài và cài các skill được chọn vào project hiện tại.
 
-- Input: preset, editable checkbox trong `sk-work`, `assets`, `report`, xác nhận companion nếu cần; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
+- Input: chọn skill từ danh sách đầy đủ, xác nhận companion nếu cần; chọn conflict mode; rồi chọn cài cho Claude Code hay không.
 - Output: danh sách skills `Added`, `Replaced`, hoặc `Skipped` cho `.agents`; có thêm output `.claude` khi chọn **Yes**.
 - Conflict mode mặc định **Install missing only** không ghi đè folder skill có sẵn. **Replace selected** chỉ thay folder của skill đã checkbox.
 - Error: lệnh dừng nếu không chọn skill, cancel prompt, hoặc một skill đã chọn không tồn tại trong `.agents/skills` của package.
@@ -270,7 +260,7 @@ Cài toàn bộ skills vào project hiện tại:
 npx sb-kit install
 ```
 
-Khi checkbox picker hiển thị, dùng phím mũi tên và Space để tick từng skill trong category phù hợp, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
+Khi danh sách skill hiển thị, dùng phím mũi tên và Space để chọn skill, rồi nhấn Enter. Chọn **Install missing only** để giữ skill hiện có, hoặc **Replace selected** khi muốn đồng bộ lại đúng các skill đã tick.
 
 Tại prompt `Install for Claude Code too?`, giữ **No** và nhấn Enter để chỉ cài `.agents/skills`, hoặc chọn **Yes** để cài thêm `.claude/skills` với cùng selection/mode.
 

@@ -4,7 +4,6 @@ const os = require("os");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const {
-  ASSET_SKILLS,
   REPORT_SKILLS,
   SB_KIT_SKILLS,
   categorizedSkills,
@@ -28,7 +27,7 @@ assert.match(helpResult.stdout, /Replace selected: Replace only selected existin
 assert.deepStrictEqual(
   helpResult.stdout.split(/\r?\n/).filter((line) => line.trim().startsWith("npx sb-kit ")),
   [
-    "  npx sb-kit install                                      Choose preset and editable skill selection",
+    "  npx sb-kit install                                      Choose skills to install",
     "  npx sb-kit create next-hono <project-name> [--claude]  Create a base workspace",
     "  npx sb-kit doctor [--json]                             Inspect installed skills (read-only, offline)",
     "  npx sb-kit update                                       Preview selected updates with retained backups (offline)",
@@ -59,7 +58,7 @@ const VISUALIZER_REFERENCE_FILES = [
 ];
 const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
-const { presetSelections, resolveCompanions, chooseInstallSelection } = require("./lib/presets");
+const { resolveCompanions, chooseInstallSelection } = require("./lib/presets");
 const { planUpdate, renderUpdate, applyUpdate, runUpdate } = require("./lib/update");
 
 // Source-level/control-flow fixtures emulate directory fsync support, including on
@@ -549,8 +548,6 @@ const SKILLS_DIR = path.join(__dirname, ".agents", "skills");
 const PACKAGED_SKILLS = listSkills(SKILLS_DIR);
 const LOCAL_ONLY_SKILLS = ["herdr", "skill-creator", "sk-create-skill", "sk-release", "deep-research", "frontend-design", "vercel-react-best-practices", "vercel-react-native-skills"];
 for (const skill of LOCAL_ONLY_SKILLS) assert.ok(!PACKAGED_SKILLS.includes(skill));
-const npmIgnore = fs.readFileSync(path.join(SKILLS_DIR, ".npmignore"), "utf8");
-for (const skill of LOCAL_ONLY_SKILLS) assert.ok(npmIgnore.includes(`${skill}/`));
 
 function captureLogs(callback) {
   const originalLog = console.log;
@@ -1294,8 +1291,6 @@ try {
 }
 
 async function testInstallPrompts() {
-  assert.ok(!Object.values(presetSelections()).flat().includes("sk-excute-fast"));
-  assert.ok(!Object.values(presetSelections()).flat().includes("sk-handoff"));
   assert.throws(() => resolveCompanions(["sk-create-skill"], PACKAGED_SKILLS), /Skill is not packaged/);
   assert.throws(() => resolveCompanions(["a"], ["a", "b"], [], { a: ["b"], b: ["a"] }), /cycle/);
   assert.throws(() => resolveCompanions(["missing"], PACKAGED_SKILLS), /not packaged/);
@@ -1328,33 +1323,32 @@ async function testInstallPrompts() {
     ["sk-excute-explorer"],
   );
   assert.deepStrictEqual([...partialExecutionSelection].sort(), ["sk-excute", ...executionRoles].sort());
-  let initialSelection;
-  await chooseInstallSelection(PACKAGED_SKILLS, { ...selectionPrompts, select: async () => "minimal" }, async (_all, _prompts, initial) => { initialSelection = initial; return ["sk-explain"]; });
-  assert.ok(initialSelection.includes("sk-excute"));
-  assert.ok(!initialSelection.includes("sk-excute-reviewer"));
+  let pickerSkills;
+  await chooseInstallSelection(PACKAGED_SKILLS, selectionPrompts, async (skills) => { pickerSkills = skills; return ["sk-explain"]; });
+  assert.deepStrictEqual(pickerSkills, PACKAGED_SKILLS);
   const cancellations = [];
-  let groupConfig;
+  let pickerConfig;
   const selected = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async (config) => {
-      groupConfig = config;
+    multiselect: async (config) => {
+      pickerConfig = config;
       return ["sk-doc", "sk-excute"];
     },
     isCancel: () => false,
     cancel: (message) => cancellations.push(message),
   });
   assert.deepStrictEqual(selected, ["sk-doc", "sk-excute"]);
-  assert.strictEqual(groupConfig.required, true);
-  assert.deepStrictEqual(groupConfig.options, pickerOptions);
+  assert.strictEqual(pickerConfig.required, true);
+  assert.deepStrictEqual(pickerConfig.options, PACKAGED_SKILLS.map((skill) => ({ value: skill, label: skill })));
 
   const cancelledSelection = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async () => Symbol.for("cancel"),
+    multiselect: async () => Symbol.for("cancel"),
     isCancel: (value) => value === Symbol.for("cancel"),
     cancel: (message) => cancellations.push(message),
   });
   assert.strictEqual(cancelledSelection, null);
 
   const emptySelection = await chooseSkills(PACKAGED_SKILLS, {
-    groupMultiselect: async () => [],
+    multiselect: async () => [],
     isCancel: () => false,
     cancel: (message) => cancellations.push(message),
   });
@@ -1423,7 +1417,7 @@ async function testUpdatePrompts() {
 
 testInstallPrompts()
   .then(testUpdatePrompts)
-  .then(() => console.log("sb-kit bootstrap, presets and update prompts passed"))
+  .then(() => console.log("sb-kit bootstrap and update prompts passed"))
   .catch((error) => {
     console.error(error);
     process.exitCode = 1;

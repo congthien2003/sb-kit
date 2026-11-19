@@ -23,7 +23,7 @@ Keep changes minimal and preserve the installer’s non-overwriting behavior. Up
 
 ## Testing Guidelines
 
-Tests use Node’s built-in `assert` module and `spawnSync`; no test framework is configured. Add focused integration assertions to `test-cli.js` for new CLI behavior. Tests must clean up temporary directories in `finally` blocks. Run `node test-cli.js` before opening a pull request.
+Tests use Node’s built-in `assert` module and `spawnSync`; no test framework is configured. Add focused integration assertions to `test-cli.js` for new CLI behavior. Tests must clean up temporary directories in `finally` blocks. Agents are allowed and expected to run relevant build, test, lint, and verification commands when appropriate, including `node test-cli.js` before opening a pull request. Follow any more specific user or environment restriction for a particular task, and report which checks were run and their results.
 
 ## Commit & Pull Request Guidelines
 
