@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [3.6.0] - 2026-11-19
+
+### Added
+
+- Add a standalone Next.js landing page, plus landing-page skill content strategy and visual-direction references.
+- Export configured Pi extensions to `pi-extensions.json`.
+
+### Changed
+
+- Open the full skill checklist directly in `sb-kit install`, without preset or category selection.
+- Update the CLI skill catalog and package exclusions to remove retired/unsupported offerings.
+
+### Breaking changes
+
+- Replace the installer preset/category flow with direct skill selection.
+- Remove `deep-research`, `frontend-design`, `sk-release`, and `vercel-*` skills from the CLI package/catalog. `sk-release` remains repository-local.
+
 ## [3.5.0] - 2026-11-01
 
 ### Added
