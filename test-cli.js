@@ -752,28 +752,8 @@ for (const skill of ["sk-app-context"]) {
 assert.ok(!categorized["sk-work"].includes("sk-create-skill"));
 assert.ok(!categorized.report.includes("sk-create-skill"));
 assert.ok(!categorized["sk-work"].includes("skill-creator"));
-const landingSource = fs.readFileSync(path.join(__dirname, "index.html"), "utf8");
-const landingCards = [...landingSource.matchAll(/<article class="skill-card">([\s\S]*?)<\/article>/g)];
-const landingSkillNames = landingCards.map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
-assert.deepStrictEqual([...landingSkillNames].sort(), PACKAGED_SKILLS);
-const landingCoreNames = landingCards
-  .filter(([, article]) => /<span class="tag tag-core">core<\/span>/.test(article))
-  .map(([, article]) => article.match(/<h3>([^<]+)<\/h3>/)[1]);
-assert.deepStrictEqual(landingCoreNames.sort(), [...SB_KIT_SKILLS].sort());
-const coreVerifySkillCards = landingCards
-  .filter(([, article]) => /<h3>sk-verify-code-ui-only<\/h3>/.test(article));
-assert.strictEqual(coreVerifySkillCards.length, 1);
-assert.match(coreVerifySkillCards[0][1], /<span class="tag tag-core">core<\/span>/);
-const coreReviewDiffCards = landingCards
-  .filter(([, article]) => /<h3>sk-review-diff<\/h3>/.test(article));
-assert.strictEqual(coreReviewDiffCards.length, 1);
-assert.match(coreReviewDiffCards[0][1], /<span class="tag tag-core">core<\/span>/);
-assert.ok(!landingCards.some(([, article]) => /<h3>(?:sk-create-skill|skill-creator)<\/h3>/.test(article)));
-const supportingCount = PACKAGED_SKILLS.length - SB_KIT_SKILLS.length;
-assert.ok(landingSource.includes(`<h2 class="section-label">SaboKit core / ${SB_KIT_SKILLS.length} skills</h2>`));
-assert.ok(landingSource.includes(`<h2 class="section-label">Supporting / ${supportingCount} skills</h2>`));
-assert.ok(landingSource.includes(`<span class="badge">${PACKAGED_SKILLS.length} agent skills</span>`));
-assert.doesNotMatch(landingSource, /<h3>sk-verify-code<\/h3>/);
+assert.ok(!fs.existsSync(path.join(__dirname, "index.html")));
+assert.ok(fs.existsSync(path.join(__dirname, "landing", "src", "app", "[lang]", "page.tsx")));
 const readmeSource = fs.readFileSync(path.join(__dirname, "README.md"), "utf8");
 const changelogSource = fs.readFileSync(path.join(__dirname, "CHANGELOG.md"), "utf8");
 const packageMetadata = parseJson(
@@ -844,12 +824,11 @@ for (const approvedPath of [
   "cli.js",
   "README.md",
   "CHANGELOG.md",
-  "index.html",
   "test-cli.js",
 ]) {
   assert.ok(approvedIntegrationPrompt.includes(approvedPath), approvedPath);
 }
-assert.match(approvedIntegrationPrompt, /exactly these eight repository paths/);
+assert.match(approvedIntegrationPrompt, /exactly these seven repository paths/);
 assert.match(approvedIntegrationPrompt, /`approved-packet\.json` is separate, read-only approval context/);
 assert.match(approvedIntegrationPrompt, /selected Inline/);
 assert.match(approvedIntegrationPrompt, /node test-cli\.js.*node cli\.js --help/);
