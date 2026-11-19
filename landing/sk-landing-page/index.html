@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="sk-landing-page giúp coding agent đọc brief, chọn thông điệp, CTA và hướng thiết kế để dựng một trang giới thiệu sản phẩm trong landing/index.html." />
+    <meta name="theme-color" content="#586331" />
+    <title>sk-landing-page — Từ brief đến trang giới thiệu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @theme {
+        --color-olive: #586331;
+        --color-olive-deep: #3e4821;
+        --color-paper: #f4f5f1;
+        --color-ink: #171b13;
+        --color-muted: #5c6255;
+        --color-line: #d6dacb;
+        --font-sans: "Geist", "Segoe UI", Arial, sans-serif;
+        --font-mono: "Geist Mono", Consolas, monospace;
+      }
+    </style>
+    <style>
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scroll-padding-top: 28px; }
+      body { margin: 0; background: #f4f5f1; color: #171b13; font-family: "Geist", "Segoe UI", Arial, sans-serif; }
+      ::selection { background: #d8e0ad; color: #171b13; }
+      a { text-underline-offset: 5px; }
+      a:focus-visible, button:focus-visible, summary:focus-visible, pre:focus-visible { outline: 3px solid #586331; outline-offset: 5px; }
+      .button { display: inline-flex; align-items: center; justify-content: center; gap: 14px; min-height: 48px; padding: 14px 21px; border: 1px solid #586331; border-radius: 5px; background: #586331; color: white; text-decoration: none; font-weight: 600; font-size: 14px; box-shadow: 0 4px 0 #3e4821; transition: background 160ms, transform 160ms; }
+      .button:hover { background: #3e4821; transform: translateY(-1px); }
+      .eyebrow { color: #586331; font-size: 11px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
+      .mono { font-family: "Geist Mono", Consolas, monospace; }
+      .artifact { box-shadow: 9px 9px 0 #d6dacb; }
+      .drawing-grid { background-image: linear-gradient(#d6dacb77 1px, transparent 1px), linear-gradient(90deg, #d6dacb77 1px, transparent 1px); background-size: 24px 24px; }
+      .code { overflow-x: auto; padding: 24px; margin: 0; font: 13px/1.9 "Geist Mono", Consolas, monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+      .single-line { white-space: pre; overflow-wrap: normal; }
+      .dark-focus:focus-visible { outline-color: #d8e0ad; }
+      summary { cursor: pointer; padding: 23px 0; font-weight: 500; }
+      details p { padding-bottom: 24px; max-width: 64ch; color: #5c6255; line-height: 1.8; }
+      .skip { position: absolute; top: -100px; left: 20px; z-index: 10; padding: 12px 18px; background: white; }
+      .skip:focus { top: 12px; }
+      @media (max-width: 640px) { .artifact { box-shadow: 5px 5px 0 #d6dacb; } .code { padding: 18px; } }
+      @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <a href="#noi-dung" class="skip">Đến nội dung chính</a>
+    <header class="mx-auto max-w-7xl px-6 lg:px-12">
+      <nav aria-label="Điều hướng chính" class="flex min-h-24 items-center justify-between gap-5 border-b border-line">
+        <a href="#" aria-label="sk-landing-page, đầu trang" class="flex items-center gap-3 no-underline">
+          <span aria-hidden="true" class="flex size-9 items-center justify-center rounded bg-olive text-xl font-semibold text-white">↗</span>
+          <span class="text-sm font-semibold tracking-tight sm:text-base">sk-landing-page<span class="ml-2 hidden font-normal text-muted sm:inline">/ sb-kit</span></span>
+        </a>
+        <div class="flex items-center gap-7 text-sm">
+          <a href="#khi-nao" class="hidden text-muted hover:text-ink md:inline">Khi nào dùng</a>
+          <a href="#dau-ra" class="hidden text-muted hover:text-ink md:inline">Đầu ra</a>
+          <a href="#bat-dau" class="font-semibold text-olive underline">Bắt đầu <span aria-hidden="true">↗</span></a>
+        </div>
+      </nav>
+    </header>
+    <main id="noi-dung">
+      <section aria-labelledby="hero-title" class="mx-auto grid max-w-7xl gap-14 px-6 py-16 md:py-24 lg:grid-cols-[1.08fr_1fr] lg:items-center lg:gap-16 lg:px-12">
+        <div>
+          <p class="eyebrow mb-7 flex items-center gap-3"><span class="size-2 rounded-full bg-olive" aria-hidden="true"></span> Agent skill · Dành cho developer & maker</p>
+          <h1 id="hero-title" class="max-w-2xl text-[42px] leading-[1.14] font-medium tracking-[-.045em] sm:text-[58px] lg:text-[66px]">Từ brief đến một<br class="hidden sm:block" /> trang giới thiệu<br class="hidden sm:block" /> <span class="text-olive">có chủ đích.</span></h1>
+          <p class="mt-7 max-w-lg text-lg leading-relaxed text-muted">Gọi <span class="font-medium text-ink">sk-landing-page</span> để agent chọn thông điệp, hướng thiết kế và hành động tiếp theo — rồi dựng trang HTML cho sản phẩm của bạn.</p>
+          <div class="mt-9 flex flex-wrap items-center gap-6">
+            <a href="#bat-dau" class="button">Bắt đầu với một prompt <span aria-hidden="true">↗</span></a>
+            <a href="#dau-ra" class="text-sm font-medium text-ink underline">Xem bạn nhận được gì</a>
+          </div>
+          <p class="mt-7 text-xs text-muted">Đọc nguồn trong repo. Tóm tắt hướng làm trước khi dựng.</p>
+        </div>
+        <figure class="min-w-0">
+          <div class="drawing-grid rounded-lg border border-line p-5 sm:p-8">
+            <div class="flex items-center justify-between text-[10px] tracking-widest text-muted"><span class="mono">BRIEF → LANDING</span><span>01 / 01</span></div>
+            <div class="artifact mt-7 rounded-md border border-line bg-white p-5 sm:p-6">
+              <p class="mono text-[11px] text-muted"><span class="mr-2 text-olive" aria-hidden="true">›</span> GỬI CHO CODING AGENT</p>
+              <p class="mt-4 text-sm leading-7"><span class="mono font-medium text-olive">$sk-landing-page</span><br />Tạo landing page giới thiệu agent skill trong repo này. Làm nổi bật cách dùng và một ví dụ prompt thật.</p>
+            </div>
+            <div class="flex items-center gap-4 px-5 py-6 text-xs text-muted"><span class="text-xl text-olive" aria-hidden="true">↓</span><span>Đọc nguồn · Chọn nội dung · Đề xuất thiết kế</span></div>
+            <div class="artifact rounded-md border border-olive bg-white">
+              <div class="flex items-center gap-2 border-b border-line bg-[#edf0e2] px-5 py-3 text-xs"><svg width="14" height="16" viewBox="0 0 14 16" fill="none" aria-hidden="true"><path d="M2 1h6l4 4v10H2V1Z" stroke="currentColor"/><path d="M8 1v4h4" stroke="currentColor"/></svg><span class="mono">landing/index.html</span></div>
+              <div class="grid grid-cols-[1.4fr_1fr] items-center gap-5 p-5 sm:p-6" aria-hidden="true">
+                <div><div class="mb-3 h-1.5 w-12 bg-olive"></div><div class="h-3 w-full rounded-sm bg-[#232b1d]"></div><div class="mt-2 h-3 w-4/5 rounded-sm bg-[#232b1d]"></div><div class="mt-4 h-1.5 w-full bg-line"></div><div class="mt-2 h-1.5 w-3/4 bg-line"></div><div class="mt-5 h-7 w-20 rounded-sm bg-olive"></div></div>
+                <div class="relative flex aspect-square items-center justify-center overflow-hidden rounded-full border border-[#c0caa3] bg-[#edf0e2]"><div class="size-14 rotate-[-16deg] rounded border border-olive bg-white shadow-[5px_5px_0_#c0caa3]"></div><span class="absolute text-2xl text-olive">↗</span></div>
+              </div>
+            </div>
+          </div>
+          <figcaption class="mt-4 text-center text-[11px] text-muted">Prompt từ README · Minh họa luồng làm việc và file đầu ra</figcaption>
+        </figure>
+      </section>
+      <div class="border-y border-line">
+        <div class="mx-auto grid max-w-7xl gap-4 px-6 py-6 text-sm text-muted sm:grid-cols-3 lg:px-12">
+          <p><span class="mr-3 mono text-olive">01</span> Nội dung bám nguồn sản phẩm</p>
+          <p><span class="mr-3 mono text-olive">02</span> Thiết kế theo brief của bạn</p>
+          <p><span class="mr-3 mono text-olive">03</span> Một file HTML để xem và sửa</p>
+        </div>
+      </div>
+      <section id="khi-nao" aria-labelledby="when-title" class="mx-auto max-w-7xl px-6 py-20 lg:px-12 lg:py-24">
+        <div class="grid gap-7 md:grid-cols-2 md:gap-16">
+          <div><p class="eyebrow mb-5">Đúng việc, đúng skill</p><h2 id="when-title" class="max-w-lg text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Bạn có sản phẩm.<br />Giờ cần kể cho đúng người.</h2></div>
+          <p class="max-w-lg self-end text-base leading-8 text-muted">Dùng khi cần tạo mới hoặc cập nhật một landing page giới thiệu một offering cụ thể. Agent dựa vào brief và repo để xác định người đọc cần biết gì trước khi hành động.</p>
+        </div>
+        <div class="mt-12 grid gap-8 md:grid-cols-3 md:gap-10">
+          <article class="border-t border-olive pt-6"><p class="mono text-xs text-muted">01 / AGENT SKILL</p><h3 class="mt-5 text-xl font-medium">Giúp người đọc biết lúc nào gọi skill</h3><p class="mt-4 text-sm leading-7 text-muted">Nêu việc skill giải quyết, đầu ra nhận được và một prompt có thể dùng ngay.</p></article>
+          <article class="border-t border-olive pt-6"><p class="mono text-xs text-muted">02 / SAAS & SẢN PHẨM</p><h3 class="mt-5 text-xl font-medium">Đưa giá trị sản phẩm lên trước</h3><p class="mt-4 text-sm leading-7 text-muted">Làm rõ vấn đề, kết quả và cách sử dụng; dẫn người đọc tới bước tiếp theo có thật.</p></article>
+          <article class="border-t border-olive pt-6"><p class="mono text-xs text-muted">03 / REPOSITORY</p><h3 class="mt-5 text-xl font-medium">Cho developer một điểm bắt đầu</h3><p class="mt-4 text-sm leading-7 text-muted">Giới thiệu repo giải quyết điều gì, chọn khả năng đáng chú ý và đưa quickstart vào tầm mắt.</p></article>
+        </div>
+      </section>
+      <section id="dau-ra" aria-labelledby="output-title" class="bg-[#e9eddf] border-y border-line">
+        <div class="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-[.85fr_1.15fr] lg:gap-24 lg:px-12">
+          <div><p class="eyebrow mb-5">Đầu ra rõ ràng</p><h2 id="output-title" class="text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Một trang.<br />Một hướng đi tiếp.</h2><p class="mt-6 max-w-md text-base leading-8 text-muted">Bạn nhận được <code class="text-sm text-ink">landing/index.html</code> với nội dung, giao diện và các tương tác cần thiết. Mở để xem, đọc để chỉnh, tiếp tục phát triển theo nhu cầu.</p><a href="#bat-dau" class="mt-8 inline-block text-sm font-semibold text-olive underline">Bắt đầu với một prompt <span aria-hidden="true">↗</span></a></div>
+          <ol class="divide-y divide-[#cbd2bd]">
+            <li class="grid grid-cols-[32px_1fr] gap-5 pb-7"><span class="mono mt-1 text-sm text-olive">01</span><div><h3 class="text-lg font-medium">Thông điệp có căn cứ</h3><p class="mt-2 text-sm leading-7 text-muted">Agent đọc brief, README và tài liệu liên quan để chọn hero cùng 1–3 điểm nổi bật đáng đưa lên trang.</p></div></li>
+            <li class="grid grid-cols-[32px_1fr] gap-5 py-7"><span class="mono mt-1 text-sm text-olive">02</span><div><h3 class="text-lg font-medium">Hướng thiết kế được nói rõ</h3><p class="mt-2 text-sm leading-7 text-muted">Trước khi dựng, bạn thấy loại trang, CTA, màu chủ đạo và phong cách. Màu hay thiết kế bạn chỉ định được ưu tiên.</p></div></li>
+            <li class="grid grid-cols-[32px_1fr] gap-5 pt-7"><span class="mono mt-1 text-sm text-olive">03</span><div><h3 class="text-lg font-medium">Một hành động thực sự hữu ích</h3><p class="mt-2 text-sm leading-7 text-muted">CTA có thể dẫn tới cài đặt, demo, tài liệu hoặc quickstart trên trang, tùy nguồn và mục đích của sản phẩm.</p></div></li>
+          </ol>
+        </div>
+      </section>
+      <section id="bat-dau" aria-labelledby="start-title" class="mx-auto max-w-7xl px-6 py-20 lg:px-12 lg:py-24">
+        <div class="mb-12 flex flex-wrap items-end justify-between gap-6"><div><p class="eyebrow mb-5">Quickstart</p><h2 id="start-title" class="text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Mang brief của bạn vào cuộc trò chuyện.</h2></div><p class="text-sm text-muted">Một lệnh cài. Một prompt để bắt đầu.</p></div>
+        <div class="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-16">
+          <div class="min-w-0"><h3 class="text-base font-semibold"><span class="mr-3 mono text-olive">01</span> Cài skill trong project</h3><p class="mt-4 text-sm leading-7 text-muted">Trong thư mục project, chạy lệnh dưới đây với Node.js 20.12.0 trở lên và npm/npx.</p><pre class="code single-line mt-5 rounded border border-line bg-white" tabindex="0" aria-label="Lệnh cài sb-kit"><code>npx sb-kit install</code></pre><p class="mt-5 text-sm leading-7 text-muted">Chọn <strong class="font-medium text-ink">sk-landing-page</strong> trong nhóm <strong class="font-medium text-ink">sk-work</strong>. Skill được cài vào <code class="text-xs text-ink">.agents/skills</code>; installer có tùy chọn cài thêm cho Claude Code.</p></div>
+          <div class="min-w-0"><h3 class="mb-5 text-base font-semibold"><span class="mr-3 mono text-olive">02</span> Gửi prompt cho coding agent</h3><div class="overflow-hidden rounded-md bg-[#202719] text-[#f4f5f1]"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/15 px-6 py-3"><span class="mono text-[11px] text-[#c5ccba]">VÍ DỤ TỪ README</span><button id="copy-prompt" type="button" class="dark-focus min-h-10 cursor-pointer rounded border border-white/30 px-3 text-xs hover:bg-white/10">Sao chép prompt</button></div><pre class="code dark-focus" tabindex="0" aria-label="Prompt mẫu"><code id="prompt-text">$sk-landing-page Tạo landing page giới thiệu agent skill trong repo này. Làm nổi bật cách dùng và một ví dụ prompt thật.</code></pre></div><p id="copy-status" role="status" aria-live="polite" class="mt-3 min-h-5 text-xs text-muted"></p><p class="mt-2 text-sm leading-7 text-muted">Thay đối tượng giới thiệu bằng sản phẩm của bạn. Bổ sung người đọc, màu ưu tiên và CTA mong muốn nếu đã có định hướng.</p></div>
+        </div>
+      </section>
+      <section aria-labelledby="faq-title" class="mx-auto grid max-w-7xl gap-8 border-t border-line px-6 py-16 md:grid-cols-[.65fr_1fr] md:gap-20 lg:px-12">
+        <div><p class="eyebrow mb-5">Trước khi bắt đầu</p><h2 id="faq-title" class="text-2xl font-medium tracking-tight">Vài điều cần biết.</h2></div>
+        <div>
+          <details class="border-b border-line"><summary>Tôi chỉ muốn tư vấn hướng làm?</summary><p>Hãy nói rõ bạn cần tư vấn. Skill trả brief trong chat: loại trang, người đọc, nội dung nổi bật, CTA và hướng thị giác.</p></details>
+          <details class="border-b border-line"><summary>Tôi đã có landing page thì sao?</summary><p>Skill đọc landing/index.html hiện có trước khi cập nhật theo phạm vi yêu cầu, giữ các phần nội dung và thiết kế không liên quan.</p></details>
+          <details class="border-b border-line"><summary>Skill có làm cả app nhiều trang không?</summary><p>Phạm vi là một landing page. Với ứng dụng nhiều trang hoặc trực quan hóa tài liệu, hãy chọn workflow dành riêng cho công việc đó.</p></details>
+        </div>
+      </section>
+    </main>
+    <footer class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 border-t border-line px-6 py-8 text-xs text-muted lg:px-12"><p><span class="font-semibold text-ink">sk-landing-page</span><span class="mx-3">/</span>Một skill trong sb-kit</p><a href="#bat-dau" class="font-medium text-olive underline">Bắt đầu với một prompt <span aria-hidden="true">↗</span></a></footer>
+    <script>
+      const copyButton = document.getElementById("copy-prompt");
+      const promptText = document.getElementById("prompt-text");
+      const copyStatus = document.getElementById("copy-status");
+      copyButton.addEventListener("click", async () => {
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error("Clipboard unavailable");
+          await navigator.clipboard.writeText(promptText.textContent.trim());
+          copyStatus.textContent = "Đã sao chép. Dán prompt vào cuộc trò chuyện với coding agent.";
+        } catch (error) {
+          const range = document.createRange();
+          range.selectNodeContents(promptText);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+          copyStatus.textContent = "Đã chọn prompt. Nhấn Ctrl+C (hoặc Command+C) để sao chép, hoặc chạm giữ để mở menu sao chép.";
+        }
+      });
+    </script>
+  </body>
+</html>

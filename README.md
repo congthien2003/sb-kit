@@ -185,7 +185,7 @@ Ví dụ skills mới: `$sk-debug Tìm nguyên nhân lỗi API, chỉ đọc sou
 | --- | --- |
 | `sk-debug` | Chẩn đoán lỗi/log, trace caller–consumer và xếp hạng giả thuyết có evidence; read-only mặc định, không tự patch/reproduce. |
 | `sk-app-context` | Tạo hoặc cập nhật `PRODUCT.md` ngắn cho app đã có: ai dùng, thao tác chính, ưu tiên UI/UX và quy tắc quyết định để agent không lạc đề. Điền trước từ repo, gắn nhãn xác nhận/giả định, không ghi đè file có sẵn và không tự sửa `AGENTS.md`. |
-| `sk-landing-page` | Tạo landing page sản phẩm tại `landing/index.html` bằng Tailwind CSS CDN, chọn concept và font theo nội dung. |
+| `sk-landing-page` | Xác định loại landing page, chọn nội dung nổi bật và CTA, đề xuất màu và phong cách, rồi dựng `landing/index.html` bằng Tailwind CSS CDN. |
 | `frontend-design` | Hướng dẫn xây dựng giao diện frontend chất lượng production. |
 | `vercel-react-best-practices` | Best practices về hiệu năng React và Next.js. |
 | `vercel-react-native-skills` | Best practices cho React Native và Expo. |
@@ -196,10 +196,12 @@ Ví dụ `$sk-app-context App này dành cho nội bộ, ưu tiên table, input 
 Chọn `sk-landing-page` trong nhóm `sk-work` khi chạy `sb-kit install`; skill này không tự cài trong luồng `create next-hono`. Ví dụ sử dụng:
 
 ```text
-$sk-landing-page Tạo landing page cho sản phẩm trong repository này.
+$sk-landing-page Tạo landing page giới thiệu agent skill trong repo này. Làm nổi bật cách dùng và một ví dụ prompt thật.
 ```
 
-Skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html`, tạo folder `landing` nếu chưa có. Trang dùng trực tiếp Tailwind CSS CDN, font theo concept và CSS/JS bổ sung inline; cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
+Skill đọc brief và nguồn trong repo để nhận diện trang giới thiệu agent skill, SaaS, repo GitHub hoặc loại nội dung khác. Trước khi dựng, agent tóm tắt trong chat loại trang, điểm cần nhấn, CTA và hướng thị giác. Màu và phong cách người dùng chỉ định được ưu tiên. Nếu chỉ yêu cầu tư vấn, brief được trả trong chat.
+
+Khi dựng, skill tạo hoặc cập nhật duy nhất `<project-root>/landing/index.html` và tạo thư mục `landing` nếu cần. Trang dùng Tailwind CSS CDN và CSS/JS bổ sung inline. Cần mạng để tải CDN, web font hoặc ảnh từ xa nếu có.
 
 `sk-verify-code-ui-only` là core skill, nằm trong nhóm `sk-work` của `sb-kit install` và được cài trong `create next-hono`. Skill mặc định trả báo cáo chat theo ngôn ngữ người dùng, chỉ tạo artifact khi được yêu cầu; audit source UI tĩnh, không mở rộng sang hooks/services/logic nghiệp vụ và không tự sửa code. Nếu host không hỗ trợ hoặc không cho phép native sub-agents, skill sẽ nói rõ và audit tuần tự.
 
