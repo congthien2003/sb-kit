@@ -21,6 +21,12 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: 'Metadata' });
   const title = siteConfig.name;
   const description = t('description');
+  const previewImage = {
+    url: new URL('/social-preview.png', siteConfig.url),
+    width: 1200,
+    height: 630,
+    alt: title,
+  };
 
   return {
     title: { absolute: title },
@@ -39,6 +45,13 @@ export async function generateMetadata({
       siteName: siteConfig.name,
       locale: locale === 'vi' ? 'vi_VN' : 'en_US',
       type: 'website',
+      images: [previewImage],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [previewImage],
     },
   };
 }
