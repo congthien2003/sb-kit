@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "npm:pi-lens",
+    "npm:@narumitw/pi-plan-mode",
+    "npm:pi-web-access",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-background-tasks",
+    "npm:@narumitw/pi-usage",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-goal-x",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-subagents",
+    "npm:pi-powerline-footer",
+    "npm:pi-advisor-flow"
+  ]
+}
