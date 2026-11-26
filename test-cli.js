@@ -58,6 +58,12 @@ function testPluginManifest() {
   assert.strictEqual(marketplace.plugins.length, 1);
   assert.strictEqual(marketplace.plugins[0].name, plugin.name);
   assert.strictEqual(marketplace.plugins[0].source, "./");
+  assert.deepStrictEqual(
+    Object.keys(marketplace.plugins[0]).sort(),
+    ["description", "name", "source"],
+    "marketplace entry should only carry name, source and description; other metadata lives in plugin.json",
+  );
+  assert.strictEqual(marketplace.plugins[0].description, plugin.description);
   const skillsDir = path.join(__dirname, plugin.skills);
   const skills = fs.readdirSync(skillsDir).filter((name) => fs.statSync(path.join(skillsDir, name)).isDirectory());
   assert.ok(skills.length > 0, "plugin ships no skills");
