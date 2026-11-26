@@ -16,6 +16,7 @@ const {
   parseCreateArgs,
   runCommand,
 } = require("./cli");
+const stateTools = require("./lib/skill-state");
 
 const helpResult = spawnSync(process.execPath, [path.join(__dirname, "cli.js"), "--help"], {
   encoding: "utf8",
@@ -34,6 +35,18 @@ assert.deepStrictEqual(
     "  npx sb-kit --help                                       Show this help",
   ],
 );
+
+function testSkillMirror() {
+  const source = stateTools.snapshot(path.join(__dirname, ".agents", "skills"));
+  const mirror = stateTools.snapshot(path.join(__dirname, ".claude", "skills"));
+  assert.strictEqual(
+    mirror.treeHash,
+    source.treeHash,
+    ".claude/skills drifted from .agents/skills; run: rm -rf .claude/skills && cp -r .agents/skills .claude/skills",
+  );
+}
+
+testSkillMirror();
 
 function runInstall({ claude = false } = {}) {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-"));
@@ -56,7 +69,6 @@ const VISUALIZER_REFERENCE_FILES = [
   "technical-doc.md",
   "base-template.html",
 ];
-const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
 const { resolveCompanions, chooseInstallSelection } = require("./lib/presets");
 const { planUpdate, renderUpdate, applyUpdate, runUpdate } = require("./lib/update");

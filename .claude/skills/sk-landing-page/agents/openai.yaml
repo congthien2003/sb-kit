@@ -1,4 +1,4 @@
 interface:
   display_name: "SK Landing Page"
-  short_description: "Create a product landing page in one HTML file"
-  default_prompt: "Use $sk-landing-page to create a product landing page at landing/index.html from this brief or repository."
+  short_description: "Plan and build a landing page in one HTML file"
+  default_prompt: "Use $sk-landing-page to identify the landing page type, prioritize content and the main CTA, and propose colors and style before building landing/index.html from this brief or repository."
