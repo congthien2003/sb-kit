@@ -24,6 +24,25 @@ CLI bắt buộc chọn ít nhất một skill. Khi chọn `$sk-excute`, install
 
 Cancel ở picker hoặc conflict mode sẽ dừng trước khi tạo/copy skill folder. Cuối cùng dùng phím mũi tên và Enter để chọn có mirror cùng selection và conflict mode sang Claude Code không. **No** là lựa chọn mặc định.
 
+## Claude Code plugin
+
+sb-kit cũng là một Claude Code plugin và tự làm marketplace của chính nó. Trong Claude Code (2.1.275 trở lên) cài bằng một lệnh:
+
+```
+/plugin install sb-kit --marketplace congthien2003/sb-kit
+```
+
+Hoặc theo hai bước trên các bản Claude Code cũ hơn:
+
+```
+/plugin marketplace add congthien2003/sb-kit
+/plugin install sb-kit@sb-kit
+```
+
+Plugin cung cấp **toàn bộ** skill trong `.agents/skills/`, kể cả các skill CLI không hiển thị trong picker (như `sk-release`, `sk-create-skill`, `skill-creator`, `herdr` và các skill bên thứ ba). Skill được gọi theo namespace của plugin, ví dụ `sb-kit:sk-excute`. CLI `npx sb-kit` vẫn hoạt động như cũ và không phụ thuộc vào plugin.
+
+Manifest nằm ở `.claude-plugin/plugin.json` (version luôn khớp `package.json`) và `.claude-plugin/marketplace.json`.
+
 ## Pi config profiles (optional)
 
 Repository này cũng có Pi package độc lập để lưu/export/import persisted Pi settings và inventory extensions an toàn:
@@ -274,4 +293,4 @@ Sau đó mở `my-app` bằng coding agent và gửi prompt mà CLI in ra để 
 
 ## License
 
-ISC
+ISC — xem [LICENSE](LICENSE).

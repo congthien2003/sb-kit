@@ -46,7 +46,28 @@ function testSkillMirror() {
   );
 }
 
+function testPluginManifest() {
+  const readJson = (file) => JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf8"));
+  const plugin = readJson(".claude-plugin/plugin.json");
+  const marketplace = readJson(".claude-plugin/marketplace.json");
+  assert.strictEqual(plugin.name, "sb-kit");
+  assert.strictEqual(plugin.version, require("./package.json").version);
+  assert.strictEqual(plugin.license, "ISC");
+  assert.strictEqual(plugin.skills, "./.agents/skills");
+  assert.strictEqual(marketplace.name, "sb-kit");
+  assert.strictEqual(marketplace.plugins.length, 1);
+  assert.strictEqual(marketplace.plugins[0].name, plugin.name);
+  assert.strictEqual(marketplace.plugins[0].source, "./");
+  const skillsDir = path.join(__dirname, plugin.skills);
+  const skills = fs.readdirSync(skillsDir).filter((name) => fs.statSync(path.join(skillsDir, name)).isDirectory());
+  assert.ok(skills.length > 0, "plugin ships no skills");
+  for (const skill of skills) {
+    assert.ok(fs.existsSync(path.join(skillsDir, skill, "SKILL.md")), `${skill} is missing SKILL.md`);
+  }
+}
+
 testSkillMirror();
+testPluginManifest();
 
 function runInstall({ claude = false } = {}) {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-"));
