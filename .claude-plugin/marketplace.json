@@ -1,0 +1,16 @@
+{
+  "$schema": "https://code.claude.com/schemas/marketplace.json",
+  "name": "sb-kit",
+  "description": "SaboKit agent skills for Claude Code.",
+  "owner": {
+    "name": "congthien2003",
+    "url": "https://github.com/congthien2003"
+  },
+  "plugins": [
+    {
+      "name": "sb-kit",
+      "source": "./",
+      "description": "SaboKit agent skills for Claude Code: risk-sized implementation workflow, debugging, diff review, code explanation, docs, HTML visualizers and slides, landing pages, releases, and Next.js + Hono workspace setup."
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 ---
 name: sk-landing-page
-description: Create or update a product marketing landing page from a brief or repository as landing/index.html using Tailwind CSS CDN. Use for single-file product landing pages, not documentation visualizations or multi-page applications.
+description: Plan, create, or update a single-file landing page for an agent skill, SaaS product, GitHub repository, or other offering. Use the brief or repository to identify the page type, choose content highlights and a primary CTA, and propose a color palette and visual style. Build at landing/index.html with Tailwind CSS CDN. For documentation visualizations and multi-page applications, use their dedicated workflows.
 ---
 
-# Product landing pages
+# Landing pages
 
-Explain a small product clearly and help its intended audience take one meaningful next step. Choose a familiar marketing-page direction that fits the audience and concept, such as SaaS, education, gym, or sport.
+Explain what the offering does, show why it matters to the intended audience, and give that audience one meaningful next step.
 
 ## Output contract
 
@@ -17,43 +17,19 @@ Explain a small product clearly and help its intended audience take one meaningf
 ## Workflow
 
 1. Read applicable `AGENTS.md` instructions and inspect the intended output path. Honor required plan approvals and restrictions on tests, browser checks, or other verification. Read an existing `landing/index.html` before making scoped updates and preserve unrelated files. If `landing` is a file, or the task would replace an unrelated existing page, resolve that conflict with the user rather than choosing another output path or deleting content. Do not ask again for an already authorized update.
-2. Gather product facts from the user's brief and relevant public-facing repository evidence: README, product documentation, public interfaces, examples, and source when needed. Identify the audience, problem, main benefit, capabilities, workflow, and primary conversion goal. Do not copy private configuration or internal implementation details into marketing copy.
-3. Ask only for missing information that materially affects the product's identity, claims, or next step. Infer reasonable presentation choices. Omit unsupported optional content instead of filling the page with placeholders or assumptions presented as facts.
-4. Choose the visual direction, language, font, and content outline. Use the user's stated concept when supplied; otherwise infer a conventional direction from the audience and offering. Briefly explain the choice in chat without requiring a separate theme questionnaire.
-5. Build the one HTML file using the content and design guidance below. For an existing page, make the requested changes within its established content and visual direction unless a redesign is authorized.
-6. Review the source against the output contract and product evidence. Run runtime or automated checks only when permitted. Return the file path, external dependencies, and any material unverified behavior; do not claim browser validation or successful conversion without evidence. Do not commit unless explicitly requested.
+2. Read the brief, README, public documentation, and examples relevant to the offering. Consult public interfaces or source if needed to substantiate a claim. Open [Content strategy](references/content-strategy.md) to identify the page type, audience, hero message, supporting highlights, and primary CTA. Ask only when missing information materially affects the offering's identity, an essential claim, or the reader's next step.
+3. Open [Visual direction](references/visual-direction.md) to choose a primary color, style, typography, and visual treatment. Inspect any supplied design references, the existing page, and relevant brand guidance or tokens.
+4. Before writing HTML, share a brief in chat covering the page type and reason, audience, hero message, one to three supported highlights, primary CTA and destination, and proposed primary color, visual style, and heading and body fonts. Explain how the proposed direction fits the content. State material assumptions and point to the evidence behind the highlights when available. For advice-only requests, deliver the brief in chat. For build requests, proceed once the brief is clear and edits are authorized. Use a wireframe or separate design approval only if the user or applicable instructions require it.
+5. Build the one HTML file using the selected direction and implementation guidance below. For a scoped update, preserve established content and visual choices outside the requested changes.
+6. Review the result against the output contract and deliver the handoff below.
 
-## Content structure
+## Reference map
 
-Use this as a starting sequence, not a required section count. Merge, reorder, or omit sections that would repeat information or do not fit the product. A reader should understand what the product does, who it serves, why it helps, how to use it, and how to start.
-
-| Section | Purpose |
+| When | Open |
 | --- | --- |
-| Navigation | Product identity, a few useful section links, and the primary CTA. |
-| Hero | A concrete value proposition, audience/context, short supporting copy, CTA, and a relevant visual. |
-| Problem and solution | Explain the situation the product improves and its approach. |
-| Features and benefits | Connect real capabilities to useful outcomes; make the product understandable beyond a slogan. |
-| How it works | Show the actual path to getting value, including prerequisites or short usage examples when relevant. |
-| Use cases | Help distinct audiences recognize suitable situations without inventing unsupported capabilities. |
-| Pricing and proof | Include actual plans, terms, testimonials, customer logos, or results only when supplied or evidenced. |
-| FAQ | Resolve likely product questions and objections with supported answers. |
-| Closing CTA | Reinforce the main benefit and repeat the same primary conversion goal. |
-| Footer | Product identity and real documentation, contact, or other relevant links. |
-
-Lead with benefits while explaining the features behind them. Keep technical detail when it helps a buyer or user decide; do not turn repository internals into page content.
-
-Never fabricate pricing, free tiers, customer names, testimonials, usage counts, performance results, guarantees, capabilities, or URLs. Omit unavailable optional proof and commercial sections. Discuss essential information gaps in chat, not as fake content on the page.
-
-CTA labels must match their real destinations or actions. Use a supplied or evidenced destination, or a useful link to an actual section such as getting started. If the intended conversion cannot work without a missing destination, ask for it. Do not use empty `href="#"` links, fake checkout buttons, or forms that pretend to submit successfully. Secondary links may support exploration while the primary goal stays clear.
-
-## Visual direction and typography
-
-- Use SaaS, education, gym, and sport as examples of familiar landing-page concepts, not a fixed template library or an exhaustive taxonomy. Let the product and audience guide composition, colors, imagery, and tone.
-- A CLI product does not imply a terminal theme. Present it as an ordinary product landing page; avoid defaulting to terminal windows, hacker colors, shell prompts as decoration, or monospace body text. A short real command in a getting-started section is appropriate when it helps explain use.
-- Select fonts for the concept and language. Be Vietnam Pro is a useful first choice for Vietnamese content; Poppins and Roboto are valid options when suitable. These are preferences, not an exclusive list. Load only needed web-font weights, use `display=swap`, provide a readable fallback, and account for the actual language's glyph coverage.
-- Keep a cohesive type scale, bounded content width, comfortable reading measure, consistent spacing, and restrained corner radii. Vary section composition instead of enclosing every section in identical cards. Use color and decoration to support the product message.
-- Prefer actual product visuals when available. Otherwise use an honest illustration of the workflow or benefit; do not invent a dashboard or interface that implies the product has features it lacks.
-- This skill supplies its own marketing-page guidance. Do not automatically invoke a separate design or visualization skill, inherit report-specific colors, or exclude the user's preferred fonts because another general design guide discourages them.
+| Identify the page type, prioritize the message, or choose sections and a CTA | [Content strategy](references/content-strategy.md) |
+| Choose or adapt colors, layout, typography, or imagery | [Visual direction](references/visual-direction.md) |
+| Build or update the HTML | [HTML and interaction](#html-and-interaction) |
 
 ## HTML and interaction
 
@@ -73,13 +49,12 @@ Tailwind documents Play CDN as intended for development, not production. Preserv
 
 ## Source review and handoff
 
-Before delivery, inspect whether the change writes only `landing/index.html`, every product claim has support, the chosen concept fits the brief, and the primary CTA has a real action. Check source structure for responsive layout, font fallbacks, accessible controls, and unnecessary external dependencies.
+Before delivery, inspect whether the change writes only `landing/index.html`, every product claim has support, the chosen direction fits the brief, and the primary CTA has a real action. Check source structure for responsive layout, font coverage and fallbacks, accessible controls, and unnecessary external dependencies. Follow the [typography guidance](references/visual-direction.md#typography) when reviewing the real headline. Run runtime or automated checks only when permitted.
 
 If verification is prohibited, report source review only and give the user any needed manual checks: open the file with network access, inspect mobile and desktop layouts, and exercise navigation and the primary CTA. Do not generate a second page or screenshots as additional deliverables.
 
-Return the created or updated file path with a brief note about Tailwind CDN, web fonts or remote imagery used, and verification status.
+Return the created or updated file path with a brief note about Tailwind CDN, web fonts or remote imagery used, material design assumptions, and verification status. Commit only when explicitly requested.
 
 ## References
 
-- [Unbounce: The anatomy of a landing page](https://unbounce.com/landing-page-articles/the-anatomy-of-a-landing-page/) — guidance on value proposition, contextual visuals, features and benefits, real proof, and a primary conversion goal; not a universal layout or conversion guarantee.
 - [Tailwind CSS: Play CDN](https://tailwindcss.com/docs/installation/play-cdn) — browser CDN setup, v4 inline theme syntax, and the development-only limitation.

@@ -16,6 +16,7 @@ const {
   parseCreateArgs,
   runCommand,
 } = require("./cli");
+const stateTools = require("./lib/skill-state");
 
 const helpResult = spawnSync(process.execPath, [path.join(__dirname, "cli.js"), "--help"], {
   encoding: "utf8",
@@ -34,6 +35,45 @@ assert.deepStrictEqual(
     "  npx sb-kit --help                                       Show this help",
   ],
 );
+
+function testSkillMirror() {
+  const source = stateTools.snapshot(path.join(__dirname, ".agents", "skills"));
+  const mirror = stateTools.snapshot(path.join(__dirname, ".claude", "skills"));
+  assert.strictEqual(
+    mirror.treeHash,
+    source.treeHash,
+    ".claude/skills drifted from .agents/skills; run: rm -rf .claude/skills && cp -r .agents/skills .claude/skills",
+  );
+}
+
+function testPluginManifest() {
+  const readJson = (file) => JSON.parse(fs.readFileSync(path.join(__dirname, file), "utf8"));
+  const plugin = readJson(".claude-plugin/plugin.json");
+  const marketplace = readJson(".claude-plugin/marketplace.json");
+  assert.strictEqual(plugin.name, "sb-kit");
+  assert.strictEqual(plugin.version, require("./package.json").version);
+  assert.strictEqual(plugin.license, "ISC");
+  assert.strictEqual(plugin.skills, "./.agents/skills");
+  assert.strictEqual(marketplace.name, "sb-kit");
+  assert.strictEqual(marketplace.plugins.length, 1);
+  assert.strictEqual(marketplace.plugins[0].name, plugin.name);
+  assert.strictEqual(marketplace.plugins[0].source, "./");
+  assert.deepStrictEqual(
+    Object.keys(marketplace.plugins[0]).sort(),
+    ["description", "name", "source"],
+    "marketplace entry should only carry name, source and description; other metadata lives in plugin.json",
+  );
+  assert.strictEqual(marketplace.plugins[0].description, plugin.description);
+  const skillsDir = path.join(__dirname, plugin.skills);
+  const skills = fs.readdirSync(skillsDir).filter((name) => fs.statSync(path.join(skillsDir, name)).isDirectory());
+  assert.ok(skills.length > 0, "plugin ships no skills");
+  for (const skill of skills) {
+    assert.ok(fs.existsSync(path.join(skillsDir, skill, "SKILL.md")), `${skill} is missing SKILL.md`);
+  }
+}
+
+testSkillMirror();
+testPluginManifest();
 
 function runInstall({ claude = false } = {}) {
   const target = fs.mkdtempSync(path.join(os.tmpdir(), "sb-kit-"));
@@ -56,7 +96,6 @@ const VISUALIZER_REFERENCE_FILES = [
   "technical-doc.md",
   "base-template.html",
 ];
-const stateTools = require("./lib/skill-state");
 const { inspectProject, renderDoctor } = require("./lib/doctor");
 const { resolveCompanions, chooseInstallSelection } = require("./lib/presets");
 const { planUpdate, renderUpdate, applyUpdate, runUpdate } = require("./lib/update");

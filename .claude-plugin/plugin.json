@@ -1,0 +1,23 @@
+{
+  "name": "sb-kit",
+  "description": "SaboKit agent skills for Claude Code: risk-sized implementation workflow, debugging, diff review, code explanation, docs, HTML visualizers and slides, landing pages, releases, and Next.js + Hono workspace setup.",
+  "version": "3.7.0",
+  "author": {
+    "name": "congthien2003",
+    "url": "https://github.com/congthien2003"
+  },
+  "homepage": "https://github.com/congthien2003/sb-kit",
+  "repository": "https://github.com/congthien2003/sb-kit",
+  "license": "ISC",
+  "keywords": [
+    "skills",
+    "agents",
+    "workflow",
+    "debugging",
+    "code-review",
+    "documentation",
+    "nextjs",
+    "hono"
+  ],
+  "skills": "./.agents/skills"
+}

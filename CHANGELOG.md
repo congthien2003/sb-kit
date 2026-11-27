@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [3.7.0] - 2026-11-26
+
+### Added
+
+- Package sb-kit as a Claude Code plugin with its own marketplace (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`). Install with `/plugin install sb-kit --marketplace congthien2003/sb-kit`, or `/plugin marketplace add congthien2003/sb-kit` then `/plugin install sb-kit@sb-kit`. The plugin ships every skill in `.agents/skills/`, including ones the CLI picker hides.
+- Add an ISC `LICENSE` file.
+- Add tests that keep `.claude/skills/` identical to `.agents/skills/` and keep the plugin manifest version in step with `package.json`.
+- Add a social preview image to the landing page.
+
+### Changed
+
+- Sync the `.claude/skills/` mirror with `.agents/skills/` (adds `sk-app-context`, updates `sk-landing-page`).
+- Remove the legacy root `index.html` landing page in favor of `landing/`.
+
 ## [3.6.0] - 2026-11-19
 
 ### Added
